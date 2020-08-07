@@ -168,3 +168,5 @@ var commonObj = {
         }
     }
 }
+//获取模板规则<script>标签;
+var layoutTemp = commonObj.getTpl("/template/layout.html");

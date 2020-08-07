@@ -1,6 +1,4 @@
 $(function () {
-    //获取模板规则<script>标签;
-    var layoutTemp = commonObj.getTpl("./template/layout.html");
     var audioPlayer = $('#play-audio')[0];
     audioPlayer.load()
 

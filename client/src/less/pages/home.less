@@ -3,8 +3,68 @@
     height: 100%;
     width: 100%;
     .swiper-container {
-        background-color: @c-e8;
+        // background-color: @c-e8;
         height: 220px;
-        width: 100%;
+        padding: 0 0 25px;
+        .img {
+            height: 100%;
+            position: relative;
+            img {
+                margin: 0 auto;
+                display: block;
+                height: 100%;
+            }
+            .text {
+                position: absolute;
+                right: -3px;
+                border-radius: 20px 0 0 20px;
+                background-color: @primary;
+                color: @white;
+                padding: 3px 10px;
+                bottom: 30px;
+            }
+        }
+        .swiper-slide {
+            position: relative;
+            z-index: 99;
+            opacity: 1;
+        }
+        .swiper-pagination {
+            .swiper-pagination-bullet {
+                width: 20px;
+                height: 2px;
+                border-radius: 2px;
+                &.swiper-pagination-bullet-active {
+                    background-color: @primary;
+                }
+            }
+        }
+        &:hover {
+            .button-next,
+            .button-prev {
+                display: block;
+            }
+        }
+        .button-next,
+        .button-prev {
+            position: absolute;
+            top: 50%;
+            margin-top: -18px;
+            z-index: 1000;
+            display: none;
+            &:hover::after {
+                color: @white;
+            }
+            &::after {
+                font-size: 36px;
+                color: @c-ccc;
+            }
+        }
+        .button-prev {
+            left: 20px;
+        }
+        .button-next {
+            right: 20px;
+        }
     }
 }
