@@ -1,0 +1,142 @@
+.grid-list {
+    position: relative;
+    overflow: hidden;
+    clear: both;
+    &-item {
+        height: 180px;
+        width: 134px;
+        margin-right: 20px;
+        margin-bottom: 30px;
+        overflow: hidden;
+        position: relative;
+        &:nth-child(5n) {
+            margin-right: 0;
+        }
+        .img {
+            width: 100%;
+            margin-bottom: 10px;
+            .desc {
+                position: absolute;
+                bottom: 46px;
+                line-height: 24px;
+                color: @white;
+                padding: 0 10px;
+                width: calc(100% - 20px);
+                background-image: linear-gradient(to right, rgba(255,255,255,0.3), rgba(0,0,0,0.3));
+                // background-color: rgba(0, 0, 0, 0.5);
+            }
+            img {
+                width: 100%;
+            }
+            &:hover {
+                .copy-writer {
+                    transform: translateY(0px);
+                }
+                .right {
+                    display: none;
+                }
+            }
+            .copy-writer,.right {
+                position: absolute;
+                top: 0px;
+                box-sizing: border-box;
+                color: @white;
+            }
+            .copy-writer {
+                background-color: rgba(0, 0, 0, 0.5);
+                padding: 8px 10px;
+                line-height: 16px;
+                font-size: 12px;
+                width: 100%;
+                left: 0;
+                transform: translateY(-100%);
+                overflow: hidden;
+                transition: all 0.3s;
+                text-align: justify;
+                z-index: 10;
+            }
+            .right {
+                right: 0;
+                top: 0;
+                max-width: 100px;
+                line-height: 18px;
+                padding: 0px 10px;
+                background-image: linear-gradient(to right, rgba(255,255,255,0), rgba(0,0,0,0.3));
+                .icon::after {
+                    color: @white;
+                }
+            }
+        }
+        .name {
+            font-size: 12px;
+            line-height: 18px;
+            color: @c-333;
+        }
+        &.type-5 {
+            height: 180px;
+            width: 237px;
+            &:nth-child(3n) {
+                margin-right: 0;
+            }
+            .left {
+                position: absolute;
+                top: 5px;
+                left: 5px;
+                padding: 6px 7px;
+                border-radius: 50px;
+                background-color: rgba(0, 0, 0, 0.3);
+                span::after {
+                    color: @white;
+                    font-size: 12px;
+                }
+            }
+        }
+        &.ftype-0 {
+            width: 375px;
+            margin-bottom: 0;
+            height: auto;
+            margin-right: 0;
+            .grid-list-item {
+                padding: 10px;
+                box-sizing: border-box;
+                border: 0;
+                height: 62px;
+                &:hover {
+                    background-color: @c-ddd !important;
+                }
+                .img {
+                    height: 42px;
+                    width: 42px;
+                    margin-right: 10px;
+                    position: relative;
+                    .icon {
+                        position: absolute;
+                        left: 50%;
+                        margin-left: -10px;
+                        top: 50%;
+                        margin-top: -8px;
+                        &::after {
+                            font-size: 16px;
+                            padding: 4px;
+                            background-color: rgba(0, 0, 0, 0.5);
+                        }
+                    }
+                }
+                .name {
+                    margin-bottom: 5px;
+                }
+                .singer {
+                    color: @c-999;
+                }
+                &:nth-child(even) {
+                    background-color: @c-eee;
+                }
+            }
+            &:nth-child(1){
+                .grid-list-item {
+                    border-right: 1px solid @c-e8;
+                }
+            }
+        }
+    }
+}

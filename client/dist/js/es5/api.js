@@ -1,18 +1,20 @@
+'use strict';
+
 var baseUrl = 'http://localhost:3000';
 var prefix = '/personalized';
-let dj = '/dj'
+var dj = '/dj';
 window.apiUrls = {
     home: {
         banner: baseUrl + '/banner', // 轮播api
         personalized: baseUrl + prefix, // 获取推荐歌单
         privatecontent: baseUrl + prefix + '/privatecontent', // 独家放送(入口列表)
-        topSong: baseUrl + '/top/song' ,//新歌速递
-        mv: baseUrl + prefix + '/mv',// 推荐 mv
+        topSong: baseUrl + '/top/song', //新歌速递
+        mv: baseUrl + prefix + '/mv', // 推荐 mv
         djprogram: baseUrl + prefix + '/djprogram', // 最热主播榜
-        djrecommend: baseUrl + dj + '/recommend', // 最热主播榜
+        djrecommend: baseUrl + dj + '/recommend' // 最热主播榜
     },
     song: {
         playlist: baseUrl + '/playlist/detail', // 获取歌单详情
-        detail: baseUrl + '/song/detail', // 所有歌曲详情
+        detail: baseUrl + '/song/detail' // 所有歌曲详情
     }
-}
+};

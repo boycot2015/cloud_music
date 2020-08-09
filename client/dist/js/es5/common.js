@@ -1,3 +1,5 @@
+'use strict';
+
 // 定义公共方法
 var commonObj = {
     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -27,16 +29,18 @@ var commonObj = {
         ended: false,
         muted: false,
         currentTime: 0,
-        duration: 0,
+        duration: 0
     },
     data: {},
-    TemplateEngine: function (html, options) {
-        var re = /<%([^%>]+)?%>/g, reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g, code = 'var r=[];\n', cursor = 0;
-        var add = function (line, js) {
-            js ? (code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n') :
-                (code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '');
+    TemplateEngine: function TemplateEngine(html, options) {
+        var re = /<%([^%>]+)?%>/g,
+            reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
+            code = 'var r=[];\n',
+            cursor = 0;
+        var add = function add(line, js) {
+            js ? code += line.match(reExp) ? line + '\n' : 'r.push(' + line + ');\n' : code += line != '' ? 'r.push("' + line.replace(/"/g, '\\"') + '");\n' : '';
             return add;
-        }
+        };
         while (match = re.exec(html)) {
             add(html.slice(cursor, match.index))(match[1], true);
             cursor = match.index + match[0].length;
@@ -46,7 +50,7 @@ var commonObj = {
         return new Function(code.replace(/[\r\t\n]/g, '')).apply(options);
     },
     //传入参数为文件路径,return 出返回值的responseText文本
-    getTpl: function (fileUrl) {
+    getTpl: function getTpl(fileUrl) {
         var result = $.ajax({
             type: "GET",
             url: fileUrl,
@@ -54,7 +58,7 @@ var commonObj = {
         });
         return result.responseText;
     },
-    getAudioInfo: function (_audio, call) {
+    getAudioInfo: function getAudioInfo(_audio, call) {
         var time = _audio.duration || 0;
         var min = parseInt(time / 60);
         var second = parseInt(time % 60);
@@ -63,8 +67,8 @@ var commonObj = {
         min = min < 10 ? '0' + min : min;
         second = second < 10 ? '0' + second : second;
         var endStr = min + ':' + second;
-        min = Math.round(currentTime) > 59 ? (Math.round(currentTime / 60) < 10 ? ('0' + parseInt(currentTime / 60)) : Math.round(currentTime / 60)) : '00';
-        second = parseInt(currentTime % 60) < 10 ? ('0' + parseInt(currentTime % 60)) : parseInt(currentTime % 60);
+        min = Math.round(currentTime) > 59 ? Math.round(currentTime / 60) < 10 ? '0' + parseInt(currentTime / 60) : Math.round(currentTime / 60) : '00';
+        second = parseInt(currentTime % 60) < 10 ? '0' + parseInt(currentTime % 60) : parseInt(currentTime % 60);
         second = second == 60 ? '00' : second;
         var curStr = min + ':' + second;
         this.playData.src = _audio.src;
@@ -77,126 +81,131 @@ var commonObj = {
         this.playData.currentTime = parseInt(currentTime);
         if (call) call(parseInt(currentTime), curStr, endStr, duration);
     },
-    initPlayer: function (audioPlayer, setStatus, setVolume) {
+    initPlayer: function initPlayer(audioPlayer, setStatus, setVolume) {
         //进度事件监听
         audioPlayer.addEventListener('timeupdate', function () {
             commonObj.getAudioInfo(audioPlayer, setStatus);
-        })
+        });
         //加载事件监听
         audioPlayer.addEventListener('loadedmetadata', function () {
             // setVolume()
             commonObj.getAudioInfo(audioPlayer, setStatus);
-        })
+        });
         //结束事件监听
         audioPlayer.addEventListener('ended', function () {
-            commonObj.getAudioInfo(audioPlayer, setStatus)
-            clearInterval(commonObj.timer)
-        })
+            commonObj.getAudioInfo(audioPlayer, setStatus);
+            clearInterval(commonObj.timer);
+        });
     }
-}
-// 获取iframe
-//获取模板规则<script>标签;
-window.layoutTemp = commonObj.getTpl("/template/layout.html");
+    // 获取iframe
+    //获取模板规则<script>标签;
+};window.layoutTemp = commonObj.getTpl("/template/layout.html");
 
 //获取audio标签;
 var audioPlayer = $('#play-audio')[0];
 // 拓展jq类方法，集成全局方法
 $.extend({
-    filterPlayCount (num) {
+    filterPlayCount: function filterPlayCount(num) {
         num = num > 10000 ? parseInt(num / 10000) + '万' : num;
-        return num
+        return num;
     },
-    filterDruationTime (dt) {
+    filterDruationTime: function filterDruationTime(dt) {
         var min = Math.floor(dt / 60 / 1000);
         var second = Math.round(dt / 1000 % 60);
         min = min < 10 ? '0' + min : min;
         second = second < 10 ? '0' + second : second;
         return min + ':' + second;
     },
+
     // 路由信息
-    $route:{},
+    $route: {},
     // 路由导航
     $router: {
-        push(path, params) {
-            var myiframe = $('#iframe-pages')
-            var data = ''
+        push: function push(path, params) {
+            var myiframe = $('#iframe-pages');
+            var data = '';
             if (params) {
-                data = '?'
-                for (const key in params) {
-                    data += (key + '=' + params[key] + '&')
+                data = '?';
+                for (var key in params) {
+                    data += key + '=' + params[key] + '&';
                 }
-                data = data.slice(0,data.length - 1)
+                data = data.slice(0, data.length - 1);
             }
-            let url = '/src/pages' + path + '.html' + data
+            var url = '/src/pages' + path + '.html' + data;
             // console.log(myiframe.attr('src'), url)
             $.$store.set('route', {
                 path: path,
                 query: params
-            })
-            $.$store.set('url', url)
-            myiframe.attr('src', url)
-            $(window.parent.document).find('#iframe-pages').attr('src', url)
+            });
+            $.$store.set('url', url);
+            myiframe.attr('src', url);
+            $(window.parent.document).find('#iframe-pages').attr('src', url);
         },
-        replace () {
-            var context = $('#iframe-pages')[0].contentWindow
-            context.location.replace(path)
+        replace: function replace() {
+            var context = $('#iframe-pages')[0].contentWindow;
+            context.location.replace(path);
         },
-        go (num = 1) {
-            var context = $('#iframe-pages')[0].contentWindow
-            context.history.go(num)
+        go: function go() {
+            var num = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+            var context = $('#iframe-pages')[0].contentWindow;
+            context.history.go(num);
         },
-        forward () {
-            var context = $('#iframe-pages')[0].contentWindow
-            context.history.forward()
-            return context.history.length
+        forward: function forward() {
+            var context = $('#iframe-pages')[0].contentWindow;
+            context.history.forward();
+            return context.history.length;
         },
-        back () {
-            var context = $('#iframe-pages')[0].contentWindow
-            context.history.back()
-            return context.history.length
+        back: function back() {
+            var context = $('#iframe-pages')[0].contentWindow;
+            context.history.back();
+            return context.history.length;
         }
     },
     // 本地存储
     $store: {
         state: {},
-        getters: () => {
-            return this.state
+        getters: function getters() {
+            return undefined.state;
         },
         /**
          * 获取本地存储
          * @param {*} key 存储的键
          */
-        get(key) {
-            let data = JSON.parse(localStorage.getItem(key));
+        get: function get(key) {
+            var data = JSON.parse(localStorage.getItem(key));
             if (data != null) {
                 if (data.expirse != null && data.expirse < new Date().getTime()) {
-                    this.state.key = null
-                    this.remove(key)
+                    this.state.key = null;
+                    this.remove(key);
                 } else {
                     return this.state.key || data.value;
                 }
             }
-            return null
+            return null;
         },
+
         /**
          * 获取本地存储
          * @param {*} key 存储的键名称
          * @param {*} value 值
          * @param {*} time 过期时间，不设置为永久
          */
-        set (key, value, time) {
-            let data = { value, expirse: new Date(time).getTime() };
+        set: function set(key, value, time) {
+            var data = { value: value, expirse: new Date(time).getTime() };
             localStorage.setItem(key, JSON.stringify(data));
-            this.state.key = value
+            this.state.key = value;
         },
+
         /**
          * 移除本地存储
          * @param {*} key 存储的键
          */
-        remove (key) {
-            window.localStorage.removeItem(key)
-            this.state.key = null
+        remove: function remove(key) {
+            window.localStorage.removeItem(key);
+            this.state.key = null;
         },
+
         action: {},
         mutations: {}
     }
@@ -204,25 +213,25 @@ $.extend({
 
 // 拓展jquery 实例方法，用于dom调用
 $.fn.extend({
-    drag (options) {
+    drag: function drag(options) {
         var obj = this,
             target = options.target || obj,
             site = options.site || {},
             fn = options.fn,
             cancelElem = options.cancelElem;
-        var dmW = document.documentElement.clientWidth || document.body.clientWidth
-        var dmH = document.documentElement.clientHeight || document.body.clientHeight
+        var dmW = document.documentElement.clientWidth || document.body.clientWidth;
+        var dmH = document.documentElement.clientHeight || document.body.clientHeight;
         site = site || {};
-        obj = obj[0]
-        target = target[0]
-        var adsorb = site.n || 0;              //磁性吸附的吸附范围
+        obj = obj[0];
+        target = target[0];
+        var adsorb = site.n || 0; //磁性吸附的吸附范围
         var l = site.l || 0;
-        var r = (site.r || site.r == 0) ? site.r : dmW - target.offsetWidth;
+        var r = site.r || site.r == 0 ? site.r : dmW - target.offsetWidth;
         var t = site.t || 0;
-        var b = (site.b || site.b == 0) ? site.b : dmH - target.offsetHeight;
+        var b = site.b || site.b == 0 ? site.b : dmH - target.offsetHeight;
         obj.onmousedown = function (ev) {
-            r = (site.r || site.r == 0) ? site.r : dmW - target.offsetWidth;
-            b = (site.b || site.b == 0) ? site.b : dmH - target.offsetHeight;
+            r = site.r || site.r == 0 ? site.r : dmW - target.offsetWidth;
+            b = site.b || site.b == 0 ? site.b : dmH - target.offsetHeight;
             var oEvent = ev || event;
             var siteX = oEvent.clientX - target.offsetLeft;
             var siteY = oEvent.clientY - target.offsetTop;
@@ -233,7 +242,8 @@ $.fn.extend({
             if (elemCancel.length) {
                 return true;
             }
-            if (obj.setCapture) { //兼容IE低版本的阻止默认行为，并实现事件捕获
+            if (obj.setCapture) {
+                //兼容IE低版本的阻止默认行为，并实现事件捕获
                 obj.onmousemove = move;
                 obj.onmouseup = up;
                 obj.setCapture();
@@ -241,12 +251,13 @@ $.fn.extend({
                 document.onmousemove = move;
                 document.onmouseup = up;
             }
-            function move (ev) {
+            function move(ev) {
                 var oEvent = ev || event;
                 var iLeft = oEvent.clientX - siteX;
                 var iTop = oEvent.clientY - siteY;
                 ev.stopPropagation();
-                if (iLeft <= l + adsorb) {              //限制拖动范围
+                if (iLeft <= l + adsorb) {
+                    //限制拖动范围
                     iLeft = 0;
                 }
                 if (iLeft >= r - adsorb) {
@@ -258,45 +269,47 @@ $.fn.extend({
                 if (iTop >= b - adsorb) {
                     iTop = b;
                 }
-                if (fn) {                         //执行回调函数，如果有其他附加情况需要处理
-                    fn({ left: iLeft, top: iTop })
+                if (fn) {
+                    //执行回调函数，如果有其他附加情况需要处理
+                    fn({ left: iLeft, top: iTop });
                 }
-                $(obj).find('.point').show()
-                $('.js-mini-music-box').find('.volume').hide()
+                $(obj).find('.point').show();
+                $('.js-mini-music-box').find('.volume').hide();
                 target.style.left = iLeft + 'px';
                 target.style.top = iTop + 'px';
             }
-            function up () {
+            function up() {
                 var oEvent = ev || event;
                 var iLeft = oEvent.clientX - siteX;
                 var iTop = oEvent.clientY - siteY;
-                if (obj.setCapture) {            //拖放结束后释放捕获
+                if (obj.setCapture) {
+                    //拖放结束后释放捕获
                     obj.releaseCapture();
                 }
-                if (options.end) options.end({ left: iLeft, top: iTop })
+                if (options.end) options.end({ left: iLeft, top: iTop });
                 this.onmousemove = null;
                 this.onmouseup = null;
                 this.onclick = null;
             }
             return this;
-        }
+        };
     },
-    render (obj, data) {
+    render: function render(obj, data) {
         // //获取<script>标签内的内容,即拼接字符串的规则;
         var temp = obj.text();
         // //使用template的render()方法,传入模板及数据生成html片段;
         var renderHtml = template.render(temp, data);
         // //将html片段渲染到页面
         if (this.children().length) {
-            this.append(renderHtml)
+            this.append(renderHtml);
         } else {
-            this.html(renderHtml)
+            this.html(renderHtml);
         }
     }
-})
+});
 $(function name() {
     $.$route = {
         path: $.$store.get('route').path,
-        query:  $.$store.get('route').query
-    }
-})
+        query: $.$store.get('route').query
+    };
+});

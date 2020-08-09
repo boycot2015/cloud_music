@@ -20,6 +20,9 @@ li,ol,dl {
     margin: 0;
     list-style: none;
 }
+a {
+    text-decoration: none;
+}
 ul,ol {
     margin: 0;
     padding: 0;
@@ -61,11 +64,45 @@ ul,ol {
 .just-a {
     justify-content: space-around;
 }
+.fl {float: left;}
+.fr {float: right;}
+.clearfix::after {
+    content: '';
+    height: 0;
+    display: block;
+    visibility: hidden;
+    overflow: hidden;
+    clear: both;
+}
 .line-one {
     text-overflow: ellipsis;
     white-space: nowrap;
     vertical-align: bottom;
     overflow: hidden;
+}
+.line-two {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical
+}
+.line-three {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical
+}
+.line-four {
+    display: -webkit-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical
 }
 input {
     font-size: 12px;

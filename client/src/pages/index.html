@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/css/swiper.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcdn.net/ajax/libs/Swiper/4.5.1/css/swiper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/dist/css/index.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.0.2/js/swiper.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/Swiper/4.5.1/js/swiper.min.js"></script>
     <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/art-template/4.13.2/lib/template-web.min.js"></script>
     <script src="/dist/js/common.js"></script>
@@ -15,6 +15,9 @@
 </head>
 <body>
     <div class="music-home">
+        <div class="tab-list">
+            
+        </div>
         <div class="swiper-container">
             <div class="swiper-wrapper">
                 <!-- <div class="swiper-slide">Slide 1</div> -->
@@ -24,6 +27,56 @@
             <!-- 如果需要导航按钮 -->
             <div class="button-prev icon-music-left"></div>
             <div class="button-next icon-music-right"></div>
+        </div>
+        <div class="recommend">
+            <div class="content">
+                <div class="title clearfix">
+                    <h3 class="name fl">推荐歌单</h3>
+                    <span class="fr more">更多<i class="icon-music-right"></i></span>
+                </div>
+                <ul class="recommend-list grid-list clearfix">
+                    <li class="grid-list-item date js-list-detail fl" data-id="">
+                        <div class="img">
+                            <span class="tip copy-writer">根据您的音乐口味生成每日更新</span>
+                            <p class="week">星期六</p>
+                            <div class="date-text">8</div>
+                        </div>
+                        <div class="name tl">每日歌曲推荐</div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="privatecontent">
+            <div class="title clearfix">
+                <h3 class="name fl">独家放送</h3>
+                <span class="fr more">更多<i class="icon-music-right"></i></span>
+            </div>
+            <ul class="privatecontent-list grid-list clearfix">
+            </ul>
+        </div>
+        <div class="newest-song">
+            <div class="title clearfix">
+                <h3 class="name fl">最新音乐</h3>
+                <span class="fr more">更多<i class="icon-music-right"></i></span>
+            </div>
+            <ul class="newest-list grid-list clearfix">
+            </ul>
+        </div>
+        <div class="recommend-MV">
+            <div class="title clearfix">
+                <h3 class="name fl">推荐MV</h3>
+                <span class="fr more">更多<i class="icon-music-right"></i></span>
+            </div>
+            <ul class="mv-list grid-list clearfix">
+            </ul>
+        </div>
+        <div class="recommend-dj">
+            <div class="title clearfix">
+                <h3 class="name fl">主播电台</h3>
+                <span class="fr more">更多<i class="icon-music-right"></i></span>
+            </div>
+            <ul class="dj-list grid-list clearfix">
+            </ul>
         </div>
     </div>
 </body>

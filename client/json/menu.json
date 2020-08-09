@@ -1,129 +1,108 @@
 [
     {
         "name": "推荐",
+        "path": "/index",
         "icon": "record",
         "unfold": true,
-        "list": [
+        "children": [
             {
                 "id": 1,
                 "name": "发现音乐",
+                "path": "/index",
                 "icon": "music"
             },
             {
                 "id": 2,
                 "name": "私人FM",
+                "path": "/FM/index",
                 "icon": "FM"
             },
             {
                 "id": 3,
                 "name": "LOOK直播",
+                "path": "/look/index",
                 "icon": "replay"
             },
             {
                 "id": 4,
                 "name": "视频",
+                "path": "/video/index",
                 "icon": "video"
             },
             {
                 "id": 5,
                 "name": "朋友",
+                "path": "/friend/index",
                 "icon": "friend"
             }
         ]
     },
     {
         "name": "我的音乐",
+        "path": "/index",
         "icon": "record",
         "unfold": true,
-        "list": [
+        "children": [
             {
                 "id": 1,
                 "name": "本地音乐",
+                "path": "/myMusic/index",
                 "icon": "my-music"
             },
             {
                 "id": 2,
                 "name": "下载管理",
+                "path": "/myMusic/download",
                 "icon": "download"
             },
             {
                 "id": 3,
                 "name": "我的音乐云盘",
+                "path": "/myMusic/cloud",
                 "icon": "cloud"
             },
             {
                 "id": 4,
                 "name": "我的电台",
+                "path": "/myMusic/dj",
                 "icon": "radio"
             },
             {
                 "id": 5,
                 "name": "我的收藏",
+                "path": "/myMusic/collect",
                 "icon": "star-user"
             }
         ]
     },
     {
         "name": "创建的歌单",
+        "path": "/index",
         "icon": "record",
-        "list": [
+        "children": [
             {
                 "id": 1,
                 "name": "我喜欢的音乐",
+                "path": "/songs/index",
                 "icon": "love",
                 "rightIcon": "beckoning"
-            },
-            {
-                "id": 2,
-                "name": "下载管理",
-                "icon": "list"
-            },
-            {
-                "id": 3,
-                "name": "我的音乐云盘",
-                "icon": "list"
-            },
-            {
-                "id": 4,
-                "name": "我的电台",
-                "icon": "list"
-            },
-            {
-                "id": 5,
-                "name": "我的收藏",
-                "icon": "list"
-            }
-        ]
+            }]
     },
     {
         "name": "收藏的歌单",
-        "icon": "record",
-        "list": [
-            {
-                "id": 1,
-                "name": "本地音乐",
-                "icon": "list"
-            },
-            {
-                "id": 2,
-                "name": "下载管理",
-                "icon": "list"
-            },
-            {
-                "id": 3,
-                "name": "我的音乐云盘",
-                "icon": "list"
-            },
-            {
-                "id": 4,
-                "name": "我的电台",
-                "icon": "list"
-            },
-            {
-                "id": 5,
-                "name": "我的收藏",
-                "icon": "list"
-            }
-        ]
+        "path": "/index",
+        "icon": "record"
+    },
+    {
+        "name": "歌单详情列表",
+        "icon": "cloud",
+        "path": "/myMusic/list",
+        "hideInMenu": true
+    },
+    {
+        "name": "歌单详情",
+        "icon": "",
+        "path": "/myMusic/detail",
+        "hideInMenu": true
     }
 ]

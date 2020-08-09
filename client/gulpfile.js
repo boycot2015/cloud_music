@@ -1,37 +1,3 @@
-// var gulp = require('gulp')
-// var less = require('gulp-less')
-// var sourcemaps = require('gulp-sourcemaps')
-// //      //确保本地已安装gulp-minify-css
-// var cssmin = require('gulp-minify-css')
-// var cache = require('gulp-cache');
-// var bs = require('browser-sync').create();
-// // ​
-// function logError(logError) {
-//     this.emit('end')
-// }
-// gulp.task('Less', async () => {
-//     gulp.src('./less/index.less')
-//     .pipe(less().on('error', logError))
-//         .pipe(sourcemaps.init())
-//         .pipe(less())
-//         .pipe(cssmin()) //兼容IE7及以下需设置compatibility属性 .pipe(cssmin({compatibility: 'ie7'}))
-//         .pipe(sourcemaps.write('./maps'))
-//         .pipe(gulp.dest('./css'))
-//     gulp.watch('./less/**/*.less', gulp.series('Less')) //当所有less文件发生改变时，调用Less任务
-// })
-
-// //创建服务器,浏览器立马可以看到 browser-sync
-// gulp.task('bs', function () {
-//     bs.init({
-//         'server': {
-//             'baseDir':'./',
-//         }
-//     })
-// });
-
-// //创建一个默认服务,可以默认执行
-// gulp.task('default', gulp.parallel( 'bs', 'watch','css', 'js', 'images', 'html'));
-
 var gulp = require('gulp');
 var cssnano = require('gulp-cssnano');
 var rename = require('gulp-rename');
@@ -42,6 +8,7 @@ var imagemin = require('gulp-imagemin');
 var watch = require('gulp-watch');
 var bs = require('browser-sync').create();
 var less = require('gulp-less');
+var babel = require("gulp-babel");    // 用于ES6转化ES5
 function logError (logError) {
     console.log(logError)
     this.emit('end')
@@ -54,6 +21,7 @@ var path = {
     'images': './src/images/',
     'css_dist': './dist/css/',
     'js_dist': './dist/js/',
+    'es5_js': './dist/js/es5/',
     'images_dist': './dist/images'
 };
 
@@ -75,12 +43,24 @@ gulp.task('css', function () {
 });
 
 //定义处理js任务
-gulp.task('js', function () {
-    gulp.src(path.js + '*.js')
+gulp.task("js", function () {
+    return gulp.src(path.js + '*.js') // ES6 源码存放的路径
+        .pipe(babel({
+            presets: ['es2015', 'es2016', 'es2017'],
+            "plugins": ["transform-object-rest-spread"]
+        })) // ES6转化为ES5
+        .pipe(gulp.dest(path.es5_js)) //转换成 ES5 存放的路径
+        // .src(path.es5_js + '*.js')
         .pipe(uglify())
         .pipe(gulp.dest(path.js_dist))
         .pipe(bs.stream())
 });
+// gulp.task('js', function () {
+//     gulp.src(path.es5_js + '*.js')
+//         .pipe(uglify())
+//         .pipe(gulp.dest(path.js_dist))
+//         .pipe(bs.stream())
+// });
 
 //定义处理图片任务
 gulp.task('images', function () {
@@ -95,6 +75,7 @@ gulp.task('watch', function () {
     watch(path.html + '*.html', gulp.series('html'));
     watch(path.css + '*.less', gulp.series('css')); //这里不能用gulp.watch(),要不然本机只能加载一次,之后就无变化
     watch(path.js + '*.js', gulp.series('js'));
+    // watch(path.es5_js + '*.js', gulp.series('js'));
     watch(path.images + '*.*', gulp.series('images'));
 });
 

@@ -6,8 +6,9 @@
     background-size: cover;
     position: relative;
     .main {
-        padding: 20px;
-        min-height: 560px;
+        // padding: 20px;
+        // min-height: 560px;
+        height: 100%;
         iframe {
             min-height: 560px;
             width: 100%;
@@ -93,65 +94,6 @@
         .order-icon {
             &:hover::after {
                 color: @c-000;
-            }
-        }
-    }
-    
-    .music-list {
-        font-size: 12px;
-        &-item {
-            padding: 0 20px;
-            line-height: 28px;
-            position: relative;
-            &:nth-child(odd) {
-                background-color: @c-f8;
-            }
-            &:hover {
-                background-color: @c-e8;
-                .name,.singer i, .time, .icon-music-link::after {
-                    color: @c-000 !important;
-                }
-            }
-            &.active {
-                background-color: @c-ccc;
-                .name {
-                    color: @c-000;
-                }
-            }
-            &.play {
-                &::before {
-                    position: absolute;
-                    left: -2px;
-                    top: 0;
-                    width: 0;
-                    height: 0;
-                    color: @primary;
-                    font-size: 18px;
-                    font-family: 'font-music';
-                    content: "\e6a5";
-                }
-            }
-            &.pause {
-                &::before {
-                    position: absolute;
-                    left: 3px;
-                    top: 9px;
-                    width: 0;
-                    height: 0;
-                    content: "";
-                    border-width: 5px 8px;
-                    border-style: solid;
-                    border-style: solid;
-                    border-color: transparent transparent transparent @primary;
-                }
-            }
-            .name {
-                color: @c-333;
-                margin-right: 5px;
-            }
-            .source {
-                color: @c-666;
-                max-width: 155px;
             }
         }
     }
@@ -531,29 +473,6 @@
                             }
                         }
                     }
-                    
-                    .list-header {
-                        padding: 0 20px;
-                        line-height: 30px;
-                        color: @c-666;
-                        .total, .operation i,
-                        .operation i {
-                            &:hover {
-                                color: @c-333;
-                                i,.num, &::after, &::before {
-                                    color: @c-333;
-                                }
-                            }
-                        }
-                        .line {
-                            color: @c-ccc;
-                        }
-                    }
-                    .wrap {
-                        overflow: hidden;
-                        height: 450px;
-                        overflow-y: auto;
-                    }
                     .music-list {
                         position: relative;
                         &-item {
@@ -731,6 +650,82 @@
             // .sing {
             //     color: @c-666;
             // }
+        }
+    }
+}
+                    
+.list-header {
+    padding: 0 20px;
+    line-height: 30px;
+    color: @c-666;
+    .total, .operation i,
+    .operation i {
+        &:hover {
+            color: @c-333;
+            i,.num, &::after, &::before {
+                color: @c-333;
+            }
+        }
+    }
+    .line {
+        color: @c-ccc;
+    }
+}
+.music-list {
+    font-size: 12px;
+    &-item {
+        padding: 0 20px;
+        line-height: 28px;
+        position: relative;
+        &:nth-child(odd) {
+            background-color: @c-f8;
+        }
+        &:hover {
+            background-color: @c-e8;
+            .name,.singer i, .time, .icon-music-link::after {
+                color: @c-000 !important;
+            }
+        }
+        &.active {
+            background-color: @c-ccc;
+            .name {
+                color: @c-000;
+            }
+        }
+        &.play {
+            &::before {
+                position: absolute;
+                left: -2px;
+                top: 0;
+                width: 0;
+                height: 0;
+                color: @primary;
+                font-size: 18px;
+                font-family: 'font-music';
+                content: "\e6a5";
+            }
+        }
+        &.pause {
+            &::before {
+                position: absolute;
+                left: 3px;
+                top: 9px;
+                width: 0;
+                height: 0;
+                content: "";
+                border-width: 5px 8px;
+                border-style: solid;
+                border-style: solid;
+                border-color: transparent transparent transparent @primary;
+            }
+        }
+        .name {
+            color: @c-333;
+            margin-right: 5px;
+        }
+        .source {
+            color: @c-666;
+            max-width: 155px;
         }
     }
 }
