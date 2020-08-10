@@ -1,6 +1,8 @@
 'use strict';
 
 $(function () {
+
+    // 首页个性推荐tab
     var homeData = {
         swiperOption: {
             // direction: 'vertical', // 垂直切换选项
@@ -38,15 +40,14 @@ $(function () {
             var djList = $.$store.get('djList');
             var newestList = $.$store.get('newestList');
             var privatecontentList = $.$store.get('privatecontentList');
-            $('.recommend-list').find('.date-text').html(new Date().getDate()).siblings('.week').html(commonObj.weeks[new Date().getDay()]);
+            $('.tab-home-content .recommend-list').find('.date-text').html(new Date().getDate()).siblings('.week').html(commonObj.weeks[new Date().getDay()]);
             $('.swiper-wrapper').render($(layoutTemp).find('#bannerTemp'), banner);
-            $('.recommend-list').render($(layoutTemp).find('#gridListTemp'), recommendList);
+            $('.tab-home-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), recommendList);
             $('.dj-list').render($(layoutTemp).find('#gridListTemp'), djList);
             $('.mv-list').render($(layoutTemp).find('#gridListTemp'), mvList);
             $('.newest-list').render($(layoutTemp).find('#gridListTemp'), newestList);
             $('.privatecontent-list').render($(layoutTemp).find('#gridListTemp'), privatecontentList);
-            new Swiper('.swiper-container', homeData.swiperOption);
-            return banner || mvList;
+            return banner || mvList || recommendList || djList || newestList || privatecontentList;
         },
         init: function init() {
             if (this.setLocal() == null) {
@@ -56,6 +57,8 @@ $(function () {
                 this.getTopSong();
                 this.getMVList();
                 this.getDjRecommend();
+            } else {
+                new Swiper('.swiper-container', homeData.swiperOption);
             }
             this.onShow();
         },
@@ -84,9 +87,9 @@ $(function () {
                     res.forEach(function (item) {
                         item.playCount = $.filterPlayCount(item.playCount);
                     });
-                    // console.log(res, 'apiUrl.personalizedTemp')
-                    $('.recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res });
+                    $('.tab-home-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res });
                     $.$store.set('recommendList', { list: res }, new Date().getTime() + 60 * 1000);
+                    console.log($.$store.get('recommendList'), 'apiUrl.personalizedTemp');
                 }
             });
         },
@@ -165,5 +168,122 @@ $(function () {
             });
         }
     };
-    homeData.init();
+
+    // 歌单tab
+    var singleListData = {
+        setLocal: function setLocal() {
+            singleListData.resetData();
+            var cateList = $.$store.get('cateList');
+            var songCateList = $.$store.get('songCateList');
+            $('.tab-cate-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), songCateList);
+            cateList !== null && $('.mask-cate').html(template('cateListTemp', { data: cateList }));
+            // console.log(songCateList && cateList, 'songCateList && cateList')
+            return cateList || songCateList;
+        },
+        resetData: function resetData() {
+            $('.tab-cate-content .mask-cate').html('');
+            $('.tab-cate-content .recommend-list').html('');
+        },
+        init: function init() {
+            this.onShow();
+        },
+        getCateList: function getCateList() {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: { limit: 50 },
+                url: apiUrls.song.catlist,
+                success: function success(data) {
+                    if (data.code == 200) {
+                        (function () {
+                            var subs = [];
+                            var sub = data.sub,
+                                all = data.all,
+                                categories = data.categories;
+
+                            var _loop = function _loop(key) {
+                                subs[key] = [];
+                                data.sub.map(function (el) {
+                                    if (el.category == key) {
+                                        subs[key].push(el);
+                                    }
+                                });
+                            };
+
+                            for (var key in data.categories) {
+                                _loop(key);
+                            }
+                            data.subs = subs;
+                            var temp = template('cateListTemp', { data: { subs: subs, all: all, categories: categories } });
+                            var hotCateTemp = template('hotCateTemp', { data: { subs: subs[0] } });
+                            $('.tab-cate-content .mask-cate').html(temp);
+                            $('.tab-cate-content .tags .cates').html(hotCateTemp);
+                            console.log(hotCateTemp, 'hotCateTemp');
+                            $.$store.set('cateList', data, new Date().getTime() + 1000);
+                        })();
+                    }
+                }
+            });
+        },
+        getRecommend: function getRecommend(current) {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: { limit: 50 },
+                url: apiUrls.home.personalized,
+                success: function success(data) {
+                    current = current || 1;
+                    var res = data.result.slice(current - 1, 50);
+                    res.forEach(function (item) {
+                        item.playCount = $.filterPlayCount(item.playCount);
+                    });
+                    singleListData.initPage(50);
+                    // console.log(res, 'apiUrl.personalizedTemp')
+                    $('.tab-cate-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res });
+                    $.$store.set('songCateList', { list: res }, new Date().getTime() + 1000);
+                }
+            });
+        },
+        initPage: function initPage(total) {
+            $("#cate-page").Page({
+                totalPages: total, //total Pages
+                liNums: 7, //the li numbers(advice use odd)
+                activeClass: 'activP', //active class style
+                firstPage: '首页', //first button name
+                lastPage: '末页', //last button name
+                prv: '<', //prev button name
+                next: '>', //next button name
+                hasFirstPage: true, //whether has first button
+                hasLastPage: true, //whether has last button
+                hasPrv: true, //whether has prev button
+                hasNext: true, //whether has next button
+                callBack: function callBack(page) {
+                    //callBack function，page:active page
+                    singleListData.getRecommend(page);
+                }
+            });
+        },
+        onShow: function onShow() {
+            // 顶部tab切换
+            $(document).on('click', '.js-tab-item', function () {
+                $(this).addClass('active').siblings().removeClass('active');
+                $('.tab-content').eq($(this).index()).show().siblings('.tab-content').hide();
+                var type = $(this).attr('data-type');
+                if (singleListData.setLocal() == null && type == 'cate') {
+                    singleListData.resetData();
+                    singleListData.getCateList();
+                    singleListData.getRecommend();
+                }
+            });
+            $('.js-toggle-cate').click(function () {
+                $(this).parent().siblings('.mask-cate').toggleClass('active');
+            });
+        }
+    };
+
+    var initData = function initData() {
+        homeData.init();
+        singleListData.init();
+    };
+    initData();
 });

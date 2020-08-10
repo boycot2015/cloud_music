@@ -6,11 +6,12 @@ $(function () {
     var songsData = {
         setLocal: function setLocal() {
             var songList = $.$store.get('songList');
-            // $('.recommend-list').find('.date-text').html(new Date().getDate())
-            // .siblings('.week').html(commonObj.weeks[new Date().getDay()])
-            // $('.swiper-wrapper').render($(layoutTemp).find('#bannerTemp'), banner)
+            var coverDetail = $.$store.get('coverDetail');
+            if (songList == null || coverDetail == null) return null;
             $('.song-list').render($(layoutTemp).find('#gridListTemp'), songList);
-            return songList;
+            var coverTemp = template('coverTemp', coverDetail);
+            $('.song-detail-list .cover').html(coverTemp);
+            return songList && coverDetail;
         },
         init: function init() {
             if (this.setLocal() == null) {
@@ -49,12 +50,13 @@ $(function () {
                             coverDetail.playCount = $.filterPlayCount(coverDetail.playCount);
                             coverDetail.subscribedCount = $.filterPlayCount(coverDetail.subscribedCount);
                             coverDetail.shareCount = $.filterPlayCount(coverDetail.shareCount);
-                            $('.song-list').render($(layoutTemp).find('#listTemp'), { list: data.playlist.tracks, order: true, operation: true });
-                            $.$store.set('songList', { list: res }, new Date().getTime() + 1000);
                             var coverTemp = template('coverTemp', { coverDetail: coverDetail });
-                            console.log(data.playlist.tracks, 'getSongDetail');
                             $('.song-detail-list .cover').html(coverTemp);
+                            // console.log(data.playlist.tracks, 'getSongDetail')
+                            $('.song-list').render($(layoutTemp).find('#listTemp'), { list: data.playlist.tracks, order: true, operation: true });
                             coverDetail.description && coverDetail.description !== null && $('.song-detail-list .desc p').html('简介：' + coverDetail.description.split('\n').join('<br/>'));
+                            $.$store.set('songList', { list: data.playlist.tracks, order: true, operation: true }, new Date().getTime() + 2000);
+                            $.$store.set('coverDetail', { coverDetail: coverDetail }, new Date().getTime() + 2000);
                         });
                     }
                 }
@@ -73,16 +75,10 @@ $(function () {
             });
         },
         onShow: function onShow() {
-            $(document).on('click', '.js-list-detail', function () {
-                var id = $(this).attr('data-id');
-                var type = $(this).attr('data-type');
-                var ctype = $(this).attr('data-ctype');
-                $.$router.push('/songs/list', { id: id, type: type, ctype: ctype });
+            $('.song-detail-list').on('click', '.js-more', function () {
+                $(this).toggleClass('active').parent().toggleClass('active line-two');
             });
         }
     };
     songsData.init();
-    $('.song-detail-list').on('click', '.js-more', function () {
-        $(this).toggleClass('active').parent().toggleClass('active line-two');
-    });
 });

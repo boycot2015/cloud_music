@@ -1,5 +1,6 @@
 .song-detail-list {
     .cover {
+        min-height: 220px;
         padding: 20px 20px 0;
         align-items: flex-start;
         margin-bottom: 40px;
@@ -92,6 +93,12 @@
                             padding: 0px;
                             background-color: transparent;
                             border: 1px solid @white;
+                        }
+                        i.icon-plus {
+                            margin-right: 0;
+                            &::after {
+                                border: 0;
+                            }
                         }
                         span {
                             padding: 8px 10px 8px 0;

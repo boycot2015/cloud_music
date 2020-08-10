@@ -4,8 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>love</title>
+    <link rel="stylesheet" href="/dist/css/index.min.css">
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/art-template/4.13.2/lib/template-web.min.js"></script>
+    <script src="/dist/js/common.js"></script>
+    <script src="/dist/js/api.js"></script>
 </head>
 <body>
-    love
+    <div id="page"></div>
 </body>
+<script>
+$(function () {
+    $("#page").Page({
+        totalPages: 14,//total Pages
+        liNums: 7,//the li numbers(advice use odd)
+        activeClass: 'activP', //active class style
+        firstPage: '首页',//first button name
+        lastPage: '末页',//last button name
+        prv: '<',//prev button name
+        next: '>',//next button name
+        hasFirstPage: true,//whether has first button
+        hasLastPage: true,//whether has last button
+        hasPrv: true,//whether has prev button
+        hasNext: true,//whether has next button
+        callBack : function(page){
+            //callBack function，page:active page
+        }
+    });
+})
+</script>
 </html>

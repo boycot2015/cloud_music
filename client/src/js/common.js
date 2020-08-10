@@ -114,10 +114,10 @@ $.extend({
         return min + ':' + second;
     },
     // 路由信息
-    $route:{},
+    $route: {},
     // 路由导航
     $router: {
-        push(path, params) {
+        push (path, params) {
             var myiframe = $('#iframe-pages')
             var data = ''
             if (params) {
@@ -125,7 +125,7 @@ $.extend({
                 for (const key in params) {
                     data += (key + '=' + params[key] + '&')
                 }
-                data = data.slice(0,data.length - 1)
+                data = data.slice(0, data.length - 1)
             }
             let url = '/src/pages' + path + '.html' + data
             // console.log(myiframe.attr('src'), url)
@@ -166,7 +166,7 @@ $.extend({
          * 获取本地存储
          * @param {*} key 存储的键
          */
-        get(key) {
+        get (key) {
             let data = JSON.parse(localStorage.getItem(key));
             if (data != null) {
                 if (data.expirse != null && data.expirse < new Date().getTime()) {
@@ -294,9 +294,12 @@ $.fn.extend({
         }
     }
 })
-$(function name() {
-    $.$route = {
-        path: $.$store.get('route').path,
-        query:  $.$store.get('route').query
+$(function name () {
+    let route = $.$store.get('route')
+    if (route !== null) {
+        $.$route = {
+            path: $.$store.get('route').path,
+            query: $.$store.get('route').query
+        }
     }
 })

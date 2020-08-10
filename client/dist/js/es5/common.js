@@ -308,8 +308,11 @@ $.fn.extend({
     }
 });
 $(function name() {
-    $.$route = {
-        path: $.$store.get('route').path,
-        query: $.$store.get('route').query
-    };
+    var route = $.$store.get('route');
+    if (route !== null) {
+        $.$route = {
+            path: $.$store.get('route').path,
+            query: $.$store.get('route').query
+        };
+    }
 });

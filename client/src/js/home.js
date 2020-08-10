@@ -1,4 +1,6 @@
 $(function () {
+
+    // 首页个性推荐tab
     const homeData = {
         swiperOption: {
             // direction: 'vertical', // 垂直切换选项
@@ -36,25 +38,26 @@ $(function () {
             let djList = $.$store.get('djList')
             let newestList = $.$store.get('newestList')
             let privatecontentList = $.$store.get('privatecontentList')
-            $('.recommend-list').find('.date-text').html(new Date().getDate())
-            .siblings('.week').html(commonObj.weeks[new Date().getDay()])
+            $('.tab-home-content .recommend-list').find('.date-text').html(new Date().getDate())
+                .siblings('.week').html(commonObj.weeks[new Date().getDay()])
             $('.swiper-wrapper').render($(layoutTemp).find('#bannerTemp'), banner)
-            $('.recommend-list').render($(layoutTemp).find('#gridListTemp'), recommendList)
+            $('.tab-home-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), recommendList)
             $('.dj-list').render($(layoutTemp).find('#gridListTemp'), djList)
             $('.mv-list').render($(layoutTemp).find('#gridListTemp'), mvList)
             $('.newest-list').render($(layoutTemp).find('#gridListTemp'), newestList)
             $('.privatecontent-list').render($(layoutTemp).find('#gridListTemp'), privatecontentList)
-            new Swiper('.swiper-container', homeData.swiperOption)
-            return banner || mvList
+            return banner || mvList || recommendList || djList || newestList || privatecontentList
         },
         init () {
-            if(this.setLocal() == null) {
+            if (this.setLocal() == null) {
                 this.getBanner();
                 this.getRecommend();
                 this.getPrivatecontent();
                 this.getTopSong();
                 this.getMVList();
                 this.getDjRecommend();
+            } else {
+                new Swiper('.swiper-container', homeData.swiperOption)
             }
             this.onShow()
         },
@@ -83,9 +86,9 @@ $(function () {
                     res.forEach(function (item) {
                         item.playCount = $.filterPlayCount(item.playCount)
                     })
-                    // console.log(res, 'apiUrl.personalizedTemp')
-                    $('.recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res })
+                    $('.tab-home-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res })
                     $.$store.set('recommendList', { list: res }, new Date().getTime() + 60 * 1000)
+                    console.log($.$store.get('recommendList'), 'apiUrl.personalizedTemp')
                 }
             })
         },
@@ -132,7 +135,7 @@ $(function () {
                 url: apiUrls.home.mv,
                 success (data) {
                     if (data.code == 200) {
-                        let res = data.result.slice(0,3)
+                        let res = data.result.slice(0, 3)
                         $('.mv-list').render($(layoutTemp).find('#gridListTemp'), { list: res, category: data.category })
                         $.$store.set('mvList', { list: res, category: data.category }, new Date().getTime() + 60 * 1000)
                     }
@@ -164,5 +167,113 @@ $(function () {
             })
         }
     }
-    homeData.init()
+
+    // 歌单tab
+    const singleListData = {
+        setLocal () {
+            singleListData.resetData()
+            let cateList = $.$store.get('cateList')
+            let songCateList = $.$store.get('songCateList')
+            $('.tab-cate-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), songCateList)
+            cateList !== null && $('.mask-cate').html(template('cateListTemp', { data: cateList }))
+            // console.log(songCateList && cateList, 'songCateList && cateList')
+            return cateList || songCateList
+        },
+        resetData () {
+            $('.tab-cate-content .mask-cate').html('')
+            $('.tab-cate-content .recommend-list').html('')
+        },
+        init () {
+            this.onShow()
+        },
+        getCateList () {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: { limit: 50 },
+                url: apiUrls.song.catlist,
+                success (data) {
+                    if (data.code == 200) {
+                        let subs = []
+                        let { sub, all, categories } = data
+                        for (const key in data.categories) {
+                            subs[key] = []
+                            data.sub.map(el => {
+                                if (el.category == key) {
+                                    subs[key].push(el)
+                                }
+                            })
+                        }
+                        data.subs = subs
+                        let temp = template('cateListTemp', { data: { subs, all, categories } });
+                        let hotCateTemp = template('hotCateTemp', { data: { subs: subs[0] } });
+                        $('.tab-cate-content .mask-cate').html(temp);
+                        $('.tab-cate-content .tags .cates').html(hotCateTemp);
+                        console.log(hotCateTemp, 'hotCateTemp');
+                        $.$store.set('cateList', data, new Date().getTime() + 1000);
+                    }
+                }
+            })
+        },
+        getRecommend (current) {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: { limit: 50 },
+                url: apiUrls.home.personalized,
+                success (data) {
+                    current = current || 1
+                    var res = data.result.slice(current - 1, 50)
+                    res.forEach(function (item) {
+                        item.playCount = $.filterPlayCount(item.playCount)
+                    })
+                    singleListData.initPage(50)
+                    // console.log(res, 'apiUrl.personalizedTemp')
+                    $('.tab-cate-content .recommend-list').render($(layoutTemp).find('#gridListTemp'), { list: res })
+                    $.$store.set('songCateList', { list: res }, new Date().getTime() + 1000)
+                }
+            })
+        },
+        initPage (total) {
+            $("#cate-page").Page({
+                totalPages: total,//total Pages
+                liNums: 7,//the li numbers(advice use odd)
+                activeClass: 'activP', //active class style
+                firstPage: '首页',//first button name
+                lastPage: '末页',//last button name
+                prv: '<',//prev button name
+                next: '>',//next button name
+                hasFirstPage: true,//whether has first button
+                hasLastPage: true,//whether has last button
+                hasPrv: true,//whether has prev button
+                hasNext: true,//whether has next button
+                callBack: function (page) {
+                    //callBack function，page:active page
+                    singleListData.getRecommend(page)
+                }
+            });
+        },
+        onShow () {
+            // 顶部tab切换
+            $(document).on('click', '.js-tab-item', function () {
+                $(this).addClass('active').siblings().removeClass('active')
+                $('.tab-content').eq($(this).index()).show().siblings('.tab-content').hide()
+                let type = $(this).attr('data-type')
+                if (singleListData.setLocal() == null && type == 'cate') {
+                    singleListData.resetData();
+                    singleListData.getCateList();
+                    singleListData.getRecommend();
+                }
+            })
+            $('.js-toggle-cate').click(function () {
+                $(this).parent().siblings('.mask-cate').toggleClass('active')
+            })
+        }
+    }
+
+    const initData = () => {
+        homeData.init()
+        singleListData.init()
+    }
+    initData()
 })

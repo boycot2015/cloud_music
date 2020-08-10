@@ -163,10 +163,10 @@ $(function () {
         onload () {
             var myiframe = $('#iframe-pages')
             let fullPath = $.$store.get('url');
-            if(myiframe.attr('src')!== fullPath) {
+            if (myiframe.attr('src') !== fullPath && fullPath !== null) {
                 myiframe.attr('src', fullPath)
             }
-            $('.js-aside-template .js-list-item').each(function (i,e) {
+            $('.js-aside-template .js-list-item').each(function (i, e) {
                 let currPath = '/src/pages';
                 currPath += $(this).attr('data-path') + '.html'
                 if (currPath == fullPath) {

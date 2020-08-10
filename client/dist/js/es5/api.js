@@ -14,6 +14,8 @@ window.apiUrls = {
         djrecommend: baseUrl + dj + '/recommend' // 最热主播榜
     },
     song: {
+        catlist: baseUrl + '/playlist/catlist', // 歌单分类
+        singleList: baseUrl + '/playlist/catlist', // 歌单分类
         playlist: baseUrl + '/playlist/detail', // 获取歌单详情
         detail: baseUrl + '/song/detail' // 所有歌曲详情
     }

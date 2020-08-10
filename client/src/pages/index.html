@@ -3,81 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/lib/pagination/jquery.page.css">
     <link href="https://cdn.bootcdn.net/ajax/libs/Swiper/4.5.1/css/swiper.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/dist/css/index.min.css">
     <script src="https://cdn.bootcdn.net/ajax/libs/Swiper/4.5.1/js/swiper.min.js"></script>
-    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-2.1.1.min.js"></script>
+    <script src="/src/lib/pagination/jquery.page.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/art-template/4.13.2/lib/template-web.min.js"></script>
     <script src="/dist/js/common.js"></script>
     <script src="/dist/js/api.js"></script>
-    <script src="/dist/js/home.js"></script>
     <title>首页</title>
 </head>
 <body>
     <div class="music-home">
-        <div class="tab-list">
-            
+        <div class="tab-list flexbox-h just-c">
+            <div class="tab-list-item active js-tab-item" data-type="home">个性推荐</div>
+            <div class="tab-list-item js-tab-item" data-type="cate">歌单</div>
+            <div class="tab-list-item js-tab-item" data-type="dj">主播电台</div>
+            <div class="tab-list-item js-tab-item" data-type="ph">排行榜</div>
+            <div class="tab-list-item js-tab-item" data-type="singer">歌手</div>
+            <div class="tab-list-item js-tab-item" data-type="newest">最新音乐</div>
         </div>
-        <div class="swiper-container">
-            <div class="swiper-wrapper">
-                <!-- <div class="swiper-slide">Slide 1</div> -->
+        <div class="tab-content tab-home-content">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <!-- <div class="swiper-slide">Slide 1</div> -->
+                </div>
+                <!-- 如果需要分页器 -->
+                <div class="swiper-pagination"></div>
+                <!-- 如果需要导航按钮 -->
+                <div class="button-prev icon-music-left"></div>
+                <div class="button-next icon-music-right"></div>
             </div>
-            <!-- 如果需要分页器 -->
-            <div class="swiper-pagination"></div>
-            <!-- 如果需要导航按钮 -->
-            <div class="button-prev icon-music-left"></div>
-            <div class="button-next icon-music-right"></div>
-        </div>
-        <div class="recommend">
-            <div class="content">
+            <div class="recommend">
+                <div class="content">
+                    <div class="title clearfix">
+                        <h3 class="name fl">推荐歌单</h3>
+                        <span class="fr more">更多<i class="icon-music-right"></i></span>
+                    </div>
+                    <ul class="recommend-list grid-list clearfix">
+                        <li class="grid-list-item date js-list-detail fl" data-id="">
+                            <div class="img">
+                                <span class="tip copy-writer">根据您的音乐口味生成每日更新</span>
+                                <p class="week">星期六</p>
+                                <div class="date-text">8</div>
+                            </div>
+                            <div class="name tl">每日歌曲推荐</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="privatecontent">
                 <div class="title clearfix">
-                    <h3 class="name fl">推荐歌单</h3>
+                    <h3 class="name fl">独家放送</h3>
                     <span class="fr more">更多<i class="icon-music-right"></i></span>
                 </div>
-                <ul class="recommend-list grid-list clearfix">
-                    <li class="grid-list-item date js-list-detail fl" data-id="">
-                        <div class="img">
-                            <span class="tip copy-writer">根据您的音乐口味生成每日更新</span>
-                            <p class="week">星期六</p>
-                            <div class="date-text">8</div>
-                        </div>
-                        <div class="name tl">每日歌曲推荐</div>
-                    </li>
+                <ul class="privatecontent-list grid-list clearfix">
+                </ul>
+            </div>
+            <div class="newest-song">
+                <div class="title clearfix">
+                    <h3 class="name fl">最新音乐</h3>
+                    <span class="fr more">更多<i class="icon-music-right"></i></span>
+                </div>
+                <ul class="newest-list grid-list clearfix">
+                </ul>
+            </div>
+            <div class="recommend-MV">
+                <div class="title clearfix">
+                    <h3 class="name fl">推荐MV</h3>
+                    <span class="fr more">更多<i class="icon-music-right"></i></span>
+                </div>
+                <ul class="mv-list grid-list clearfix">
+                </ul>
+            </div>
+            <div class="recommend-dj">
+                <div class="title clearfix">
+                    <h3 class="name fl">主播电台</h3>
+                    <span class="fr more">更多<i class="icon-music-right"></i></span>
+                </div>
+                <ul class="dj-list grid-list clearfix">
                 </ul>
             </div>
         </div>
-        <div class="privatecontent">
-            <div class="title clearfix">
-                <h3 class="name fl">独家放送</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
+        <div class="tab-content tab-cate-content">
+            <div class="tags">
+                <span class="btn-cate js-toggle-cate">全部歌单 <i class="icon-music-down"></i></span>
+                <p class="name">
+                    热门标签：
+                    <span class="cates"></span>
+                </p>
             </div>
-            <ul class="privatecontent-list grid-list clearfix">
-            </ul>
-        </div>
-        <div class="newest-song">
-            <div class="title clearfix">
-                <h3 class="name fl">最新音乐</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
+            <div class="mask-cate">
             </div>
-            <ul class="newest-list grid-list clearfix">
-            </ul>
-        </div>
-        <div class="recommend-MV">
-            <div class="title clearfix">
-                <h3 class="name fl">推荐MV</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
-            </div>
-            <ul class="mv-list grid-list clearfix">
-            </ul>
-        </div>
-        <div class="recommend-dj">
-            <div class="title clearfix">
-                <h3 class="name fl">主播电台</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
-            </div>
-            <ul class="dj-list grid-list clearfix">
-            </ul>
+            <ul class="recommend-list"></ul>
+            <div id="cate-page"></div>
         </div>
     </div>
+    <script type="text/html" id="hotCateTemp">
+        {{each data.subs item index}}
+            {{item.name}}
+            <i class="line">{{(index < data.subs.length - 1 ? '|': '')}}</i>
+        {{/each}}
+    </script>
+    <script type="text/html" id="cateListTemp">
+        <div class="wrap flexbox-v">
+            <span class="btn-cate tc">{{data.all.name}}</span>
+            <div class="content">
+                {{each data.subs subsItem index}}
+                <div class="content-item flexbox-h just-b">
+                    <div class="left flex-1">
+                        <div class="cate-title flexbox-h">
+                            <i class="icon-music-emoji"></i>
+                            <p class="name">{{data.categories[index]}}</p>
+                        </div>
+                    </div>
+                    <div class="right flex-4">
+                        <div class="cates clearfix">
+                            {{each subsItem sub cindex}}
+                                <div class="cates-item tc fl">
+                                    {{if sub.hot}}
+                                        <i class="icon-hot">HOT</i>
+                                    {{/if}}
+                                    <span>{{sub.name}}</span>
+                                </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </script>
+    <script src="/dist/js/home.js"></script>
 </body>
 </html>

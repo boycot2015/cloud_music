@@ -102,11 +102,14 @@
                         data-type="{{child.type}}"
                         data-ftype="{{child.ftype}}"
                     >
+                    <span class="order fl">
+                        {{index * (item.list.length) + (cindex + 1) < 10 ? '0' + (index * (item.list.length) + (cindex + 1)) : index * (item.list.length) + (cindex + 1)}}
+                    </span>
                     <div class="img {{child.ftype == 0 ? 'fl': ''}}">
                         <span class="icon icon-music-pause"></span>
                         <img src="{{child.album.picUrl}}" alt="">
                     </div>
-                    <div class="text  {{child.ftype == 0 ? 'fl': ''}}" title="{{child.rcmdtext || child.name}}" >
+                    <div class="text {{child.ftype == 0 ? 'fl': ''}}" title="{{child.rcmdtext || child.name}}" >
                         <p class="name">{{child.name}}</p>
                         <p class="desc">
                             <i class="icon-play-video"></i>
