@@ -1,0 +1,48 @@
+<div id="tabsTemp">
+    <script type="text/html" id="tabsTemp">
+        {{each list $value fIndex}}
+        <div class="tab-list-item js-tab-item {{fIndex == 0 ? 'active':''}}" data-type="{{$value.type}}">
+            <span class="name">{{$value.name}}</span>
+        </div>
+        {{/each}}
+    </script>
+</div>
+<div id="hotCateTemp">
+    <script type="text/html" id="hotCateTemp">
+        {{each data.tags item index}}
+            {{item.name}}
+            <i class="line">{{(index < data.tags.length - 1 ? '|': '')}}</i>
+        {{/each}}
+    </script>
+</div>
+<div id="cateListTemp">
+    <script type="text/html" id="cateListTemp">
+        <div class="wrap flexbox-v">
+            <span class="btn-cate tc">{{data.all.name}}</span>
+            <div class="content">
+                {{each data.subs subsItem index}}
+                <div class="content-item flexbox-h just-b">
+                    <div class="left flex-1">
+                        <div class="cate-title flexbox-h">
+                            <i class="icon-music-emoji"></i>
+                            <p class="name">{{data.categories[index]}}</p>
+                        </div>
+                    </div>
+                    <div class="right flex-4">
+                        <div class="cates clearfix">
+                            {{each subsItem sub cindex}}
+                                <div class="cates-item tc fl">
+                                    {{if sub.hot}}
+                                        <i class="icon-hot">HOT</i>
+                                    {{/if}}
+                                    <span>{{sub.name}}</span>
+                                </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </script>
+</div>

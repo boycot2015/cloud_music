@@ -100,6 +100,7 @@ var commonObj = {
     // 获取iframe
     //获取模板规则<script>标签;
 };window.layoutTemp = commonObj.getTpl("/template/layout.html");
+window.contentTemp = commonObj.getTpl("/template/index.html");
 
 //获取audio标签;
 var audioPlayer = $('#play-audio')[0];
@@ -294,16 +295,17 @@ $.fn.extend({
             return this;
         };
     },
-    render: function render(obj, data) {
+    render: function render(obj, data, constTemp) {
         // //获取<script>标签内的内容,即拼接字符串的规则;
         var temp = obj.text();
         // //使用template的render()方法,传入模板及数据生成html片段;
-        var renderHtml = template.render(temp, data);
         // //将html片段渲染到页面
-        if (this.children().length) {
-            this.append(renderHtml);
+        // this.html(this.children(0))
+        if (constTemp) {
+            this.html(constTemp);
+            this.append(template.render(temp, data));
         } else {
-            this.html(renderHtml);
+            this.html(template.render(temp, data));
         }
     }
 });
