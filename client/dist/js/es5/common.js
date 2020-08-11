@@ -24,14 +24,17 @@ var commonObj = {
         name: '至尊宝',
         singer: '徐良/杨威',
         coverImg: '/dist/images/avatar.jpg',
-        volume: 0.5,
+        volume: 0.3,
         loop: false,
         ended: false,
         muted: false,
         currentTime: 0,
         duration: 0
     },
-    data: {},
+    data: {
+        tracks: [],
+        code: 200
+    },
     TemplateEngine: function TemplateEngine(html, options) {
         var re = /<%([^%>]+)?%>/g,
             reExp = /(^( )?(if|for|else|switch|case|break|{|}))(.*)?/g,
@@ -72,7 +75,6 @@ var commonObj = {
         second = second == 60 ? '00' : second;
         var curStr = min + ':' + second;
         this.playData.src = _audio.src;
-        this.playData.volume = _audio.volume;
         this.playData.ended = _audio.ended;
         this.playData.muted = _audio.muted;
         this.playData.curStr = curStr;
@@ -96,18 +98,126 @@ var commonObj = {
             commonObj.getAudioInfo(audioPlayer, setStatus);
             clearInterval(commonObj.timer);
         });
+    },
+    setStatus: function setStatus(currentTime, curStr, endStr, duration) {
+        var left = 0;
+        duration = duration || 1;
+        if (commonObj.progressPsition) {
+            left = commonObj.progressPsition.left;
+        }
+        left = currentTime * $('.progress .progress-bar').width() / duration;
+        // console.log(currentTime, duration);
+        left = Math.abs(left);
+        if (audioPlayer.loop && !currentTime) {
+            $('.js-play').removeClass('play');
+            setTimeout(function () {
+                $('.js-play').addClass('play');
+            }, 1000);
+        }
+        if (commonObj.playData.ended) {
+            audioPlayer.pause();
+            $('.js-play').removeClass('play');
+            // console.log(commonObj.playData.loop);
+            if (commonObj.playData.loop) {
+                audioPlayer.play();
+                $('.js-play').addClass('play');
+                audioPlayer.loop = true;
+            }
+        }
+        left = left > commonObj.maxPlayWidth ? commonObj.maxPlayWidth : left;
+        currentTime <= 0 && $('.progress .end-time').html(endStr);
+        $('.progress .progress-bar .point').css('left', left);
+        $('.progress .progress-bar .js-line').css('width', left);
+        $('.progress .start-time').html(curStr);
+    },
+    setCurrentData: function setCurrentData(playData) {
+        $.$store.set('playData', playData, new Date().getTime() + 10000);
+        $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
+        $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
+        $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
+        $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
+        // window.onload = function () {
+        //     commonObj.getAudioInfo($('#play-audio')[0], commonObj.setStatus);
+        // }
+    },
+    getData: {
+        init: function init() {
+            // 渲染左侧菜单=====================================
+            this.getMenu();
+            $.$store.get('playData') !== null && commonObj.setCurrentData($.$store.get('playData'));
+            this.getPlayList(commonObj.data);
+        },
+        getMenu: function getMenu() {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: { json: 1 },
+                url: "/json/menu.json",
+                success: function success(data) {
+                    // //获取<script>标签内的内容,即拼接字符串的规则;
+                    var asideTemp = $(layoutTemp).find('#asideTemp').text();
+                    // console.log(asideTemp, ".find('#asideTemp')");
+                    // //使用template的render()方法,传入模板及数据生成html片段;
+                    var renderHtml = template.render(asideTemp, { list: data });
+                    // //将html片段渲染到页面
+                    $('.js-aside-template').html(renderHtml);
+                    commonObj.onload();
+                }
+            });
+        },
+        getPlayList: function getPlayList(data) {
+            // 渲染播放列表=====================================
+            var localplayList = $.$store.get('playList');
+            if (localplayList != null) {
+                data = localplayList;
+            }
+            var listTemp = $(layoutTemp).find('#listTemp');
+            $('.js-footer-music-list').render(listTemp, { list: data.tracks, page: data.size, isPlay: true });
+            $('.js-mini-music-list ul').render(listTemp, { list: data.tracks, isminiPlay: true });
+            $('.js-music-box .total .num i').html(data.tracks.length);
+        },
+        getPlayUrl: function getPlayUrl(data, callback) {
+            $.ajax({
+                type: "get",
+                dataType: "json",
+                data: data,
+                url: apiUrls.song.playUrl,
+                success: function success(res) {
+                    // console.log(data, 'dasdada');
+                    if (res.code == 200) {
+                        callback(res.data[0]);
+                    }
+                }
+            });
+        }
+    },
+    onload: function onload() {
+        var myiframe = $('#iframe-pages');
+        var fullPath = $.$store.get('url');
+        if (myiframe.attr('src') !== fullPath && fullPath !== null) {
+            myiframe.attr('src', fullPath);
+        }
+        $('.js-aside-template .js-list-item').each(function (i, e) {
+            var currPath = '/src/pages';
+            currPath += $(this).attr('data-path') + '.html';
+            if (currPath == fullPath) {
+                console.log(currPath, fullPath);
+                $(this).addClass('active').siblings().removeClass('active').parent().parent().siblings().find('.js-list-item').removeClass('active');
+            }
+        });
     }
-    // 获取iframe
-    //获取模板规则<script>标签;
-};window.layoutTemp = commonObj.getTpl("/template/layout.html");
+};
+// 获取iframe
+//获取模板规则<script>标签;
+window.layoutTemp = commonObj.getTpl("/template/layout.html");
 window.contentTemp = commonObj.getTpl("/template/index.html");
 
 //获取audio标签;
-var audioPlayer = $('#play-audio')[0];
+window.audioPlayer = $('#play-audio')[0];
 // 拓展jq类方法，集成全局方法
 $.extend({
     filterPlayCount: function filterPlayCount(num) {
-        num = num > 10000 ? parseInt(num / 10000) + '万' : num;
+        num = num > 50000 ? parseInt(num / 10000) + '万' : num;
         return num;
     },
     filterDruationTime: function filterDruationTime(dt) {
@@ -177,10 +287,9 @@ $.extend({
             var data = JSON.parse(localStorage.getItem(key));
             if (data != null) {
                 if (data.expirse != null && data.expirse < new Date().getTime()) {
-                    this.state.key = null;
-                    this.remove(key);
+                    this.remove();
                 } else {
-                    return this.state.key || data.value;
+                    return data.value;
                 }
             }
             return null;
@@ -195,7 +304,6 @@ $.extend({
         set: function set(key, value, time) {
             var data = { value: value, expirse: new Date(time).getTime() };
             localStorage.setItem(key, JSON.stringify(data));
-            this.state.key = value;
         },
 
         /**
@@ -204,7 +312,6 @@ $.extend({
          */
         remove: function remove(key) {
             window.localStorage.removeItem(key);
-            this.state.key = null;
         },
 
         action: {},
@@ -300,7 +407,6 @@ $.fn.extend({
         var temp = obj.text();
         // //使用template的render()方法,传入模板及数据生成html片段;
         // //将html片段渲染到页面
-        // this.html(this.children(0))
         if (constTemp) {
             this.html(constTemp);
             this.append(template.render(temp, data));
@@ -309,7 +415,8 @@ $.fn.extend({
         }
     }
 });
-$(function name() {
+$(function () {
+    commonObj.getData.init();
     var route = $.$store.get('route');
     if (route !== null) {
         $.$route = {
@@ -317,4 +424,13 @@ $(function name() {
             query: $.$store.get('route').query
         };
     }
+    // 点击外出关闭弹框
+    $(document).on('click', function (e) {
+        if (!$('.js-play-list')[0]) {
+            $(window.parent.document).find('.js-play-list').hide();
+        } else if (!$('.js-play-list')[0].contains(e.target) && !e.target.contains($('.js-play-list-btn')[0])) {
+            $('.js-play-list').hide();
+            $(window.parent.document).find('.js-play-list').hide();
+        }
+    });
 });

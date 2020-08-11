@@ -18,6 +18,8 @@ window.apiUrls = {
         hotCate: baseUrl + '/playlist/hot', // 热门歌单分类
         singleList: baseUrl + '/playlist/catlist', // 歌单分类
         playlist: baseUrl + '/playlist/detail', // 获取歌单详情
-        detail: baseUrl + '/song/detail' // 所有歌曲详情
+        detail: baseUrl + '/song/detail', // 所有歌曲详情
+        topPlaylist: baseUrl + '/top/playlist', // 歌单 ( 网友精选碟 )
+        playUrl: baseUrl + '/song/url' // 获取音乐 url
     }
 };

@@ -34,6 +34,9 @@
                 margin-top: 20px;
                 .cates {
                     color: @c-666;
+                    span.active {
+                        color: @primary
+                    }
                 }
             }
             .line {
@@ -81,13 +84,29 @@
                 display: flex;
             }
             .btn-cate {
-                border: 1px solid @primary;
                 padding: 8px 0;
                 width: 100%;
                 font-size: 14px;
-                color: @primary;
                 border-radius: 2px;
                 margin-bottom: 10px;
+                color: @c-666;
+                border: 1px solid @c-ddd;
+                position: relative;
+                &.active {
+                    color: @primary;
+                    border: 1px solid @primary;
+                    &::after {
+                        content: '';
+                        position: absolute;
+                        height: 0px;
+                        width: 0px;
+                        right: 0;
+                        bottom: 0;
+                        border-width: 5px;
+                        border-style: solid;
+                        border-color: transparent @primary @primary transparent;
+                    }
+                }
             }
             .content {
                 &-item {
@@ -123,6 +142,23 @@
                                 font-family: '微软雅黑';
                                 color: red;
                             }
+                            &.active {
+                                border: 1px solid @primary;
+                                color: @primary;
+                                z-index: 10;
+                                position: relative;
+                                &::after {
+                                    content: '';
+                                    position: absolute;
+                                    height: 0px;
+                                    width: 0px;
+                                    right: 0;
+                                    bottom: 0;
+                                    border-width: 5px;
+                                    border-style: solid;
+                                    border-color: transparent @primary @primary transparent;
+                                }
+                            }
                         }
                     }
                 }
@@ -137,6 +173,15 @@
                 }
                 &:nth-child(4n) {
                     margin-right: 0;
+                }
+                &:hover {
+                    .right {
+                        // display: none;
+                        opacity: 1;
+                    }
+                }
+                .name {
+                    font-size: 14px;
                 }
                 &.top {
                     .img {

@@ -50,14 +50,16 @@
                     <span class="name">{{item.name}}</span>
                     <span class="source ">{{item.al.name}}</span>
                 </div>
-                {{if item.ar}}
+                {{if item.ar && !isminiPlay}}
                     <span class="singer line-one flex-2">
                         {{each item.ar singer cindex}}
                             <i>{{singer.name + (cindex < item.ar.length - 1 ? '/' : '')}}</i>
                         {{/each}}
                     </span>
+                    {{if !isPlay}}
                     <span class="collect line-one flex-2">{{item.al.name}}</span>
-                    {{if !order}}
+                    {{/if}}
+                    {{if !order && !isminiPlay}}
                     <span class="icon-music-link"></span>
                     {{/if}}
                     <span class="time {{order ? 'tl': 'tr'}} flex-1">{{item.dt}}</span>
@@ -125,13 +127,15 @@
             </ul>
         {{else}}
             <div class="img {{item.ftype == 0 ? 'fl': ''}}">
-                {{if item.type == 0 || category == 3}}
+                    {{if item.type == 0 || category == 3}}
                     <span class="copy-writer">{{item.copywriter}}</span>
+                    {{/if}}
+                    {{if item.playCount}}
                     <div class="right">
                         <span class="icon icon-music-{{item.type == 5? 'video':'erphone'}}"></span>
                         <span class="play-count">{{item.playCount}}</span>
                     </div>
-                {{/if}}
+                    {{/if}}
                 {{if item.type == 5 && category != 3}}
                     <div class="left">
                         <span class="icon icon-music-video"></span>
@@ -140,7 +144,10 @@
                 {{if item.rcmdtext}}
                 <p class="desc line-one" title="{{item.name}}">{{item.name}}</p>
                 {{/if}}
-                <img src="{{item.sPicUrl || item.picUrl}}" alt="">
+                <img src="{{item.coverImgUrl || item.sPicUrl || item.picUrl}}" alt="">
+                {{if item.creator}}
+                <span class="creator"><i class="icon-music-user"></i> {{item.creator.nickname}}</span>
+                {{/if}}
             </div>
             <div class="text  {{item.ftype == 0 ? 'fl': ''}}">
                 <p class="name">{{item.rcmdtext || item.name}}</p>

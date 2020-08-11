@@ -2,8 +2,7 @@ $(function () {
     //获取audio标签;
     var audioPlayer = $('#play-audio')[0];
     audioPlayer.load()
-
-    var layOutConfig = { // 整体架构数据配置
+    window.layOutConfig = { // 整体架构数据配置
         setStatus: function (currentTime, curStr, endStr, duration) {
             var left = 0;
             duration = duration || 1;
@@ -87,99 +86,16 @@ $(function () {
                 }
             })
         },
-        getData: {
-            init: function () {
-                // 渲染左侧菜单=====================================
-                this.getMenu();
-                this.getList(function (res) {
-                    // //获取<script>标签内的内容,即拼接字符串的规则;
-                    var listTemp = $(layoutTemp).find('#listTemp').text();
-                    // console.log(listTemp, ".find('#listTemp')");
-                    // //使用template的render()方法,传入模板及数据生成html片段;
-                    var srcList = []
-                    res.tracks.forEach(function (item, i) {
-                        item.dt = $.filterDruationTime(item.dt)
-                        item.src = 'http://m10.music.126.net/20200807094723/c03a9d05ed395a612e4e1ae62930c0b7/yyaac/obj/wonDkMOGw6XDiTHCmMOi/3355922236/ab61/828a/4c8d/b614204ea9081dcf6db1722c5fa7f398.m4a'
-                        $.ajax({
-                            type: "post",
-                            dataType: "jsonp",
-                            data: {
-                                encSecKey: 'dc67e18ee269b205c7e1513af52d3f2a617cbed3b14dd4c44473a232bfcb73a608a92834498cd6d7d29b0d63456ed68e38ec5e983af02f5e5a1ba024aab66e0caad59bd59d676f6d5898bc1cb566ff10b169563fd7d55363403b9566f4920162624c8d3a7ef14195cdeccf04bd4796089cb5a280e5f585e7856382ee652e2d9a',
-                                params: 'OCCN9ASTI2yP8n7W5XaoI4dFa4Av5Q9qkJ3F4KOc+X/XvbYL4UM28VgZ/ixbPlK12AxjoL9cvhB1s1dlvghV3Lo281zxHK0fC2h6WCU+DGT+/9R+Ze5Lq4zLCWC7/9EnesQGXrB1os64NfSN8qCKmrizh4hgRhA0TVs4Y8sveojL8tOnzPU2M40y1OV0r9npExt/3EKbstQAano86CIsSg=='
-                            },
-                            url: 'https://music.163.com/weapi/song/enhance/player/url/v1?csrf_token=9dba65809e6f815a53a1d59f6169cf5f',
-                            success: function (res) {
-                                srcList.push(res.data.data)
-                                console.log(srcList, 'srcList')
-                            }
-                        })
-                    })
-                    var renderHtml = template.render(listTemp, { list: res.tracks, page: res.size });
-                    $('.js-footer-music-list').html(renderHtml)
-                    var renderHtml = template.render(listTemp, { list: res.tracks });
-                    // //将html片段渲染到页面
-                    $('.js-music-list').html(renderHtml)
-                    commonObj.data = res
-                });
-            },
-            getMenu: function () {
-                $.ajax({
-                    type: "get",
-                    dataType: "json",
-                    data: { json: 1 },
-                    url: "./json/menu.json",
-                    success: function (data) {
-                        // //获取<script>标签内的内容,即拼接字符串的规则;
-                        var asideTemp = $(layoutTemp).find('#asideTemp').text();
-                        // console.log(asideTemp, ".find('#asideTemp')");
-                        // //使用template的render()方法,传入模板及数据生成html片段;
-                        var renderHtml = template.render(asideTemp, { list: data });
-                        // //将html片段渲染到页面
-                        $('.js-aside-template').html(renderHtml)
-                        layOutConfig.onload()
-                    }
-                })
-            },
-            getList: function (callback) {
-                // 渲染歌曲列表=====================================
-                $.ajax({
-                    type: "get",
-                    dataType: "json",
-                    data: { json: 1 },
-                    url: "./json/list.json",
-                    success: function (res) {
-                        callback(res)
-                    }
-                })
-            }
-        },
         setCurrentData: function (playData) {
             $.$store.set('playData', playData, new Date().getTime() + 10000)
             $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
             $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
             $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
             $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
-        },
-        onload () {
-            var myiframe = $('#iframe-pages')
-            let fullPath = $.$store.get('url');
-            if (myiframe.attr('src') !== fullPath && fullPath !== null) {
-                myiframe.attr('src', fullPath)
-            }
-            $('.js-aside-template .js-list-item').each(function (i, e) {
-                let currPath = '/src/pages';
-                currPath += $(this).attr('data-path') + '.html'
-                if (currPath == fullPath) {
-                    console.log(currPath, fullPath);
-                    $(this).addClass('active').siblings().removeClass('active').parent().parent().siblings().find('.js-list-item').removeClass('active')
-
-                }
-            })
         }
     }
     commonObj.initPlayer(audioPlayer, layOutConfig.setStatus, layOutConfig.setVolume)
     layOutConfig.initDrag()
-    layOutConfig.getData.init()
     // 缩放窗口设置主体位置
     window.addEventListener('resize', function (e) {
         layOutConfig.initDrag()
@@ -337,11 +253,14 @@ $(function () {
         }
         $('.js-play').toggleClass('play')
     })
-    $('.js-mini-music-list, .js-footer-music-list').on('click', '.music-list-item', function () {
+
+    // 点击列表播放歌曲
+    $('.js-mini-music-list, .js-footer-music-list, .song-detail-list').on('click', '.music-list-item', function () {
         $(this).addClass('active').siblings().removeClass('active')
     })
     $('.js-mini-music-list, .js-footer-music-list').on('dblclick', '.music-list-item', function () {
         var _this = $(this);
+        if ($(this).attr('data-id') == commonObj.playData.id && !commonObj.playData.ended) return
         commonObj.data.tracks.forEach(function (item, i) {
             if (item.id == _this.attr('data-id')) {
                 audioPlayer.muted = false;
@@ -355,16 +274,26 @@ $(function () {
                 commonObj.playData.picUrl = item.al.picUrl;
             }
         })
-        layOutConfig.setCurrentData(commonObj.playData)
-        // audioPlayer.volume = commonObj.playData.volume
-        var listDom = $('.js-mini-music-list, .js-footer-music-list').find('.music-list-item');
-        listDom.each(function (i, e) {
-            if ($(this).attr('data-id') == commonObj.playData.id) {
-                $(this).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
-            }
+        commonObj.getData.getPlayUrl({ id: commonObj.playData.id }, function (data) {
+            audioPlayer.src = data.url;
+            commonObj.playData.src = data.url;
+            layOutConfig.setCurrentData(commonObj.playData)
+            let listDom = $('.js-mini-music-list, .js-footer-music-list, .song-detail-list').find('.music-list-item');
+            let iframeDom = $('#iframe-pages')[0].contentWindow.document;
+            let detaillistDom = $(iframeDom).find('.song-detail-list .music-list-item')
+            listDom.each(function (i, e) {
+                if ($(this).attr('data-id') == _this.attr('data-id')) {
+                    $(this).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+                }
+            })
+            detaillistDom.each(function (i, e) {
+                if ($(this).attr('data-id') == _this.attr('data-id')) {
+                    $(this).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+                }
+            })
+            $('.js-play').addClass('play');
+            audioPlayer.play();
         })
-        $('.js-play').addClass('play');
-        audioPlayer.play();
     })
     $('.js-min-music-volume').click(function () {
         $(this).parent().find('.volume').toggle()

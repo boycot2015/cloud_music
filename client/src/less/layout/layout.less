@@ -357,7 +357,11 @@
                     width: 40px;
                     height: 40px;
                     // border: 1px solid @c-e8;
+                    overflow: hidden;
                     margin-right: 10px;
+                    img {
+                        height: 100%;
+                    }
                 }
                 .text {
                     .top {
@@ -472,6 +476,11 @@
                                 color: @c-666;
                             }
                         }
+                    }
+                    .wrap {
+                        max-height: 440px;
+                        overflow: hidden;
+                        overflow-y: auto;
                     }
                     .music-list {
                         position: relative;

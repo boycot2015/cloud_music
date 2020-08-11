@@ -39,19 +39,19 @@ $(function () {
             {
                 name: '个性推荐',
                 type: 'home'
-            },{
+            }, {
                 name: '歌单',
                 type: 'cate'
-            },{
+            }, {
                 name: '主播电台',
                 type: 'dj'
-            },{
+            }, {
                 name: '排行榜',
                 type: 'ph'
-            },{
+            }, {
                 name: '歌手',
                 type: 'singer'
-            },{
+            }, {
                 name: '最新音乐',
                 type: 'newest'
             },
@@ -66,7 +66,7 @@ $(function () {
             banner !== null && $('.swiper-wrapper').render($(layoutTemp).find('#bannerTemp'), banner)
             mvList !== null && $('.tab-home-content .recommend-list').render(
                 $(layoutTemp).find('#gridListTemp'),
-            recommendList, this.constantTemp.recommend)
+                recommendList, this.constantTemp.recommend)
             recommendList !== null && $('.dj-list').render($(layoutTemp).find('#gridListTemp'), djList)
             djList !== null && $('.mv-list').render($(layoutTemp).find('#gridListTemp'), mvList)
             newestList !== null && $('.newest-list').render($(layoutTemp).find('#gridListTemp'), newestList)
@@ -75,9 +75,9 @@ $(function () {
         },
         init () {
             $('.tab-home-content .recommend-list').find('.date-text').html(new Date().getDate())
-            .siblings('.week').html(commonObj.weeks[new Date().getDay()])
+                .siblings('.week').html(commonObj.weeks[new Date().getDay()])
             this.constantTemp.recommend = $('.tab-home-content .recommend-list').html()
-            $('.music-home .tab-list').render($(contentTemp).find('#tabsTemp'), {list: this.tabMenu})
+            $('.music-home .tab-list').render($(contentTemp).find('#tabsTemp'), { list: this.tabMenu })
             if (this.setLocal() == null) {
                 this.getBanner();
                 this.getRecommend();
@@ -196,16 +196,16 @@ $(function () {
                 let ctype = $(this).attr('data-ctype')
                 $.$router.push('/songs/list', { id, type, ctype })
             })
-            $('.tab-content .recommend .more').click(function() {
+            $('.tab-content .recommend .more').click(function () {
                 $('.js-tab-item').eq(1).click()
             })
-            $('.tab-content .newest-song .more').click(function() {
+            $('.tab-content .newest-song .more').click(function () {
                 $('.js-tab-item').eq(5).click()
             })
-            $('.tab-content .recommend .more').click(function() {
+            $('.tab-content .recommend .more').click(function () {
                 $('.js-tab-item').eq(1).click()
             })
-            $('.tab-content .recommend .more').click(function() {
+            $('.tab-content .recommend .more').click(function () {
                 $('.js-tab-item').eq(1).click()
             })
         }
@@ -213,6 +213,9 @@ $(function () {
 
     // 歌单tab
     const singleListData = {
+        data: {
+            query: {}
+        },
         setLocal () {
             let hotCateList = $.$store.get('hotCateList')
             let cateList = $.$store.get('cateList')
@@ -221,11 +224,10 @@ $(function () {
                 $(contentTemp).find('#hotCateTemp'),
                 { data: hotCateList })
             songCateList !== null && $('.tab-cate-content .recommend-list').render(
-            $(layoutTemp).find('#gridListTemp'),
-            songCateList, this.constantTemp.recommend)
-            cateList !== null && $('.mask-cate').html(template('cateListTemp', { data: cateList }))
-            // console.log(songCateList && cateList, 'songCateList && cateList')
-            return hotCateList || cateList || songCateList
+                $(layoutTemp).find('#gridListTemp'),
+                songCateList, this.constantTemp.recommend)
+            cateList !== null && $('.mask-cate').render($(contentTemp).find('#cateListTemp'), { data: cateList })
+            return hotCateList && cateList && songCateList
         },
         constantTemp: { // 模块固定模板
             recommend: ''
@@ -255,7 +257,7 @@ $(function () {
                         data.subs = subs
                         // console.log($('.tab-cate-content .tags .cates').html(), 'hotCateTemp');
                         $('.tab-cate-content .mask-cate').render($(contentTemp).find('#cateListTemp'), { data: { subs, all, categories } })
-                        $.$store.set('cateList', data, new Date().getTime() + 1000);
+                        $.$store.set('cateList', data, new Date().getTime() + 5000);
                     }
                 }
             })
@@ -268,32 +270,33 @@ $(function () {
                 url: apiUrls.song.hotCate,
                 success (data) {
                     if (data.code == 200) {
-                        console.log(data, 'hotCateTemp');
+                        // console.log(data, 'hotCateTemp');
                         $('.tab-cate-content .tags .cates').render($(contentTemp).find('#hotCateTemp'), { data })
-                        $.$store.set('hotCateList', data, new Date().getTime() + 1000);
+                        $.$store.set('hotCateList', data, new Date().getTime() + 5000);
                     }
                 }
             })
         },
-        getRecommend (current) {
+        getRecommend (current, cat) {
             $.ajax({
                 type: "get",
                 dataType: "json",
-                data: { limit: 50 },
-                url: apiUrls.home.personalized,
+                data: { limit: 39, order: 'hot', cat, offset: current },
+                url: apiUrls.song.topPlaylist,
                 success (data) {
                     current = current || 1
-                    var res = data.result.slice(current - 1, 39)
+                    // .slice(current - 1, 39)
+                    var res = data.playlists
+                    console.log(data, 'apiUrl.personalizedTemp')
                     res.forEach(function (item) {
                         item.playCount = $.filterPlayCount(item.playCount)
                     })
-                    singleListData.initPage(49)
-                    // console.log(res, 'apiUrl.personalizedTemp')
+                    singleListData.initPage(data.total)
                     $('.tab-cate-content .recommend-list').render(
                         $(layoutTemp).find('#gridListTemp'),
                         { list: res },
                         singleListData.constantTemp.recommend)
-                    $.$store.set('songCateList', { list: res }, new Date().getTime() + 1000)
+                    $.$store.set('songCateList', { list: res }, new Date().getTime() + 5000)
                 }
             })
         },
@@ -330,6 +333,59 @@ $(function () {
             })
             $('.js-toggle-cate').click(function () {
                 $(this).parent().siblings('.mask-cate').toggleClass('active')
+            })
+            // 点击分类
+            $(document).on('click', '.js-cates-item', function () {
+                let cate = $(this).attr('data-cate')
+                let exist = false
+                $('.js-hot-cate-item').each(function (i, e) {
+                    if ($(e).attr('data-cate') == cate) {
+                        $(e).addClass('active').siblings('.js-hot-cate-item')
+                            .removeClass('active')
+                        exist = true
+                    }
+                })
+                !exist && $('.js-hot-cate-item').removeClass('active')
+                $(this).addClass('active').siblings().removeClass('active')
+                    .parent().parent().parent().siblings()
+                    .find('.js-cates-item').removeClass('active')
+                $('.btn-cate').removeClass('active')
+                $('.mask-cate').removeClass('active')
+                $('.js-hot-cate-item').find().addClass('active')
+                $('.js-toggle-cate .text').html(cate)
+                singleListData.data.query.cate = cate
+            })
+            $(document).on('click', '.js-hot-cate-item', function () {
+                let cate = $(this).attr('data-cate')
+                $(this).addClass('active').siblings('.js-hot-cate-item')
+                    .removeClass('active')
+                $('.btn-cate').removeClass('active')
+                $('.mask-cate').removeClass('active')
+                // console.log($('.js-cates-item'), cate);
+                $('.js-cates-item').each(function (i, e) {
+                    if ($(e).attr('data-cate') == cate) {
+                        $(e).addClass('active').siblings().removeClass('active')
+                            .parent().parent().parent().siblings()
+                            .find('.js-cates-item').removeClass('active')
+                    }
+                })
+                $('.js-toggle-cate .text').html(cate)
+                singleListData.data.query.cate = cate
+            })
+            $(document).on('click', '.mask-cate .btn-cate', function () {
+                let cate = $(this).attr('data-cate')
+                $(this).addClass('active')
+                $('.js-cates-item').removeClass('active')
+                $('.js-hot-cate-item').removeClass('active')
+                $('.mask-cate').removeClass('active')
+                $('.js-toggle-cate .text').html(cate)
+                singleListData.data.query.cate = ''
+            })
+            $(document).on('click', function (e) {
+                // console.log(!$(e.target).parent()[0].contains($('.js-toggle-cate')[0]));
+                if (!$('.mask-cate').parent('.tab-content')[0].contains(e.target) && !e.target.contains($('.js-toggle-cate')[0])) {
+                    $('.mask-cate').removeClass('active')
+                }
             })
         }
     }

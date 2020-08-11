@@ -10,7 +10,7 @@
 <div id="hotCateTemp">
     <script type="text/html" id="hotCateTemp">
         {{each data.tags item index}}
-            {{item.name}}
+            <span class="js-hot-cate-item" data-id="{{item.id}}" data-cate="{{item.name}}">{{item.name}}</span>
             <i class="line">{{(index < data.tags.length - 1 ? '|': '')}}</i>
         {{/each}}
     </script>
@@ -18,7 +18,7 @@
 <div id="cateListTemp">
     <script type="text/html" id="cateListTemp">
         <div class="wrap flexbox-v">
-            <span class="btn-cate tc">{{data.all.name}}</span>
+            <span class="btn-cate active tc" data-cate="{{data.all.name}}">{{data.all.name}}</span>
             <div class="content">
                 {{each data.subs subsItem index}}
                 <div class="content-item flexbox-h just-b">
@@ -31,7 +31,9 @@
                     <div class="right flex-4">
                         <div class="cates clearfix">
                             {{each subsItem sub cindex}}
-                                <div class="cates-item tc fl">
+                                <div
+                                data-cate="{{sub.name}}"
+                                class="cates-item js-cates-item tc fl">
                                     {{if sub.hot}}
                                         <i class="icon-hot">HOT</i>
                                     {{/if}}

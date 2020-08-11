@@ -22,6 +22,7 @@
         .img {
             width: 100%;
             margin-bottom: 10px;
+            position: relative;
             .desc {
                 position: absolute;
                 bottom: 46px;
@@ -40,7 +41,8 @@
                     transform: translateY(0px);
                 }
                 .right {
-                    display: none;
+                    // display: none;
+                    opacity: 0;
                 }
             }
             .copy-writer,.right {
@@ -58,7 +60,7 @@
                 left: 0;
                 transform: translateY(-100%);
                 overflow: hidden;
-                transition: all 0.3s;
+                transition: all .3s 0.5s;
                 text-align: justify;
                 z-index: 10;
             }
@@ -68,8 +70,24 @@
                 max-width: 100px;
                 line-height: 18px;
                 padding: 0px 10px;
+                opacity: 1;
+                transition: all .1s 0.5s;
                 background-image: linear-gradient(to right, rgba(255,255,255,0), rgba(0,0,0,0.3));
                 .icon::after {
+                    color: @white;
+                }
+            }
+            .creator {
+                position: absolute;
+                bottom: 0px;
+                left: 0;
+                padding-left: 10px;
+                box-sizing: border-box;
+                width: 100%;
+                line-height: 30px;
+                color: @white;
+                background-image: linear-gradient(to bottom, rgba(255,255,255,0), rgba(0,0,0,0.8));
+                i::after {
                     color: @white;
                 }
             }

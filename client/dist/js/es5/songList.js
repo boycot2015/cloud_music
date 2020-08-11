@@ -3,6 +3,8 @@
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 $(function () {
+    var commonObj = window.parent.commonObj;
+    var audioPlayer = window.parent.audioPlayer;
     var songsData = {
         setLocal: function setLocal() {
             var songList = $.$store.get('songList');
@@ -53,6 +55,7 @@ $(function () {
                             var coverTemp = template('coverTemp', { coverDetail: coverDetail });
                             $('.song-detail-list .cover').html(coverTemp);
                             // console.log(data.playlist.tracks, 'getSongDetail')
+                            commonObj.data.tracks = data.playlist.tracks;
                             $('.song-list').render($(layoutTemp).find('#listTemp'), { list: data.playlist.tracks, order: true, operation: true });
                             coverDetail.description && coverDetail.description !== null && $('.song-detail-list .desc p').html('简介：' + coverDetail.description.split('\n').join('<br/>'));
                             $.$store.set('songList', { list: data.playlist.tracks, order: true, operation: true }, new Date().getTime() + 2000);
@@ -77,6 +80,43 @@ $(function () {
         onShow: function onShow() {
             $('.song-detail-list').on('click', '.js-more', function () {
                 $(this).toggleClass('active').parent().toggleClass('active line-two');
+            });
+            // 点击列表播放歌曲
+            $('.song-detail-list').on('click', '.music-list-item', function () {
+                $(this).addClass('active').siblings().removeClass('active');
+            });
+            $('.song-detail-list').on('dblclick', '.music-list-item', function () {
+                var _this = $(this);
+                if ($(this).attr('data-id') == commonObj.playData.id && !commonObj.playData.ended) return;
+                commonObj.data.tracks.forEach(function (item, i) {
+                    if (item.id == _this.attr('data-id')) {
+                        audioPlayer.muted = false;
+                        commonObj.playData.id = item.id;
+                        commonObj.playData.name = item.name;
+                        commonObj.playData.singer = '';
+                        item.ar.forEach(function (singer, cindex) {
+                            commonObj.playData.singer += singer.name + (cindex < item.ar.length - 1 ? '/' : '');
+                        });
+                        commonObj.playData.picUrl = item.al.picUrl;
+                    }
+                });
+                commonObj.getData.getPlayUrl({ id: commonObj.playData.id }, function (data) {
+                    audioPlayer.src = data.url;
+                    audioPlayer.volume = commonObj.playData.volume;
+                    commonObj.playData.src = data.url;
+                    commonObj.setCurrentData(commonObj.playData);
+                    $.$store.set('playList', commonObj.data);
+                    commonObj.getData.getPlayList(commonObj.data);
+                    _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+                    var listDom = $(window.parent.document).find('.js-mini-music-list, .js-footer-music-list').find('.music-list-item');
+                    listDom.each(function (i, e) {
+                        if ($(e).attr('data-id') == commonObj.playData.id) {
+                            $(e).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+                        }
+                    });
+                    $(window.parent.document).find('.js-play').addClass('play');
+                    audioPlayer.play();
+                });
             });
         }
     };
