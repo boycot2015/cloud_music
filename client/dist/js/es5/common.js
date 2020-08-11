@@ -130,21 +130,66 @@ var commonObj = {
         $('.progress .progress-bar .js-line').css('width', left);
         $('.progress .start-time').html(curStr);
     },
-    setCurrentData: function setCurrentData(playData) {
-        $.$store.set('playData', playData, new Date().getTime() + 10000);
-        $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
-        $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
-        $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
-        $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
-        // window.onload = function () {
-        //     commonObj.getAudioInfo($('#play-audio')[0], commonObj.setStatus);
-        // }
+    setCurrentData: function setCurrentData(_this, callback) {
+        var id = _this && _this.attr('data-id') || '';
+        if (!_this && $.$store.get('playData') !== null) {
+            id = $.$store.get('playData').id;
+        }
+        if (!commonObj.data.tracks.length && $.$store.get('playList') !== null) {
+            commonObj.data.tracks = $.$store.get('playList').tracks;
+        }
+
+        if (!id || !commonObj.data.tracks.length) return;
+        commonObj.data.tracks.forEach(function (item, i) {
+            if (item.id == id) {
+                commonObj.playData.id = item.id;
+                commonObj.playData.name = item.name;
+                commonObj.playData.singer = '';
+                item.ar.forEach(function (singer, cindex) {
+                    commonObj.playData.singer += singer.name + (cindex < item.ar.length - 1 ? '/' : '');
+                });
+                commonObj.playData.picUrl = item.al.picUrl;
+            }
+        });
+        commonObj.getData.getPlayUrl({ id: id }, function (data) {
+            if (audioPlayer) {
+                audioPlayer.muted = false;
+                audioPlayer.src = data.url;
+                audioPlayer.volume = commonObj.playData.volume;
+            }
+            commonObj.playData.src = data.url;
+            $.$store.set('playData', commonObj.playData, new Date().getTime() + 10000);
+            $.$store.set('playList', commonObj.data);
+            commonObj.getData.getPlayList(commonObj.data);
+            var playData = commonObj.playData;
+            $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
+            $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
+            $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
+            $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
+            var listDom = $(window.parent.document).find('.js-mini-music-list, .js-footer-music-list').find('.music-list-item');
+            listDom.each(function (i, e) {
+                if ($(e).attr('data-id') == commonObj.playData.id) {
+                    $(e).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+                }
+            });
+            callback && callback();
+            if (!_this) return;
+            _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
+            $(window.parent.document).find('.js-play').addClass('play');
+            audioPlayer.muted = false;
+            audioPlayer.src = data.url;
+            audioPlayer.volume = commonObj.playData.volume;
+            audioPlayer.loop = false;
+            audioPlayer.play();
+        });
     },
+
     getData: {
         init: function init() {
             // 渲染左侧菜单=====================================
             this.getMenu();
-            $.$store.get('playData') !== null && commonObj.setCurrentData($.$store.get('playData'));
+            // console.log($.$store.get('playList'), window.localStorage.getItem('playData'));
+            $.$store.get('playData') !== null && commonObj.setCurrentData();
             this.getPlayList(commonObj.data);
         },
         getMenu: function getMenu() {
@@ -416,7 +461,6 @@ $.fn.extend({
     }
 });
 $(function () {
-    commonObj.getData.init();
     var route = $.$store.get('route');
     if (route !== null) {
         $.$route = {
@@ -433,4 +477,5 @@ $(function () {
             $(window.parent.document).find('.js-play-list').hide();
         }
     });
+    commonObj.getData.init();
 });

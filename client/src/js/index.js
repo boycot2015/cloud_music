@@ -3,7 +3,7 @@ $(function () {
     var audioPlayer = $('#play-audio')[0];
     audioPlayer.load()
     window.layOutConfig = { // 整体架构数据配置
-        setStatus: function (currentTime, curStr, endStr, duration) {
+        setStatus (currentTime, curStr, endStr, duration) {
             var left = 0;
             duration = duration || 1;
             if (commonObj.progressPsition) {
@@ -26,6 +26,13 @@ $(function () {
                     audioPlayer.play();
                     $('.js-play').addClass('play');
                     audioPlayer.loop = true;
+                }
+                if ($('.order-icon').hasClass('icon-music-loop')||
+                $('.order-icon').hasClass('icon-music-loop-random')) {
+                    layOutConfig.playNext()
+                }
+                if ($('.order-icon').hasClass('icon-music-loop-random')) {
+                    layOutConfig.playRandom()
                 }
             }
             left = left > commonObj.maxPlayWidth ? commonObj.maxPlayWidth : left;
@@ -86,12 +93,18 @@ $(function () {
                 }
             })
         },
-        setCurrentData: function (playData) {
-            $.$store.set('playData', playData, new Date().getTime() + 10000)
-            $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
-            $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
-            $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
-            $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
+        playNext () {
+            let nextplay = $('.js-footer-music-list .music-list-item.play').next();
+            nextplay.dblclick()
+        },
+        playPrev () {
+            let prevPlay = $('.js-footer-music-list .music-list-item.play').prev();
+            prevPlay.dblclick()
+        },
+        playRandom () {
+            let num = Math.floor(Math.random(0, 1) * $('.js-footer-music-list .music-list-item').length)
+            let randomPlay = $('.js-footer-music-list .music-list-item').eq(num);
+            randomPlay.dblclick()
         }
     }
     commonObj.initPlayer(audioPlayer, layOutConfig.setStatus, layOutConfig.setVolume)
@@ -214,6 +227,21 @@ $(function () {
         $(this).addClass('active').siblings().removeClass('active')
     })
 
+    // 5.上一首，下一首
+    $('.icon-music-play-left').click(function () {
+        if ($('.order-icon').hasClass('icon-music-loop-random')) {
+            layOutConfig.playRandom()
+            return
+        }
+        layOutConfig.playPrev()
+    })
+    $('.icon-music-play-right').click(function () {
+        if ($('.order-icon').hasClass('icon-music-loop-random')) {
+            layOutConfig.playRandom()
+            return
+        }
+        layOutConfig.playNext()
+    })
 
     /**
      * mini-box
@@ -259,25 +287,9 @@ $(function () {
         $(this).addClass('active').siblings().removeClass('active')
     })
     $('.js-mini-music-list, .js-footer-music-list').on('dblclick', '.music-list-item', function () {
-        var _this = $(this);
         if ($(this).attr('data-id') == commonObj.playData.id && !commonObj.playData.ended) return
-        commonObj.data.tracks.forEach(function (item, i) {
-            if (item.id == _this.attr('data-id')) {
-                audioPlayer.muted = false;
-                audioPlayer.src = item.src;
-                commonObj.playData.id = item.id;
-                commonObj.playData.name = item.name;
-                commonObj.playData.singer = '';
-                item.ar.forEach(function (singer, cindex) {
-                    commonObj.playData.singer += singer.name + ((cindex < item.ar.length - 1) ? '/' : '');
-                })
-                commonObj.playData.picUrl = item.al.picUrl;
-            }
-        })
-        commonObj.getData.getPlayUrl({ id: commonObj.playData.id }, function (data) {
-            audioPlayer.src = data.url;
-            commonObj.playData.src = data.url;
-            layOutConfig.setCurrentData(commonObj.playData)
+        let _this = $(this)
+        commonObj.setCurrentData($(this), function () {
             let listDom = $('.js-mini-music-list, .js-footer-music-list, .song-detail-list').find('.music-list-item');
             let iframeDom = $('#iframe-pages')[0].contentWindow.document;
             let detaillistDom = $(iframeDom).find('.song-detail-list .music-list-item')
@@ -291,8 +303,6 @@ $(function () {
                     $(this).removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
                 }
             })
-            $('.js-play').addClass('play');
-            audioPlayer.play();
         })
     })
     $('.js-min-music-volume').click(function () {

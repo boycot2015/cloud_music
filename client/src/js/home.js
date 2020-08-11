@@ -6,7 +6,7 @@ $(function () {
             // direction: 'vertical', // 垂直切换选项
             slidesPerView: 1,
             // spaceBetween: -40,
-            // slidesPerView: 'auto',
+            slidesPerView: 'auto',
             effect: 'coverflow',
             centeredSlides: true,
             coverflowEffect: {
@@ -29,7 +29,7 @@ $(function () {
                 nextEl: '.button-next',
                 prevEl: '.button-prev',
             },
-            speed: 500
+            speed: 400
         },
         constantTemp: {
             recommend: ''
@@ -354,6 +354,7 @@ $(function () {
                 $('.js-hot-cate-item').find().addClass('active')
                 $('.js-toggle-cate .text').html(cate)
                 singleListData.data.query.cate = cate
+                singleListData.getRecommend(1, cate)
             })
             $(document).on('click', '.js-hot-cate-item', function () {
                 let cate = $(this).attr('data-cate')
@@ -371,6 +372,7 @@ $(function () {
                 })
                 $('.js-toggle-cate .text').html(cate)
                 singleListData.data.query.cate = cate
+                singleListData.getRecommend(1, cate)
             })
             $(document).on('click', '.mask-cate .btn-cate', function () {
                 let cate = $(this).attr('data-cate')
@@ -380,6 +382,7 @@ $(function () {
                 $('.mask-cate').removeClass('active')
                 $('.js-toggle-cate .text').html(cate)
                 singleListData.data.query.cate = ''
+                singleListData.getRecommend(1, '')
             })
             $(document).on('click', function (e) {
                 // console.log(!$(e.target).parent()[0].contains($('.js-toggle-cate')[0]));

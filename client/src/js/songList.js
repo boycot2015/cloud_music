@@ -18,7 +18,7 @@ $(function () {
             this.onShow()
         },
         getPlayList () {
-            // console.log($.$route, '$.$route');
+            $('.song-list').html('')
             $.ajax({
                 type: "get",
                 dataType: "json",
@@ -48,8 +48,8 @@ $(function () {
                             commonObj.data.tracks = data.playlist.tracks
                             $('.song-list').render($(layoutTemp).find('#listTemp'), { list: data.playlist.tracks, order: true, operation: true })
                             coverDetail.description && coverDetail.description !== null && $('.song-detail-list .desc p').html('简介：' + coverDetail.description.split('\n').join('<br/>'))
-                            $.$store.set('songList', { list: data.playlist.tracks, order: true, operation: true }, new Date().getTime() + 2000)
-                            $.$store.set('coverDetail', { coverDetail }, new Date().getTime() + 2000)
+                            // $.$store.set('songList', { list: data.playlist.tracks, order: true, operation: true }, new Date().getTime() + 1000)
+                            // $.$store.set('coverDetail', { coverDetail }, new Date().getTime() + 1000)
                         })
                     }
                 }
@@ -76,27 +76,9 @@ $(function () {
                 $(this).addClass('active').siblings().removeClass('active')
             })
             $('.song-detail-list').on('dblclick', '.music-list-item', function () {
-                var _this = $(this);
                 if ($(this).attr('data-id') == commonObj.playData.id && !commonObj.playData.ended) return
-                commonObj.data.tracks.forEach(function (item, i) {
-                    if (item.id == _this.attr('data-id')) {
-                        audioPlayer.muted = false;
-                        commonObj.playData.id = item.id;
-                        commonObj.playData.name = item.name;
-                        commonObj.playData.singer = '';
-                        item.ar.forEach(function (singer, cindex) {
-                            commonObj.playData.singer += singer.name + ((cindex < item.ar.length - 1) ? '/' : '');
-                        })
-                        commonObj.playData.picUrl = item.al.picUrl;
-                    }
-                })
-                commonObj.getData.getPlayUrl({ id: commonObj.playData.id }, function (data) {
-                    audioPlayer.src = data.url;
-                    audioPlayer.volume = commonObj.playData.volume;
-                    commonObj.playData.src = data.url;
-                    commonObj.setCurrentData(commonObj.playData);
-                    $.$store.set('playList', commonObj.data)
-                    commonObj.getData.getPlayList(commonObj.data);
+                var _this = $(this);
+                commonObj.setCurrentData($(this), () =>{
                     _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
                     let listDom = $(window.parent.document).find('.js-mini-music-list, .js-footer-music-list').find('.music-list-item');
                     listDom.each(function (i, e) {
@@ -105,8 +87,10 @@ $(function () {
                         }
                     })
                     $(window.parent.document).find('.js-play').addClass('play');
-                    audioPlayer.play();
-                })
+                });
+            })
+            $('.song-detail-list').on('click', '.play-btn.play', function () {
+                $('.song-detail-list .music-list-item').eq(0).dblclick()
             })
         }
     }

@@ -1,38 +1,31 @@
 'use strict';
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 $(function () {
+    var _swiperOption;
 
     // 首页个性推荐tab
     var homeData = {
-        swiperOption: {
+        swiperOption: (_swiperOption = {
             // direction: 'vertical', // 垂直切换选项
-            slidesPerView: 1,
-            // spaceBetween: -40,
-            // slidesPerView: 'auto',
-            effect: 'coverflow',
-            centeredSlides: true,
-            coverflowEffect: {
-                rotate: 0,
-                stretch: 100,
-                depth: 50,
-                modifier: 3,
-                slideShadows: false
-            },
-            autoplay: {
-                delay: 5000,
-                disableOnInteraction: false
-            },
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true
-            },
-            loop: true,
-            navigation: {
-                nextEl: '.button-next',
-                prevEl: '.button-prev'
-            },
-            speed: 500
-        },
+            slidesPerView: 1
+        }, _defineProperty(_swiperOption, 'slidesPerView', 'auto'), _defineProperty(_swiperOption, 'effect', 'coverflow'), _defineProperty(_swiperOption, 'centeredSlides', true), _defineProperty(_swiperOption, 'coverflowEffect', {
+            rotate: 0,
+            stretch: 100,
+            depth: 50,
+            modifier: 3,
+            slideShadows: false
+        }), _defineProperty(_swiperOption, 'autoplay', {
+            delay: 5000,
+            disableOnInteraction: false
+        }), _defineProperty(_swiperOption, 'pagination', {
+            el: '.swiper-pagination',
+            clickable: true
+        }), _defineProperty(_swiperOption, 'loop', true), _defineProperty(_swiperOption, 'navigation', {
+            nextEl: '.button-next',
+            prevEl: '.button-prev'
+        }), _defineProperty(_swiperOption, 'speed', 400), _swiperOption),
         constantTemp: {
             recommend: ''
 
@@ -348,6 +341,7 @@ $(function () {
                 $('.js-hot-cate-item').find().addClass('active');
                 $('.js-toggle-cate .text').html(cate);
                 singleListData.data.query.cate = cate;
+                singleListData.getRecommend(1, cate);
             });
             $(document).on('click', '.js-hot-cate-item', function () {
                 var cate = $(this).attr('data-cate');
@@ -362,6 +356,7 @@ $(function () {
                 });
                 $('.js-toggle-cate .text').html(cate);
                 singleListData.data.query.cate = cate;
+                singleListData.getRecommend(1, cate);
             });
             $(document).on('click', '.mask-cate .btn-cate', function () {
                 var cate = $(this).attr('data-cate');
@@ -371,6 +366,7 @@ $(function () {
                 $('.mask-cate').removeClass('active');
                 $('.js-toggle-cate .text').html(cate);
                 singleListData.data.query.cate = '';
+                singleListData.getRecommend(1, '');
             });
             $(document).on('click', function (e) {
                 // console.log(!$(e.target).parent()[0].contains($('.js-toggle-cate')[0]));
