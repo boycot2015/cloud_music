@@ -244,11 +244,14 @@ $(function () {
     });
     // 6.播放暂停
     $('.js-play').click(function () {
+        var myiframeDom = window.frames['iframe-pages'].contentWindow.document;
         if (!$('.js-play').hasClass('play')) {
             audioPlayer.play();
             $('.music-list-item.play').removeClass('play').addClass('pause');
+            $(myiframeDom).find('.song-detail .cover').addClass('active').parent().find('.handler').addClass('active');
         } else {
             $('.music-list-item.pause').removeClass('pause').addClass('play');
+            $(myiframeDom).find('.song-detail .cover').removeClass('active').parent().find('.handler').removeClass('active');
             audioPlayer.pause();
         }
         $('.js-play').toggleClass('play');
@@ -317,6 +320,8 @@ $(function () {
 
     // 查看歌曲详情评论
     $('.js-music-box .music-info').click(function () {
+        $(window.parent.document).find('.song-detail').addClass('active');
+        $('.js-aside').fadeOut();
         $.$router.push('/songs/detail', {
             id: $(this).attr('data-id')
         });

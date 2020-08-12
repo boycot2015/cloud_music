@@ -4,7 +4,11 @@ $(function () {
         data () {
             return {
                 cover: '',
-                songTextArr: []
+                songTextArr: [],
+                $refs: {
+                    el: $('.song-detail'),
+                    children:$('.song-detail').children()
+                }
             }
         },
         methods: {
@@ -43,6 +47,9 @@ $(function () {
         },
         mounted () {
             this.getData()
+            setTimeout(() => {
+                this.$refs.el.addClass('active')
+            }, 100);
         }
     }
     // 设置方法及属性

@@ -22,6 +22,10 @@ li,ol,dl {
 }
 a {
     text-decoration: none;
+    color: @c-333;
+    :active {
+        color: @c-333;
+    }
 }
 ul,ol {
     margin: 0;
@@ -122,6 +126,24 @@ input {
 img {
     height: 100%;
     vertical-align: middle;
+}
+.red {
+    color: @primary;
+}
+.bd-red {
+    border: 1px solid @primary;
+}
+.font12 {
+    font-size: 12px;
+}
+.font14 {
+    font-size: 14px;
+}
+.font16 {
+    font-size: 16px;
+}
+.font18 {
+    font-size: 18px;
 }
 /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/  
 ::-webkit-scrollbar  

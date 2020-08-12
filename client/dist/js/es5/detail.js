@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 $(function () {
     var contentTemp = commonObj.getTpl("/template/index.html");
@@ -6,7 +6,11 @@ $(function () {
         data: function data() {
             return {
                 cover: '',
-                songTextArr: []
+                songTextArr: [],
+                $refs: {
+                    el: $('.song-detail'),
+                    children: $('.song-detail').children()
+                }
             };
         },
 
@@ -45,7 +49,12 @@ $(function () {
             }
         },
         mounted: function mounted() {
+            var _this = this;
+
             this.getData();
+            setTimeout(function () {
+                _this.$refs.el.addClass('active');
+            }, 100);
         }
     };
     // 设置方法及属性

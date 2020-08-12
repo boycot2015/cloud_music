@@ -472,6 +472,9 @@ $(function () {
             query: $.$store.get('route').query
         }
     }
+    if (route.path.includes('/songs/detail')) {
+        $('.js-aside').hide()
+    }
     // 点击外出关闭弹框
     $(document).on('click', function (e) {
         if (!$('.js-play-list')[0]) {
