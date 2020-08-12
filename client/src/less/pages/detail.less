@@ -1,0 +1,45 @@
+.song-detail {
+    .top {
+        position: relative;
+        .mask {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            z-index: -1;
+            background-position: center;
+            background-size: cover;
+            background: inherit;
+            -webkit-filter: blur(150px);
+            -moz-filter: blur(150px);
+            -ms-filter: blur(150px);
+            -o-filter: blur(150px);
+            filter: blur(150px);
+            filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=1, MakeShadow=true);
+        }
+        .cover {
+            padding: 30px;
+            .img {
+                width: 200px;
+                height: 200px;
+                margin: 0 auto;
+                border-radius: 200px;
+                overflow: hidden;
+            }
+        }
+        .lyric-text-content {
+            max-height: 400px;
+            overflow: hidden;
+            overflow-y: auto;
+            .lyric-text {
+                &-item {
+                    font-size: 16px;
+                    line-height: 42px;
+                    color: @c-333;
+                    &.active {
+                        color: @white;
+                    }
+                }
+            }
+        }
+    }
+}

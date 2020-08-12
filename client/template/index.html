@@ -48,3 +48,37 @@
         </div>
     </script>
 </div>
+
+<!-- 歌曲详情及评论temp -->
+<div id="detailTemp">
+    <script type="text/html" id="detailTemp">
+        <!-- {{playData}} -->
+        <div class="cover flex-1">
+            <div class="img">
+                <img src="{{playData.picUrl}}" alt="">
+            </div>
+        </div>
+        <div class="lyric-text-content flex-1 align-s">
+            <div class="info">
+                <p class="name">{{playData.name}}</p>
+                <span class="level red bd-red font12">{{playData.level === 'exhigh' ?'标准音质':'高音质'}}</span>
+                <span class="type red bd-red font12">{{playData.type}}</span>
+                <span class="al-name"><i>专辑：</i>{{playData.alName}}</span>
+            </div>
+            <div class="lyric-text">
+                {{each lyricList item index}}
+                    <p class="lyric-text-item {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
+                {{/each}}
+            </div>
+        </div>
+        <div class="mask" style="background-image: url({{playData.picUrl}})">
+        </div>
+    </script>
+</div>
+<div id="commentTemp">
+    <script type="text/html" id="commentTemp">
+        {{each list item fIndex}}
+        <p class="lyric-item" data-time="{{item.time}}">{{item.text}}</p>
+        {{/each}}
+    </script>
+</div>

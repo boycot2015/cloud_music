@@ -4,7 +4,6 @@ function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in ob
 
 $(function () {
     var commonObj = window.parent.commonObj;
-    var audioPlayer = window.parent.audioPlayer;
     var songsData = {
         setLocal: function setLocal() {
             var songList = $.$store.get('songList');

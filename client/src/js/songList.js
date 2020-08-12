@@ -1,6 +1,5 @@
 $(function () {
     var commonObj = window.parent.commonObj;
-    var audioPlayer = window.parent.audioPlayer;
     const songsData = {
         setLocal () {
             let songList = $.$store.get('songList')

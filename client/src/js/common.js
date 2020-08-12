@@ -128,10 +128,10 @@ var commonObj = {
     },
     setCurrentData (_this, callback) {
         let id = _this && _this.attr('data-id') || '';
-        if (!_this && $.$store.get('playData')!==null) {
+        if (!_this && $.$store.get('playData') !== null) {
             id = $.$store.get('playData').id
         }
-        if (!commonObj.data.tracks.length && $.$store.get('playList')!==null) {
+        if (!commonObj.data.tracks.length && $.$store.get('playList') !== null) {
             commonObj.data.tracks = $.$store.get('playList').tracks
         }
 
@@ -140,6 +140,7 @@ var commonObj = {
             if (item.id == id) {
                 commonObj.playData.id = item.id;
                 commonObj.playData.name = item.name;
+                commonObj.playData.alName = item.al.name;
                 commonObj.playData.singer = '';
                 item.ar.forEach(function (singer, cindex) {
                     commonObj.playData.singer += singer.name + ((cindex < item.ar.length - 1) ? '/' : '');
@@ -154,11 +155,14 @@ var commonObj = {
                 audioPlayer.volume = commonObj.playData.volume;
             }
             commonObj.playData.src = data.url;
-            $.$store.set('playData', commonObj.playData, new Date().getTime() + 10000);
+            commonObj.playData.level = data.level;
+            commonObj.playData.type = data.type;
+            $.$store.set('playData', commonObj.playData);
             $.$store.set('playList', commonObj.data);
             commonObj.getData.getPlayList(commonObj.data);
             let playData = commonObj.playData
             $('.js-mini-music-box').find('img').attr('src', playData.picUrl);
+            $('.js-music-box .music-info').attr('data-id', data.id);
             $('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
             $('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
             $('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
@@ -223,9 +227,23 @@ var commonObj = {
                 data,
                 url: apiUrls.song.playUrl,
                 success (res) {
-                    // console.log(data, 'dasdada');
                     if (res.code == 200) {
-                        callback(res.data[0])
+                        if (res.data[0].code == 200) {
+                            callback(res.data[0])
+                        } else {
+                            dialog({
+                                title: '温馨提示',
+                                okValue: '确定',
+                                ok: function () {
+                                    this.close()
+                                    // callback(res.data[0])
+                                },
+                                content: '该歌曲无法播放！',
+                                onshow: function () {
+                                    // this.content('dialog ready');
+                                }
+                            }).showModal()
+                        }
                     }
                 }
             })

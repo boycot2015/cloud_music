@@ -126,7 +126,7 @@ $(function () {
     //     audioPlayer.muted = false;
     // }, false);
 
-    // 渲染头部==================================
+    // 头部==================================
     $('.js-music-min').click(function () {
         // console.log(1231231);
         $('.js-music-box').hide().siblings('.js-mini-music-box').show();
@@ -147,10 +147,7 @@ $(function () {
         $(this).addClass('active').siblings().removeClass('active').parent().parent().siblings().find('.js-list-item').removeClass('active');
     });
 
-    // 渲染内容===================================
-
-
-    // 渲染底部===================================
+    // 底部===================================
 
     // 1. 时间进度条js
     $('.progress .progress-bar').click(function (e) {
@@ -245,7 +242,17 @@ $(function () {
         }
         layOutConfig.playNext();
     });
-
+    // 6.播放暂停
+    $('.js-play').click(function () {
+        if (!$('.js-play').hasClass('play')) {
+            audioPlayer.play();
+            $('.music-list-item.play').removeClass('play').addClass('pause');
+        } else {
+            $('.music-list-item.pause').removeClass('pause').addClass('play');
+            audioPlayer.pause();
+        }
+        $('.js-play').toggleClass('play');
+    });
     /**
      * mini-box
      */
@@ -272,17 +279,6 @@ $(function () {
         } else {
             $('.js-mini-music-list').slideUp(200);
         }
-    });
-    // 播放暂停
-    $('.js-play').click(function () {
-        if (!$('.js-play').hasClass('play')) {
-            audioPlayer.play();
-            $('.music-list-item.play').removeClass('play').addClass('pause');
-        } else {
-            $('.music-list-item.pause').removeClass('pause').addClass('play');
-            audioPlayer.pause();
-        }
-        $('.js-play').toggleClass('play');
     });
 
     // 点击列表播放歌曲
@@ -311,12 +307,18 @@ $(function () {
     $('.js-min-music-volume').click(function () {
         $(this).parent().find('.volume').toggle();
     });
-
     $('.js-love-icon').click(function () {
         if ($('.js-love-icon').hasClass('icon-music-love')) {
             $('.js-love-icon').addClass('icon-music-love-full').removeClass('icon-music-love');
         } else {
             $('.js-love-icon').addClass('icon-music-love').removeClass('icon-music-love-full');
         }
+    });
+
+    // 查看歌曲详情评论
+    $('.js-music-box .music-info').click(function () {
+        $.$router.push('/songs/detail', {
+            id: $(this).attr('data-id')
+        });
     });
 });
