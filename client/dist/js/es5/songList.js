@@ -25,7 +25,7 @@ $(function () {
             $.ajax({
                 type: "get",
                 dataType: "json",
-                data: { id: $.$route.query.id },
+                data: { id: $.$route.query.id || $.$store.get('route').query.id },
                 url: apiUrls.song.playlist,
                 success: function success(data) {
                     if (data.code == 200) {

@@ -1,11 +1,11 @@
 @font-face {
     font-family: 'font-music';  /* project id 1984636 */
-    src: url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.eot');
-    src: url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.eot?#iefix') format('embedded-opentype'),
-    url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.woff2') format('woff2'),
-    url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.woff') format('woff'),
-    url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.ttf') format('truetype'),
-    url('//at.alicdn.com/t/font_1984636_3gwvs2sm2zf.svg#font-music') format('svg');
+    src: url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.eot');
+    src: url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.eot?#iefix') format('embedded-opentype'),
+    url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.woff2') format('woff2'),
+    url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.woff') format('woff'),
+    url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.ttf') format('truetype'),
+    url('//at.alicdn.com/t/font_1984636_ii4mrbd3q1.svg#font-music') format('svg');
   }
 .icon-music {
     font-family: 'font-music';
@@ -400,5 +400,33 @@
         color: @c-666;
         vertical-align: bottom;
         content: '\e725';
+    }
+    &-checked::after {
+        font-family: 'font-music';
+        font-size: 18px;
+        color: @c-666;
+        vertical-align: bottom;
+        content: '\e628';
+    }
+    &-minify::after {
+        font-family: 'font-music';
+        font-size: 24px;
+        color: @c-666;
+        vertical-align: bottom;
+        content: '\e66d';
+    }
+    &-phone::after {
+        font-family: 'font-music';
+        font-size: 18px;
+        color: @c-666;
+        vertical-align: bottom;
+        content: '\e62d';
+    }
+    &-eyes::after {
+        font-family: 'font-music';
+        font-size: 18px;
+        color: @c-666;
+        vertical-align: bottom;
+        content: '\e631';
     }
 }

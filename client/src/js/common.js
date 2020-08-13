@@ -1,4 +1,5 @@
 // 定义公共方法
+window.myiframe = $('#iframe-pages')
 var commonObj = {
     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
     timer: null,
@@ -27,7 +28,7 @@ var commonObj = {
         ended: false,
         muted: false,
         currentTime: 0,
-        duration: 0,
+        duration: 0
     },
     data: {
         tracks: [],
@@ -175,7 +176,8 @@ var commonObj = {
             callback && callback()
             if (!_this) return
             _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
-            $(window.parent.document).find('.js-play').addClass('play');
+            iframePages.window.detailObj && iframePages.window.detailObj.mounted()
+            $('.js-play').addClass('play');
             audioPlayer.muted = false;
             audioPlayer.src = data.url;
             audioPlayer.volume = commonObj.playData.volume;
@@ -190,6 +192,7 @@ var commonObj = {
             // console.log($.$store.get('playList'), window.localStorage.getItem('playData'));
             $.$store.get('playData') !== null && commonObj.setCurrentData()
             this.getPlayList(commonObj.data);
+            commonObj.onload()
         },
         getMenu: function () {
             $.ajax({
@@ -205,7 +208,6 @@ var commonObj = {
                     var renderHtml = template.render(asideTemp, { list: data });
                     // //将html片段渲染到页面
                     $('.js-aside-template').html(renderHtml)
-                    commonObj.onload()
                 }
             })
         },
@@ -231,18 +233,19 @@ var commonObj = {
                         if (res.data[0].code == 200) {
                             callback(res.data[0])
                         } else {
-                            dialog({
-                                title: '温馨提示',
-                                okValue: '确定',
-                                ok: function () {
-                                    this.close()
-                                    // callback(res.data[0])
-                                },
-                                content: '该歌曲无法播放！',
-                                onshow: function () {
-                                    // this.content('dialog ready');
-                                }
-                            }).showModal()
+                            let d = dialog({
+                                title: '',
+                                cancel: false,
+                                okValue: '',
+                                content: '该歌曲无法播放！'
+                            }).show()
+                            let _this = $('.js-footer-music-list').find('.music-list-item.play').next().next()
+                            setTimeout(function () {
+                                d.close().remove();
+                                // 播放失败就播放下一首
+                                if (data.id == _this.attr('data-id')) return
+                                commonObj.setCurrentData(_this)
+                            }, 1000);
                         }
                     }
                 }
@@ -250,18 +253,46 @@ var commonObj = {
         }
     },
     onload () {
-        var myiframe = $('#iframe-pages')
+        let route = $.$store.get('route');
         let fullPath = $.$store.get('url');
-        if (myiframe.attr('src') !== fullPath && fullPath !== null) {
-            myiframe.attr('src', fullPath)
+        if (route !== null) {
+            $.$route = {
+                path: $.$store.get('route').path,
+                query: $.$store.get('route').query
+            }
+        }
+        // 点击外出关闭弹框
+        $(document).on('click', function (e) {
+            if (!$('.js-play-list')[0]) {
+                $(window.parent.document).find('.js-play-list').hide()
+            } else if (!$('.js-play-list')[0].contains(e.target) && !e.target.contains($('.js-play-list-btn')[0])) {
+                $('.js-play-list').hide()
+                $(window.parent.document).find('.js-play-list').hide()
+            }
+            if (myiframe.attr('src') && myiframe.attr('src').includes('/songs/detail')) {
+                $('.js-aside').addClass('active')
+            } else {
+                $('.js-aside').removeClass('active')
+            }
+        })
+        // 点击logo返回首页
+        $('.js-logo').click(function () {
+            $(myiframeDom).find('.song-detail').removeClass('active').addClass('leave')
+            $.$router.push('/index')
+        })
+        if (myiframe.attr('src')) {
+            if (myiframe.attr('src') !== fullPath && fullPath !== null) {
+                myiframe.attr('src', fullPath)
+            }
+            if (fullPath.includes('/songs/detail')) {
+                $('.js-aside').addClass('active')
+            }
         }
         $('.js-aside-template .js-list-item').each(function (i, e) {
             let currPath = '/src/pages';
             currPath += $(this).attr('data-path') + '.html'
             if (currPath == fullPath) {
-                console.log(currPath, fullPath);
                 $(this).addClass('active').siblings().removeClass('active').parent().parent().siblings().find('.js-list-item').removeClass('active')
-
             }
         })
     }
@@ -270,7 +301,6 @@ var commonObj = {
 //获取模板规则<script>标签;
 window.layoutTemp = commonObj.getTpl("/template/layout.html");
 window.contentTemp = commonObj.getTpl("/template/index.html");
-
 //获取audio标签;
 window.audioPlayer = $('#play-audio')[0];
 // 拓展jq类方法，集成全局方法
@@ -291,7 +321,8 @@ $.extend({
     // 路由导航
     $router: {
         push (path, params) {
-            var myiframe = $('#iframe-pages')
+            var myiframe = $('#iframe-pages').length ? $('#iframe-pages') :
+                $(window.parent.document).find('#iframe-pages')
             var data = ''
             if (params) {
                 data = '?'
@@ -301,14 +332,15 @@ $.extend({
                 data = data.slice(0, data.length - 1)
             }
             let url = '/src/pages' + path + '.html' + data
-            // console.log(myiframe.attr('src'), url)
             $.$store.set('route', {
                 path: path,
                 query: params
             })
+            $.$store.set('historyUrl', myiframe.attr('src'))
             $.$store.set('url', url)
             myiframe.attr('src', url)
-            $(window.parent.document).find('#iframe-pages').attr('src', url)
+            myiframe.find('#iframe-pages').attr('src', url)
+            // console.log(myiframe.attr('src'), url)
         },
         replace () {
             var context = $('#iframe-pages')[0].contentWindow
@@ -369,6 +401,52 @@ $.extend({
         },
         action: {},
         mutations: {}
+    },
+    // 获取元素的旋转角度
+    getAngle (obj) {
+        var st = window.getComputedStyle(obj, null);
+        var tr = st.getPropertyValue("-webkit-transform") ||
+            st.getPropertyValue("-moz-transform") ||
+            st.getPropertyValue("-ms-transform") ||
+            st.getPropertyValue("-o-transform") ||
+            st.getPropertyValue("transform") ||
+            "FAIL";
+        // With rotate(30deg)...
+        // matrix(0.866025, 0.5, -0.5, 0.866025, 0px, 0px)
+        console.log('Matrix: ' + tr);
+        // rotation matrix - http://en.wikipedia.org/wiki/Rotation_matrix
+        var values = tr.split('(')[1].split(')')[0].split(',');
+        var a = values[0];
+        var b = values[1];
+        var c = values[2];
+        var d = values[3];
+        var scale = Math.sqrt(a * a + b * b);
+        console.log('Scale: ' + scale);
+        // arc sin, convert from radians to degrees, round
+        var sin = b / scale;
+        // next line works for 30deg but not 130deg (returns 50);
+        // var angle = Math.round(Math.asin(sin) * (180/Math.PI));
+        var angle = Math.round(Math.atan2(b, a) * (180 / Math.PI));
+        console.log('Rotate: ' + angle + 'deg');
+        return angle
+    },
+    getUrlandParam (url, name) {
+        //构造一个含有目标参数的正则表达式对象
+        let obj = {}
+        url = url == null ? '/index.html' : url
+        url = url.replace('/src/pages', '')
+        obj.path = url.slice(0, url.indexOf('.html'))
+        url = url.slice(url.indexOf('.html'))
+        if (url.indexOf('?')) {
+            url = url.slice(url.indexOf('?'))
+        }
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = url.substr(1).match(reg); //匹配目标参数
+        if (r != null) {
+            // return unescape(r[2]);
+            obj[name] = unescape(r[2])
+        }
+        return obj
     }
 });
 
@@ -465,24 +543,6 @@ $.fn.extend({
     }
 })
 $(function () {
-    let route = $.$store.get('route')
-    if (route !== null) {
-        $.$route = {
-            path: $.$store.get('route').path,
-            query: $.$store.get('route').query
-        }
-    }
-    if (route.path.includes('/songs/detail')) {
-        $('.js-aside').hide()
-    }
-    // 点击外出关闭弹框
-    $(document).on('click', function (e) {
-        if (!$('.js-play-list')[0]) {
-            $(window.parent.document).find('.js-play-list').hide()
-        } else if (!$('.js-play-list')[0].contains(e.target) && !e.target.contains($('.js-play-list-btn')[0])) {
-            $('.js-play-list').hide()
-            $(window.parent.document).find('.js-play-list').hide()
-        }
-    })
     commonObj.getData.init()
+    window.frames['iframe-pages'] && (window.myiframeDom = window.frames['iframe-pages'].contentWindow.document)
 })

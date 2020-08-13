@@ -245,10 +245,10 @@ $(function () {
         if (!$('.js-play').hasClass('play')) {
             audioPlayer.play()
             $('.music-list-item.play').removeClass('play').addClass('pause')
-            $(myiframeDom).find('.song-detail .cover').addClass('active').parent().find('.handler').addClass('active')
+            $(myiframeDom).find('.song-detail .cover').removeClass('pause').addClass('active play').parent().find('.handler').addClass('active')
         } else {
             $('.music-list-item.pause').removeClass('pause').addClass('play')
-            $(myiframeDom).find('.song-detail .cover').removeClass('active').parent().find('.handler').removeClass('active')
+            $(myiframeDom).find('.song-detail .cover').addClass('pause').parent().find('.handler').removeClass('active')
             audioPlayer.pause()
         }
         $('.js-play').toggleClass('play')
@@ -317,8 +317,7 @@ $(function () {
 
     // 查看歌曲详情评论
     $('.js-music-box .music-info').click(function () {
-        $(window.parent.document).find('.song-detail').addClass('active')
-        $('.js-aside').fadeOut()
+        $(window.parent.document).find('.song-detail').removeClass('active').addClass('active')
         $.$router.push('/songs/detail', {
             id: $(this).attr('data-id')
         })

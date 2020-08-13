@@ -52,7 +52,6 @@
 <!-- 歌曲详情及评论temp -->
 <div id="detailTemp">
     <script type="text/html" id="detailTemp">
-        <!-- {{playData}} -->
         <div class="handler">
              <div class="point"></div>
              <div class="line-1"></div>
@@ -60,6 +59,7 @@
              <div class="line-3"></div>
              <div class="header-cap"></div>
         </div>
+        <div class="mask" style="background-image: url({{playData.picUrl}})"></div>
         <div class="cover">
             <div class="img">
                 <img src="{{playData.picUrl}}" alt="">
@@ -68,25 +68,30 @@
         <div class="lyric-text-content flex-1">
             <div class="info">
                 <div class="song-info flexbox-h">
-                    <p class="name">{{playData.name}}</p>
-                    <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'标准音质':'极高音质'}}</span>
-                    <span class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
+                    <p class="name">
+                        {{playData.name}}
+                        <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'标准音质':'极高音质'}}</span>
+                        <span class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
+                    </p>
                 </div>
                 <div class="single-info flexbox-h">
-                    <span class="al-name flex-1">专辑：<i>{{playData.alName}}</i></span>
-                    <span class="al-name flex-1">歌手：<i>{{playData.singer}}</i></span>
-                    <span class="al-name flex-1">来源：<i>{{playData.alName}}</i></span>
+                    <span class="al-name line-one flex-1" title="{{playData.alName}}">专辑：<i>{{playData.alName}}</i></span>
+                    <span class="al-name line-one flex-1" title="{{playData.singer}}">歌手：<i>{{playData.singer}}</i></span>
+                    <span class="al-name line-one flex-1" title="{{playData.alName}}">来源：<i>{{playData.alName}}</i></span>
                 </div>
+                <i class="icon-music-minify icon-minify"></i>
             </div>
             <div class="wrap">
                 <div class="lyric-text">
-                    {{each lyricList item index}}
-                        <p class="lyric-text-item {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
-                    {{/each}}
+                    {{if lyricList && lyricList.length}}
+                        {{each lyricList item index}}
+                            <p class="lyric-text-item {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
+                        {{/each}}
+                    {{else}}
+                        <p class="lyric-text-item " data-time="">暂无歌词~</p>
+                    {{/if}}
                 </div>
             </div>
-        </div>
-        <div class="mask" style="background-image: url({{playData.picUrl}})">
         </div>
     </script>
 </div>

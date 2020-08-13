@@ -1,25 +1,36 @@
 .song-detail {
     transition: all 0.5s;
-    transform: scale(0.6);
+    opacity: 0;
+    transform: scale(0);
+    transform-origin: left 200%;
     &.active {
         transform: scale(1);
+        opacity: 1;
+    }
+    &.leave {
+        transform: scale(0);
+        opacity: 0;
     }
     .top {
         position: relative;
         .mask {
             position: absolute;
             height: 100%;
-            width: 100%;
+            top: 10%;
+            width: 90%;
             z-index: -1;
             background-position: center;
             background-size: cover;
-            background: inherit;
-            -webkit-filter: blur(300px);
-            -moz-filter: blur(300px);
-            -ms-filter: blur(300px);
-            -o-filter: blur(300px);
-            filter: blur(300px);
-            filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius=1, MakeShadow=true);
+            // background: inherit;
+            filter: blur(30px);
+            &::after {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                content: '';
+                // background-color: rgba(255,255,255,0.5);
+                background-image: linear-gradient(306deg, rgba(0,0,0,0.3), rgba(255,255,255,0.6));
+            }
         }
         .handler {
             position: absolute;
@@ -151,9 +162,8 @@
         .cover {
             position: relative;
             align-self: flex-start;
-            margin-top: 110px;
-            width: 540px;
-            // animation: rotate-animate  linear 30s infinite;
+            height: 400px;
+            width: 510px;
             &::after {
                 position: absolute;
                 content: '';
@@ -169,17 +179,26 @@
                 background-image: repeating-linear-gradient(60deg, @c-000, @c-666, @c-000);
             }
             .img {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -100px;
+                margin-left: -100px;
                 width: 200px;
                 height: 200px;
-                margin: 0 auto;
                 border-radius: 200px;
                 box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.7);
                 overflow: hidden;
-                position: relative;
                 z-index: 10;
             }
             &.active {
-                animation: rotate-animate  linear 30s infinite;
+                animation: rotate-animate linear 30s infinite;
+            }
+            &.play {
+                animation-play-state: running;
+            }
+            &.pause {
+                animation-play-state: paused;
             }
             @keyframes rotate-animate {
                 0% {
@@ -195,8 +214,9 @@
         }
         .lyric-text-content {
             padding-top: 30px;
-            margin-left: 20px;
-            padding-right: 40px;
+            margin:0 40px 0 20px;
+            align-self: flex-start;
+            position: relative;
             .wrap {
                 margin-top: 20px;
                 max-height: 400px;
@@ -208,23 +228,34 @@
                     margin-bottom: 10px;
                    .name {
                        font-size: 22px;
-                       line-height: 32px;
+                       line-height: 28px;
                        color: @c-333;
-                       margin-right: 20px;
+                       text-align: justify;
+                       margin-right: 90px;
                        font-family: 微软雅黑;
                    }
                    span {
                        margin: 0 2px;
                        padding: 0px 5px;
                        border-radius: 2px;
+                       white-space: nowrap;
                    }
-               }
-               .single-info {
-                   color: @c-666;
-                   i {
-                       color: rgb(20, 101, 223);
-                   }
-               }
+                }
+                .single-info {
+                    color: @c-666;
+                    i {
+                        color: rgb(20, 101, 223);
+                    }
+                }
+                .icon-minify {
+                        position: absolute;
+                        top: 30px;
+                        right: 0;
+                        border: 1px solid @c-ccc;
+                        border-radius: 3px;
+                        padding: 0 5px;
+                        cursor: pointer;
+                }
             }
             .lyric-text {
                 &-item {

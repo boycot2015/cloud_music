@@ -244,9 +244,14 @@
         .aside {
             width: 200px;
             height: 100%;
-            overflow: hidden;
             box-sizing: border-box;
             overflow: hidden;
+            opacity:1;
+            transition: opacity 0.3s;
+            &.active {
+                width: 0;
+                opacity:0;
+            }
             &-item {
                 // padding: 10px 20px 0 10px;
                 margin-top: 10px;

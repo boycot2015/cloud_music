@@ -1,5 +1,6 @@
 $(function () {
     var contentTemp = commonObj.getTpl("/template/index.html");
+    var parent = window.parent.document
     window.detailObj = {
         data () {
             return {
@@ -7,14 +8,14 @@ $(function () {
                 songTextArr: [],
                 $refs: {
                     el: $('.song-detail'),
-                    children:$('.song-detail').children()
+                    children: $('.song-detail').children()
                 }
             }
         },
         methods: {
             getData () {
                 this.getlyric()
-                console.log($.$route.query);
+                // console.log($.$route.query);
             },
             getlyric () {
                 $.ajax({
@@ -23,9 +24,9 @@ $(function () {
                     data: $.$route.query,
                     url: apiUrls.song.lyric,
                     success: (data) => {
-                        if (data.code == 200) {
+                        let newArr = []
+                        if (data.code == 200 && data.lrc) {
                             let tempArr = data.lrc.lyric.split('\n')
-                            let newArr = []
                             tempArr.map((el, i) => {
                                 let obj = {}
                                 if (i > 0 && el) {
@@ -38,9 +39,9 @@ $(function () {
                                     // newArr.push(obj)
                                 }
                             })
-                            console.log(newArr, $.$store.get('playData'));
-                            $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') })
+                            // console.log(newArr, $.$store.get('playData'));
                         }
+                        $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') })
                     }
                 })
             }
@@ -48,8 +49,18 @@ $(function () {
         mounted () {
             this.getData()
             setTimeout(() => {
-                this.$refs.el.addClass('active')
-            }, 100);
+                $('.song-detail, .song-detail .cover').addClass('active')
+                if ($(parent).find('.js-play').hasClass('play')) {
+                    $('.song-detail .cover').addClass('play').siblings('.handler').addClass('active')
+                } else {
+                    $('.song-detail .cover').removeClass('play').addClass('pause').siblings('.handler').removeClass('active')
+                }
+            }, 120);
+            $('.song-detail').on('click', '.icon-minify', function () {
+                let params = $.getUrlandParam($.$store.get('historyUrl'), 'id')
+                $(parent).find('.js-aside').removeClass('active')
+                $.$router.push(params.path, params)
+            })
         }
     }
     // 设置方法及属性

@@ -21,7 +21,7 @@ $(function () {
             $.ajax({
                 type: "get",
                 dataType: "json",
-                data: { id: $.$route.query.id },
+                data: { id: $.$route.query.id || $.$store.get('route').query.id },
                 url: apiUrls.song.playlist,
                 success (data) {
                     if (data.code == 200) {
@@ -77,7 +77,7 @@ $(function () {
             $('.song-detail-list').on('dblclick', '.music-list-item', function () {
                 if ($(this).attr('data-id') == commonObj.playData.id && !commonObj.playData.ended) return
                 var _this = $(this);
-                commonObj.setCurrentData($(this), () =>{
+                commonObj.setCurrentData($(this), () => {
                     _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
                     let listDom = $(window.parent.document).find('.js-mini-music-list, .js-footer-music-list').find('.music-list-item');
                     listDom.each(function (i, e) {
