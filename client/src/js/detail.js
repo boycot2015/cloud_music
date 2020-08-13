@@ -15,6 +15,9 @@ $(function () {
         methods: {
             getData () {
                 this.getlyric()
+                this.getComment()
+                this.getSamePlayList()
+                this.sameMusicList()
                 // console.log($.$route.query);
             },
             getlyric () {
@@ -44,6 +47,75 @@ $(function () {
                         $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') })
                     }
                 })
+            },
+            filterTime (timeStr) {
+                let time = new Date(timeStr)
+                let month = time.getMonth() + 1
+                let day = time.getDate()
+                let hours = time.getHours()
+                hours= hours < 10 ? '0' + hours : hours
+                let min = time.getMinutes()
+                min= min < 10 ? '0' + min : min
+                return month + '月' + day + '日 ' + hours + ':' + min
+            },
+            getComment () {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        limit: 20,
+                        // offset: 1,
+                        ...$.$route.query
+                    },
+                    url: apiUrls.comment.music,
+                    success: (data) => {
+                        if (data.code == 200) {
+                            data.hotComments.map(el => {
+                                el.time = detailObj.filterTime(el.time)
+                            })
+                            data.comments.map(el => {
+                                el.time = detailObj.filterTime(el.time)
+                            })
+                            // console.log(data);
+                            $('.song-detail .comment').render($(contentTemp).find('#commentTemp'), { data })
+                        }
+                    }
+                })
+            },
+            getSamePlayList () {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        ...$.$route.query
+                    },
+                    url: apiUrls.simi.playlist,
+                    success: (data) => {
+                        if (data.code == 200) {
+                            data.playlists.map(el => {
+                                el.playCount = $.filterPlayCount(el.playCount)
+                            })
+                            console.log(data, 'samePlayListTemp');
+                            $('.song-detail .same-play-list').render($(contentTemp).find('#samePlayListTemp'), { data })
+                        }
+                    }
+                })
+            },
+            sameMusicList () {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: {
+                        ...$.$route.query
+                    },
+                    url: apiUrls.simi.song,
+                    success: (data) => {
+                        if (data.code == 200) {
+                            console.log(data, 'sameMusicListTemp');
+                            $('.song-detail .same-music-list').render($(contentTemp).find('#sameMusicListTemp'), { data })
+                        }
+                    }
+                })
             }
         },
         mounted () {
@@ -61,10 +133,20 @@ $(function () {
                 $(parent).find('.js-aside').removeClass('active')
                 $.$router.push(params.path, params)
             })
+            $('.song-detail').on('click', '.js-list-detail', function () {
+                let id = $(this).attr('data-id')
+                let type = $(this).attr('data-type')
+                let ctype = $(this).attr('data-ctype')
+                $(parent).find('.js-aside').removeClass('active')
+                $.$router.push('/songs/list', { id, type, ctype })
+            })
         }
     }
     // 设置方法及属性
     Object.assign(detailObj, detailObj.data())
     Object.assign(detailObj, detailObj.methods)
     detailObj.mounted()
+    $.extend({
+        detailObj
+    })
 })

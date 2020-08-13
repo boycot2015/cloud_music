@@ -97,8 +97,108 @@
 </div>
 <div id="commentTemp">
     <script type="text/html" id="commentTemp">
-        {{each list item fIndex}}
-        <p class="lyric-item" data-time="{{item.time}}">{{item.text}}</p>
+        {{if data.hotComments && data.hotComments.length}}
+            <h2 class="title">听友评论<span>(已有{{data.total}}条评论)</span></h2>
+            <h3 class="title">精彩评论({{data.hotComments.length}})</h3>
+            {{each data.hotComments hotComment index}}
+                <div class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img src="{{hotComment.user.avatarUrl}}" alt="">
+                    </div>
+                    <div class="text fl">
+                        <p class="name">
+                            {{hotComment.user.nickname}}：
+                            <span class="desc">{{hotComment.content}}</span>
+                        </p>
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{hotComment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    {{if hotComment.likedCount}}
+                                        <i class="num">({{hotComment.likedCount}})</i>
+                                    {{/if}}
+                                </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+        {{if data.comments && data.comments.length}}
+            <h3 class="title">最新评论({{data.total - data.hotComments.length}})</h3>
+            {{each data.comments comment index}}
+                <div class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img src="{{comment.user.avatarUrl}}" alt="">
+                    </div>
+                    <div class="text fl">
+                        <p class="name">
+                            {{comment.user.nickname}}
+                            <span class="desc">{{comment.content}}</span>
+                        </p>
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{comment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    {{if comment.likedCount}}
+                                        <i class="num">({{comment.likedCount}})</i>
+                                    {{/if}}
+                                </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+    </script>
+</div>
+<div id="samePlayListTemp">
+    <script type="text/html" id="samePlayListTemp">
+        {{each data.playlists item findex}}
+        <div class="grid-list-item ftype-0 " data-id="{{item.id}}"
+        data-type="{{item.type}}">
+            <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}"
+            data-type="{{item.type}}">
+                <div class="img fl">
+                    <span class="icon icon-music-pause"></span>
+                    <img src="{{item.coverImgUrl}}" alt="">
+                </div>
+                <div class="text fl" title="{{item.rcmdtext || item.name}}" >
+                    <p class="name line-one">{{item.name}}</p>
+                    <span class="play-count singer">播放：{{item.playCount}}</span>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </script>
+</div>
+<div id="sameMusicListTemp">
+    <script type="text/html" id="sameMusicListTemp">
+        {{each data.songs item findex}}
+        <div class="grid-list-item ftype-0" data-id="{{item.id}}"
+        data-type="{{item.type}}">
+            <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}"
+            data-type="{{item.type}}">
+                <div class="img fl">
+                    <span class="icon icon-music-pause"></span>
+                    <img src="{{item.album.picUrl}}" alt="">
+                </div>
+                <div class="text fl" title="{{item.rcmdtext || item.name}}" >
+                    <p class="name line-one">{{item.name}}</p>
+                    <span class="singer">
+                        {{each item.album.artists singer index}}
+                            {{singer.name}} {{index < item.album.artists.length - 1 ? '/': ''}}
+                        {{/each}}
+                    </span>
+                </div>
+            </div>
+        </div>
         {{/each}}
     </script>
 </div>

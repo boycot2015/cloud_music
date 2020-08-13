@@ -245,6 +245,7 @@ $(function () {
     // 6.播放暂停
     $('.js-play').click(function () {
         var myiframeDom = window.frames['iframe-pages'].contentWindow.document;
+        if (!commonObj.playData.src) return;
         if (!$('.js-play').hasClass('play')) {
             audioPlayer.play();
             $('.music-list-item.play').removeClass('play').addClass('pause');
@@ -324,5 +325,9 @@ $(function () {
         $.$router.push('/songs/detail', {
             id: $(this).attr('data-id')
         });
+    });
+
+    $.extend({
+        layOutConfig: layOutConfig
     });
 });

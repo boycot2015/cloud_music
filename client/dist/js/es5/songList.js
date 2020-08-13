@@ -1,10 +1,12 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
 
 $(function () {
     var commonObj = window.parent.commonObj;
-    var songsData = {
+    var songsObj = {
         setLocal: function setLocal() {
             var songList = $.$store.get('songList');
             var coverDetail = $.$store.get('coverDetail');
@@ -34,7 +36,7 @@ $(function () {
                             ids.push(item.id);
                         });
                         ids = ids.join(',');
-                        songsData.getSongDetail({ ids: ids }, function (res) {
+                        songsObj.getSongDetail({ ids: ids }, function (res) {
                             data.playlist.tracks = res.songs;
                             data.privileges = res.privileges;
                             data.playlist.tracks.map(function (item) {
@@ -68,7 +70,7 @@ $(function () {
             $.ajax({
                 type: "get",
                 dataType: "json",
-                data: data,
+                data: _extends({}, $.$store.get('route').query, data),
                 url: apiUrls.song.detail,
                 success: function success(data) {
                     var res = data.result;
@@ -103,5 +105,8 @@ $(function () {
             });
         }
     };
-    songsData.init();
+    songsObj.init();
+    $.extend({
+        songsObj: songsObj
+    });
 });

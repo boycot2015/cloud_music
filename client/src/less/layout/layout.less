@@ -40,7 +40,7 @@
             }
             .point {
                 position: absolute;
-                left: 18%;
+                left: 0%;
                 top: -5px;
                 height: 12px;
                 width: 12px;
@@ -80,6 +80,7 @@
                 width: 20%;
             }
             .point {
+                left: 18%;
                 display: none;
             }
             // &:hover {
@@ -247,6 +248,7 @@
             box-sizing: border-box;
             overflow: hidden;
             opacity:1;
+            border-right: 1px solid @c-ddd;
             transition: opacity 0.3s;
             &.active {
                 width: 0;
@@ -326,13 +328,11 @@
                 overflow-y: auto;
                 height: calc(100% - 56px);
                 background-color: #F5F5F7;
-                border-right: 1px solid @c-ddd;
             }
             .music-info {
                 padding: 8px;
                 box-sizing: border-box;
                 border-top: 1px solid @c-ddd;
-                border-right: 1px solid @c-ddd;
                 background-color: #F5F5F7;
                 position: relative;
                 .mask {

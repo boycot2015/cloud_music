@@ -1,5 +1,7 @@
 'use strict';
 
+var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 $(function () {
     var contentTemp = commonObj.getTpl("/template/index.html");
     var parent = window.parent.document;
@@ -18,6 +20,9 @@ $(function () {
         methods: {
             getData: function getData() {
                 this.getlyric();
+                this.getComment();
+                this.getSamePlayList();
+                this.sameMusicList();
                 // console.log($.$route.query);
             },
             getlyric: function getlyric() {
@@ -47,6 +52,69 @@ $(function () {
                         $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') });
                     }
                 });
+            },
+            filterTime: function filterTime(timeStr) {
+                var time = new Date(timeStr);
+                var month = time.getMonth() + 1;
+                var day = time.getDate();
+                var hours = time.getHours();
+                hours = hours < 10 ? '0' + hours : hours;
+                var min = time.getMinutes();
+                min = min < 10 ? '0' + min : min;
+                return month + '月' + day + '日 ' + hours + ':' + min;
+            },
+            getComment: function getComment() {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: _extends({
+                        limit: 20
+                    }, $.$route.query),
+                    url: apiUrls.comment.music,
+                    success: function success(data) {
+                        if (data.code == 200) {
+                            data.hotComments.map(function (el) {
+                                el.time = detailObj.filterTime(el.time);
+                            });
+                            data.comments.map(function (el) {
+                                el.time = detailObj.filterTime(el.time);
+                            });
+                            // console.log(data);
+                            $('.song-detail .comment').render($(contentTemp).find('#commentTemp'), { data: data });
+                        }
+                    }
+                });
+            },
+            getSamePlayList: function getSamePlayList() {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: _extends({}, $.$route.query),
+                    url: apiUrls.simi.playlist,
+                    success: function success(data) {
+                        if (data.code == 200) {
+                            data.playlists.map(function (el) {
+                                el.playCount = $.filterPlayCount(el.playCount);
+                            });
+                            console.log(data, 'samePlayListTemp');
+                            $('.song-detail .same-play-list').render($(contentTemp).find('#samePlayListTemp'), { data: data });
+                        }
+                    }
+                });
+            },
+            sameMusicList: function sameMusicList() {
+                $.ajax({
+                    type: "get",
+                    dataType: "json",
+                    data: _extends({}, $.$route.query),
+                    url: apiUrls.simi.song,
+                    success: function success(data) {
+                        if (data.code == 200) {
+                            console.log(data, 'sameMusicListTemp');
+                            $('.song-detail .same-music-list').render($(contentTemp).find('#sameMusicListTemp'), { data: data });
+                        }
+                    }
+                });
             }
         },
         mounted: function mounted() {
@@ -64,10 +132,20 @@ $(function () {
                 $(parent).find('.js-aside').removeClass('active');
                 $.$router.push(params.path, params);
             });
+            $('.song-detail').on('click', '.js-list-detail', function () {
+                var id = $(this).attr('data-id');
+                var type = $(this).attr('data-type');
+                var ctype = $(this).attr('data-ctype');
+                $(parent).find('.js-aside').removeClass('active');
+                $.$router.push('/songs/list', { id: id, type: type, ctype: ctype });
+            });
         }
     };
     // 设置方法及属性
     Object.assign(detailObj, detailObj.data());
     Object.assign(detailObj, detailObj.methods);
     detailObj.mounted();
+    $.extend({
+        detailObj: detailObj
+    });
 });

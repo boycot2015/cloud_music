@@ -398,4 +398,7 @@ $(function () {
         singleListData.init()
     }
     initData()
+    $.extend({
+        homeData
+    })
 })

@@ -20,5 +20,16 @@ window.apiUrls = {
         topPlaylist: baseUrl + '/top/playlist', // 歌单 ( 网友精选碟 )
         playUrl: baseUrl + '/song/url', // 获取音乐 url
         lyric: baseUrl + '/lyric', // 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
+    },
+    comment: {
+        music: baseUrl + '/comment/music', // 歌曲评论
+        playList: baseUrl + '/comment/playList', // 歌曲评论
+    },
+    simi: {
+        playlist: baseUrl + '/simi/playlist', // 获取相似歌单
+        artist: baseUrl + '/simi/artist', // 获取相似歌手
+        mv: baseUrl + '/simi/artist', // 获取相似mv
+        song: baseUrl + '/simi/song', // 获取相似歌曲
+        user: baseUrl + '/simi/user', // 获取最近 5 个听了这首歌的用户
     }
 }

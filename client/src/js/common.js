@@ -19,7 +19,7 @@ var commonObj = {
     },
     maxVolumeWidth: 82,
     playData: {
-        src: '/src/source/前世今生-文武贝钢琴版.mp3',
+        src: '',
         name: '至尊宝',
         singer: '徐良/杨威',
         coverImg: '/dist/images/avatar.jpg',
@@ -178,6 +178,7 @@ var commonObj = {
             _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
             iframePages.window.detailObj && iframePages.window.detailObj.mounted()
             $('.js-play').addClass('play');
+            $('.js-aside .music-info').show();
             audioPlayer.muted = false;
             audioPlayer.src = data.url;
             audioPlayer.volume = commonObj.playData.volume;
@@ -295,6 +296,10 @@ var commonObj = {
                 $(this).addClass('active').siblings().removeClass('active').parent().parent().siblings().find('.js-list-item').removeClass('active')
             }
         })
+        // 显示或隐藏music-info-box
+        if ($.$store.get('playData') == null) {
+            $('.js-aside .music-info').hide()
+        }
     }
 }
 // 获取iframe
@@ -305,6 +310,7 @@ window.contentTemp = commonObj.getTpl("/template/index.html");
 window.audioPlayer = $('#play-audio')[0];
 // 拓展jq类方法，集成全局方法
 $.extend({
+    commonObj,
     filterPlayCount (num) {
         num = num > 50000 ? parseInt(num / 10000) + '万' : num;
         return num
@@ -545,4 +551,5 @@ $.fn.extend({
 $(function () {
     commonObj.getData.init()
     window.frames['iframe-pages'] && (window.myiframeDom = window.frames['iframe-pages'].contentWindow.document)
+    console.dir($,'global')
 })

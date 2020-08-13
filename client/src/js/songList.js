@@ -1,6 +1,6 @@
 $(function () {
     var commonObj = window.parent.commonObj;
-    const songsData = {
+    const songsObj = {
         setLocal () {
             let songList = $.$store.get('songList')
             let coverDetail = $.$store.get('coverDetail')
@@ -30,7 +30,7 @@ $(function () {
                             ids.push(item.id)
                         })
                         ids = ids.join(',')
-                        songsData.getSongDetail({ ids }, function (res) {
+                        songsObj.getSongDetail({ ids }, function (res) {
                             data.playlist.tracks = res.songs
                             data.privileges = res.privileges
                             data.playlist.tracks.map(item => {
@@ -58,7 +58,7 @@ $(function () {
             $.ajax({
                 type: "get",
                 dataType: "json",
-                data,
+                data: {...$.$store.get('route').query, ...data},
                 url: apiUrls.song.detail,
                 success (data) {
                     var res = data.result
@@ -93,5 +93,8 @@ $(function () {
             })
         }
     }
-    songsData.init()
+    songsObj.init()
+    $.extend({
+        songsObj
+    })
 })
