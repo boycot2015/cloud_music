@@ -45,6 +45,8 @@ $(function () {
                             // console.log(newArr, $.$store.get('playData'));
                         }
                         $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') })
+                        $(parent).find('.js-play').removeClass('pause').addClass('play')
+                        $(parent).find('.song-detail .cover').addClass('play').siblings('.handler').addClass('active')
                     }
                 })
             },
@@ -53,9 +55,9 @@ $(function () {
                 let month = time.getMonth() + 1
                 let day = time.getDate()
                 let hours = time.getHours()
-                hours= hours < 10 ? '0' + hours : hours
+                hours = hours < 10 ? '0' + hours : hours
                 let min = time.getMinutes()
-                min= min < 10 ? '0' + min : min
+                min = min < 10 ? '0' + min : min
                 return month + '月' + day + '日 ' + hours + ':' + min
             },
             getComment () {
@@ -95,7 +97,10 @@ $(function () {
                             data.playlists.map(el => {
                                 el.playCount = $.filterPlayCount(el.playCount)
                             })
-                            console.log(data, 'samePlayListTemp');
+                            this.samePlayList = data.playlists
+                            // console.log(data, 'samePlayListTemp');
+                            // commonObj.data.tracks = data.playlists
+                            // $.$store.set('playList', commonObj.data)
                             $('.song-detail .same-play-list').render($(contentTemp).find('#samePlayListTemp'), { data })
                         }
                     }
@@ -111,7 +116,9 @@ $(function () {
                     url: apiUrls.simi.song,
                     success: (data) => {
                         if (data.code == 200) {
-                            console.log(data, 'sameMusicListTemp');
+                            // console.log(data, 'sameMusicListTemp');
+                            // commonObj.data.tracks = data.songs
+                            // $.$store.set('playList', data.songs)
                             $('.song-detail .same-music-list').render($(contentTemp).find('#sameMusicListTemp'), { data })
                         }
                     }
@@ -134,11 +141,9 @@ $(function () {
                 $.$router.push(params.path, params)
             })
             $('.song-detail').on('click', '.js-list-detail', function () {
-                let id = $(this).attr('data-id')
-                let type = $(this).attr('data-type')
-                let ctype = $(this).attr('data-ctype')
-                $(parent).find('.js-aside').removeClass('active')
-                $.$router.push('/songs/list', { id, type, ctype })
+                event.stopPropagation();
+                commonObj.palyMusic($(this))
+                detailObj.getData()
             })
         }
     }
@@ -146,7 +151,4 @@ $(function () {
     Object.assign(detailObj, detailObj.data())
     Object.assign(detailObj, detailObj.methods)
     detailObj.mounted()
-    $.extend({
-        detailObj
-    })
 })

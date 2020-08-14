@@ -8,7 +8,11 @@ var imagemin = require('gulp-imagemin');
 var watch = require('gulp-watch');
 var bs = require('browser-sync').create();
 var less = require('gulp-less');
-var babel = require("gulp-babel");    // 用于ES6转化ES5
+var babel = require("gulp-babel"); // 用于ES6转化ES5
+// var browserify = require('browserify');
+// var source = require('vinyl-source-stream');
+// var es = require('event-stream');
+// var glob = require('glob');
 function logError (logError) {
     console.log(logError)
     this.emit('end')
@@ -22,6 +26,7 @@ var path = {
     'css_dist': './dist/css/',
     'js_dist': './dist/js/',
     'es5_js': './dist/js/es5/',
+    'async_js': './dist/js/async/',
     'images_dist': './dist/images'
 };
 
@@ -55,6 +60,22 @@ gulp.task("js", function () {
         .pipe(gulp.dest(path.js_dist))
         .pipe(bs.stream())
 });
+/* 下面的是为了让浏览器支持import和export，babelify这个放到了package.json中了 */
+// gulp.task('browserify', gulp.series('js', function (done) {
+//     glob(path.js_dist + '*.js', function (err, files) {
+//         if (err) done(err);
+//         var tasks = files.map(function (entry) {
+//             return browserify({ entries: [entry] })
+//                 .bundle()
+//                 .pipe(source(entry))
+//                 // .pipe(rename({
+//                 //     extname: '.bundle.js'
+//                 // }))
+//                 .pipe(gulp.dest('./'));
+//         });
+//         es.merge(tasks).on('end', done);
+//     })
+// }));
 // gulp.task('js', function () {
 //     gulp.src(path.es5_js + '*.js')
 //         .pipe(uglify())
@@ -75,7 +96,7 @@ gulp.task('watch', function () {
     watch(path.html + '*.html', gulp.series('html'));
     watch(path.css + '*.less', gulp.series('css')); //这里不能用gulp.watch(),要不然本机只能加载一次,之后就无变化
     watch(path.js + '*.js', gulp.series('js'));
-    // watch(path.es5_js + '*.js', gulp.series('js'));
+    // watch(path.js + '*.js', gulp.series('browserify'));
     watch(path.images + '*.*', gulp.series('images'));
 });
 

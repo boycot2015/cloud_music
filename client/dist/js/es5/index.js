@@ -326,8 +326,4 @@ $(function () {
             id: $(this).attr('data-id')
         });
     });
-
-    $.extend({
-        layOutConfig: layOutConfig
-    });
 });

@@ -177,11 +177,26 @@ $(function () {
             });
         },
         onShow: function onShow() {
-            $(document).on('click', '.js-list-detail', function () {
-                var id = $(this).attr('data-id');
-                var type = $(this).attr('data-type');
-                var ctype = $(this).attr('data-ctype');
-                $.$router.push('/songs/list', { id: id, type: type, ctype: ctype });
+            $(document).on('click', '.js-list-detail', function (event) {
+                event.stopPropagation();
+                commonObj.palyMusic($(this));
+                // let id = $(this).attr('data-id')
+                // let type = $(this).attr('data-type')
+                // let ctype = $(this).attr('data-ctype')
+                // let url = $(this).attr('data-url')
+                // if (url) {
+                //     commonObj.playData = {
+                //         ...commonObj.playData,
+                //         id, type, ctype,
+                //         name: $(this).find('.name').text(),
+                //         singer: $(this).find('.singer').text(),
+                //         picUrl: $(this).find('img').attr('src'),
+                //     }
+                //     $.$store.set('playData', commonObj.playData);
+                //     commonObj.setCurrentData($(this))
+                // } else {
+                //     $.$router.push('/songs/list', { id, type, ctype })
+                // }
             });
             $('.tab-content .recommend .more').click(function () {
                 $('.js-tab-item').eq(1).click();

@@ -92,9 +92,10 @@
             data-id="{{item.id}}"
             data-type="{{item.type}}"
             data-ftype="{{item.ftype}}"
+            data-url="{{item.mp3Url}}"
         >
         {{if item.list}}
-            <ul class="grid-list fl">
+            <ul class="grid-list js-child-list fl">
                 {{each item.list child cindex}}
                     <li class="grid-list-item clearfix js-list-detail
                         {{child.ftype!=undefind ? ' ftype-'+ child.ftype : ''}}
@@ -103,6 +104,7 @@
                         data-id="{{child.id}}"
                         data-type="{{child.type}}"
                         data-ftype="{{child.ftype}}"
+                        data-url="{{child.mp3Url}}"
                     >
                     <span class="order fl">
                         {{index * (item.list.length) + (cindex + 1) < 10 ? '0' + (index * (item.list.length) + (cindex + 1)) : index * (item.list.length) + (cindex + 1)}}
