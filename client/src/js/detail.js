@@ -13,14 +13,14 @@ $(function () {
             }
         },
         methods: {
-            getData () {
-                this.getlyric()
+            getData (call) {
+                this.getlyric(call)
                 this.getComment()
                 this.getSamePlayList()
                 this.sameMusicList()
                 // console.log($.$route.query);
             },
-            getlyric () {
+            getlyric (call) {
                 $.ajax({
                     type: "get",
                     dataType: "json",
@@ -45,8 +45,7 @@ $(function () {
                             // console.log(newArr, $.$store.get('playData'));
                         }
                         $('.song-detail .top').render($(contentTemp).find('#detailTemp'), { lyricList: newArr, playData: $.$store.get('playData') })
-                        $(parent).find('.js-play').removeClass('pause').addClass('play')
-                        $(parent).find('.song-detail .cover').addClass('play').siblings('.handler').addClass('active')
+                        call && call()
                     }
                 })
             },
@@ -126,24 +125,25 @@ $(function () {
             }
         },
         mounted () {
-            this.getData()
-            setTimeout(() => {
-                $('.song-detail, .song-detail .cover').addClass('active')
+            this.getData(function () {
                 if ($(parent).find('.js-play').hasClass('play')) {
-                    $('.song-detail .cover').addClass('play').siblings('.handler').addClass('active')
+                    $('.song-detail .cover').addClass('play active').siblings('.handler').addClass('active')
                 } else {
                     $('.song-detail .cover').removeClass('play').addClass('pause').siblings('.handler').removeClass('active')
                 }
-            }, 120);
+            })
+            $('.song-detail, .song-detail .cover').addClass('active')
             $('.song-detail').on('click', '.icon-minify', function () {
                 let params = $.getUrlandParam($.$store.get('historyUrl'), 'id')
                 $(parent).find('.js-aside').removeClass('active')
                 $.$router.push(params.path, params)
             })
-            $('.song-detail').on('click', '.js-list-detail', function () {
+            $('.song-detail').on('dblclick', '.js-list-detail', function () {
                 event.stopPropagation();
+                detailObj.getData(function () {
+                    $('.song-detail .cover').addClass('play active').siblings('.handler').addClass('active')
+                })
                 commonObj.palyMusic($(this))
-                detailObj.getData()
             })
         }
     }

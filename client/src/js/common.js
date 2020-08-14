@@ -152,6 +152,7 @@ var commonObj = {
         })
         commonObj.getData.getPlayUrl({ id }, function (data) {
             audioPlayer = audioPlayer || $(parent.document).find('#play-audio')[0]
+            if (audioPlayer.src === data.url) return
             if (audioPlayer) {
                 audioPlayer.muted = false;
                 audioPlayer.src = data.url;
@@ -165,9 +166,8 @@ var commonObj = {
             commonObj.getData.getPlayList(commonObj.data);
             let playData = commonObj.playData
             let parentBox = $('.music-client')[0] ? $('.music-client') : $(parent.document)
-            // console.log($(parent.document), 'playData');
             parentBox.find('.js-mini-music-box img').attr('src', playData.picUrl);
-            parentBox.find('.js-music-box .music-info').attr('data-id', data.id);
+            parentBox.find('.js-music-box .music-info').attr('data-id', playData.id);
             parentBox.find('.js-music-box .music-info').find('img').attr('src', playData.picUrl);
             parentBox.find('.js-music-box .music-info .name').html(playData.name).parent().siblings().find('.singer').html(playData.singer);
             parentBox.find('.js-mini-music-box').find('.left .more .name').html(playData.name).siblings('.singer').html(playData.singer);
@@ -181,8 +181,8 @@ var commonObj = {
             if (!_this) return
             _this.removeClass('pause').addClass('play active').siblings().removeClass('play active pause');
             window.iframePages && iframePages.window.detailObj && iframePages.window.detailObj.mounted()
-            parentBox.find('.js-play').addClass('play');
             parentBox.find('.js-aside .music-info').show();
+            parentBox.find('.js-play').removeClass('pause').addClass('play')
             audioPlayer.muted = false;
             audioPlayer.src = data.url;
             audioPlayer.volume = commonObj.playData.volume;
@@ -190,7 +190,7 @@ var commonObj = {
             audioPlayer.play();
         })
     },
-    palyMusic (_this) {
+    palyMusic (_this, callback) {
         let id = _this.attr('data-id')
         let type = _this.attr('data-type')
         let ctype = _this.attr('data-ctype')
@@ -205,7 +205,7 @@ var commonObj = {
                 picUrl: _this.find('img').attr('src'),
             }
             $.$store.set('playData', commonObj.playData);
-            commonObj.setCurrentData(_this)
+            commonObj.setCurrentData(_this, callback)
         } else {
             $.$router.push('/songs/list', { id, type, ctype })
         }
@@ -214,9 +214,7 @@ var commonObj = {
         init: function () {
             // 渲染左侧菜单=====================================
             this.getMenu();
-            if ($.$store.get('route') !== null) {
-                $.$store.get('playData') === null && commonObj.setCurrentData()
-            }
+            commonObj.setCurrentData()
             this.getPlayList(commonObj.data);
             commonObj.onload()
         },

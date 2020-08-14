@@ -15,14 +15,18 @@
         position: relative;
         .mask {
             position: absolute;
-            height: 100%;
+            position: absolute;
+            height: 80%;
             top: 10%;
-            width: 90%;
+            width: 80%;
             z-index: -1;
+            border-radius: 20px;
             background-position: center;
             background-size: cover;
-            // background: inherit;
+            background-repeat: no-repeat;
             filter: blur(30px);
+            overflow: hidden;
+            // background: inherit;
             &::after {
                 position: absolute;
                 width: 100%;
@@ -271,9 +275,10 @@
     }
     .bottom  {
         margin-top: 60px;
+        padding: 0 40px 0 80px;
         h2.title {
             font-size: 18px;
-            color: @c-666;
+            color: @c-333;
             font-family: 微软雅黑;
             padding-bottom: 10px;
             border-bottom: 1px solid @c-e8;
@@ -285,7 +290,8 @@
         }
     }
     .comment {
-        padding: 0 50px;
+        // padding: 0 50px;
+        padding-right: 50px;
         h3.title {
             font-size: 14px;
             line-height: 36px;
@@ -310,7 +316,7 @@
                 }
             }
             .text {
-                width: 510px;
+                width: 500px;
                 .name {
                     // min-width: 120px;
                     font-size: 12px;
@@ -329,7 +335,8 @@
         }
     }
     .same-content {
-        padding-right: 60px;
+        // padding-right: 60px;
+        width: 290px;
         align-self: flex-start;
         .grid-list-item.ftype-0 {
             width: auto;
