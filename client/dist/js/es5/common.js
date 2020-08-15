@@ -28,7 +28,7 @@ var commonObj = {
         name: '至尊宝',
         singer: '徐良/杨威',
         coverImg: '/dist/images/avatar.jpg',
-        volume: 0.3,
+        volume: 0.1,
         loop: false,
         ended: false,
         muted: false,

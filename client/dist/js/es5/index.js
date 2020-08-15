@@ -46,7 +46,7 @@ $(function () {
 
         setVolume: function setVolume(left, width) {
             if (!left && !width) {
-                audioPlayer.volume = 0.5;
+                audioPlayer.volume = commonObj.playData.volume;
                 $('.volume .progress-bar .point').css('left', 42);
                 $('.volume .progress-bar .line').width(50);
                 return true;
@@ -247,6 +247,7 @@ $(function () {
         var myiframeDom = window.frames['iframe-pages'].contentWindow.document;
         if (!commonObj.playData.src) return;
         if (!$('.js-play').hasClass('play')) {
+            audioPlayer.volume = commonObj.playData.volume;
             audioPlayer.play();
             $('.music-list-item.play').removeClass('play').addClass('pause');
             $(myiframeDom).find('.song-detail .cover').removeClass('pause').addClass('active play').parent().find('.handler').addClass('active');

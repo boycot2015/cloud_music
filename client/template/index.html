@@ -109,9 +109,17 @@
                     </div>
                     <div class="text fl">
                         <p class="name">
-                            {{hotComment.user.nickname}}：
+                            {{hotComment.user.nickname}}:
                             <span class="desc">{{hotComment.content}}</span>
                         </p>
+                        {{if hotComment.beReplied.length}}
+                            {{each hotComment.beReplied beReplied index}}
+                            <p class="name reply">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
+                            </p>
+                            {{/each}}
+                        {{/if}}
                         <div class="info flexbox-h just-b">
                             <span class="time flex-1 tl">{{hotComment.time}}</span>
                             <div class="right flex-3 tr">
@@ -141,6 +149,14 @@
                             {{comment.user.nickname}}：
                             <span class="desc">{{comment.content}}</span>
                         </p>
+                        {{if comment.beReplied.length}}
+                            {{each comment.beReplied beReplied index}}
+                            <p class="name reply">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
+                            </p>
+                            {{/each}}
+                        {{/if}}
                         <div class="info flexbox-h just-b">
                             <span class="time flex-1 tl">{{comment.time}}</span>
                             <div class="right flex-3 tr">
