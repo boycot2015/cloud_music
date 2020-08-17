@@ -1,0 +1,161 @@
+
+<div id="asideTemp">
+    <script type="text/html" id="asideTemp">
+        {{each list $value fIndex}}
+            {{if !$value.hideInMenu }}
+            <div class="aside-item {{$value.unfold ? 'unfold' : ''}}">
+                <div class="title flexbox-h just-b js-toggle-class" data-path="{{$value.path}}">
+                    <p class="name">{{$value.name}}</p>
+                    <span class="icon icon-music-{{$value.icon}}">{{!$value.unfold ? '>' : ''}}</span>
+                </div>
+                <ul class="list">
+                    {{each $value.children item cIndex}}
+                        <li data-path="{{$value.children[cIndex].path}}" class="list-item js-list-item flexbox-h {{fIndex === 0 && cIndex === 0 ? 'active': ''}}">
+                            <span class="icon icon-music-{{item.icon}}"></span>
+                            <span class="name">{{item.name}}</span>
+                            <span class="icon flex-1 tr icon-music-{{item.rightIcon}}"></span>
+                        </li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+        {{/each}}
+    </script>
+</div>
+<div id="tabsTemp">
+    <script type="text/html" id="tabsTemp">
+        {{each list $value fIndex}}
+            <a href="{{item.path}}">
+                <span class="name">{{$value.name}}</span>
+            </a>
+        {{/each}}
+    </script>
+</div>
+<div id="listTemp">
+    <script type="text/html" id="listTemp">
+        {{each list item index}}
+            <li class="music-list-item flexbox-h jsut-b" data-id="{{item.id}}">
+                {{if order}}
+                <div class="order tr">
+                    <span class="num">{{(index + 1) < 10 ? '0' + (index + 1) : (index + 1)}}</span>
+                </div>
+                {{/if}}
+                {{if operation}}
+                <div class="operation tc flex-1">
+                    <span class="icon-music-love"></span>
+                    <span class="icon-music-download"></span>
+                </div>
+                {{/if}}
+                <div class="sing-info flex-4 line-one">
+                    <span class="name">{{item.name}}</span>
+                    <span class="source ">{{item.al.name}}</span>
+                </div>
+                {{if item.ar && !isminiPlay}}
+                    <span class="singer line-one flex-2">
+                        {{each item.ar singer cindex}}
+                            <i>{{singer.name + (cindex < item.ar.length - 1 ? '/' : '')}}</i>
+                        {{/each}}
+                    </span>
+                    {{if !isPlay}}
+                    <span class="collect line-one flex-2">{{item.al.name}}</span>
+                    {{/if}}
+                    {{if !order && !isminiPlay}}
+                    <span class="icon-music-link"></span>
+                    {{/if}}
+                    <span class="time {{order ? 'tl': 'tr'}} flex-1">{{item.dt}}</span>
+                {{/if}}
+            </li>
+        {{/each}}
+    </script>
+</div>
+<div id="bannerTemp">
+    <script type="text/html" id="bannerTemp">
+        {{each list item index}}
+            <div class="swiper-slide">
+                <a href="{{item.url}}" title="{{item.typeTitle}}" class="">
+                    <div class="img"  title="{{item.typeTitle}}">
+                        <img src="{{item.imageUrl}}" alt="">
+                    </div>
+                    <div class="title {{item.titleColor}}">{{item.typeTitle}}</div>
+                </a>
+            </div>
+        {{/each}}
+    </script>
+</div>
+<div id="gridListTemp">
+    <script type="text/html" id="gridListTemp">
+        {{each list item index}}
+        <li class="grid-list-item fl clearfix js-list-detail
+            {{item.ftype!=undefind ? ' ftype-'+ item.ftype : ''}}
+            {{item.type ? ' type-'+ item.type : ''}}"
+            title="{{item.rcmdtext || item.name}}"
+            data-id="{{item.id}}"
+            data-type="{{item.type}}"
+            data-ftype="{{item.ftype}}"
+            data-url="{{item.mp3Url}}"
+        >
+        {{if item.list}}
+            <ul class="grid-list js-child-list fl">
+                {{each item.list child cindex}}
+                    <li class="grid-list-item clearfix js-list-detail
+                        {{child.ftype!=undefind ? ' ftype-'+ child.ftype : ''}}
+                        {{child.type ? ' type-'+ child.type : ''}}"
+                        title="{{child.name}}"
+                        data-id="{{child.id}}"
+                        data-type="{{child.type}}"
+                        data-ftype="{{child.ftype}}"
+                        data-url="{{child.mp3Url}}"
+                    >
+                    <span class="order fl">
+                        {{index * (item.list.length) + (cindex + 1) < 10 ? '0' + (index * (item.list.length) + (cindex + 1)) : index * (item.list.length) + (cindex + 1)}}
+                    </span>
+                    <div class="img {{child.ftype == 0 ? 'fl': ''}}">
+                        <span class="icon icon-music-pause"></span>
+                        <img src="{{child.album.picUrl}}" alt="">
+                    </div>
+                    <div class="text {{child.ftype == 0 ? 'fl': ''}}" title="{{child.rcmdtext || child.name}}" >
+                        <p class="name">{{child.name}}</p>
+                        <p class="desc">
+                            <i class="icon-play-video"></i>
+                            <span class="singer">
+                                {{each child.album.artists singer index}}
+                                    {{singer.name}} {{index < child.album.artists.length - 1 ? '/': ''}}
+                                {{/each}}
+                            </span>
+                        </p>
+                    </div>
+                </li>
+                {{/each}}
+            </ul>
+        {{else}}
+            <div class="img {{item.ftype == 0 ? 'fl': ''}}">
+                    {{if item.type == 0 || category == 3}}
+                    <span class="copy-writer">{{item.copywriter}}</span>
+                    {{/if}}
+                    {{if item.playCount}}
+                    <div class="right">
+                        <span class="icon icon-music-{{item.type == 5? 'video':'erphone'}}"></span>
+                        <span class="play-count">{{item.playCount}}</span>
+                    </div>
+                    {{/if}}
+                {{if item.type == 5 && category != 3}}
+                    <div class="left">
+                        <span class="icon icon-music-video"></span>
+                    </div>
+                {{/if}}
+                {{if item.rcmdtext}}
+                <p class="desc line-one" title="{{item.name}}">{{item.name}}</p>
+                {{/if}}
+                <img src="{{item.coverImgUrl || item.sPicUrl || item.picUrl}}" alt="">
+                {{if item.creator}}
+                <span class="creator"><i class="icon-music-user"></i> {{item.creator.nickname}}</span>
+                {{/if}}
+            </div>
+            <div class="text  {{item.ftype == 0 ? 'fl': ''}}">
+                <p class="name">{{item.rcmdtext || item.name}}</p>
+            </div>
+            {{/if}}
+        </li>
+        {{/each}}
+    </script>
+</div>

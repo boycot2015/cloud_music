@@ -1,0 +1,228 @@
+<div id="tabsTemp">
+    <script type="text/html" id="tabsTemp">
+        {{each list $value fIndex}}
+        <div class="tab-list-item js-tab-item {{fIndex == 0 ? 'active':''}}" data-type="{{$value.type}}">
+            <span class="name">{{$value.name}}</span>
+        </div>
+        {{/each}}
+    </script>
+</div>
+<div id="hotCateTemp">
+    <script type="text/html" id="hotCateTemp">
+        {{each data.tags item index}}
+            <span class="js-hot-cate-item" data-id="{{item.id}}" data-cate="{{item.name}}">{{item.name}}</span>
+            <i class="line">{{(index < data.tags.length - 1 ? '|': '')}}</i>
+        {{/each}}
+    </script>
+</div>
+<div id="cateListTemp">
+    <script type="text/html" id="cateListTemp">
+        <div class="wrap flexbox-v">
+            <span class="btn-cate active tc" data-cate="{{data.all.name}}">{{data.all.name}}</span>
+            <div class="content">
+                {{each data.subs subsItem index}}
+                <div class="content-item flexbox-h just-b">
+                    <div class="left flex-1">
+                        <div class="cate-title flexbox-h">
+                            <i class="icon-music-emoji"></i>
+                            <p class="name">{{data.categories[index]}}</p>
+                        </div>
+                    </div>
+                    <div class="right flex-4">
+                        <div class="cates clearfix">
+                            {{each subsItem sub cindex}}
+                                <div
+                                data-cate="{{sub.name}}"
+                                class="cates-item js-cates-item tc fl">
+                                    {{if sub.hot}}
+                                        <i class="icon-hot">HOT</i>
+                                    {{/if}}
+                                    <span>{{sub.name}}</span>
+                                </div>
+                            {{/each}}
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </script>
+</div>
+
+<!-- 歌曲详情及评论temp -->
+<div id="detailTemp">
+    <script type="text/html" id="detailTemp">
+        <div class="handler">
+             <div class="point"></div>
+             <div class="line-1"></div>
+             <div class="line-2"></div>
+             <div class="line-3"></div>
+             <div class="header-cap"></div>
+        </div>
+        <div class="mask" style="background-image: url({{playData.picUrl}})"></div>
+        <div class="cover">
+            <div class="img">
+                <img src="{{playData.picUrl}}" alt="">
+            </div>
+        </div>
+        <div class="lyric-text-content flex-1">
+            <div class="info">
+                <div class="song-info flexbox-h">
+                    <p class="name">
+                        {{playData.name}}
+                        <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'标准音质':'极高音质'}}</span>
+                        {{if playData.type}}
+                        <span class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
+                        {{/if}}
+                    </p>
+                </div>
+                <div class="single-info flexbox-h">
+                    <span class="al-name line-one flex-1" title="{{playData.alName}}">专辑：<i>{{playData.alName}}</i></span>
+                    <span class="al-name line-one flex-1" title="{{playData.singer}}">歌手：<i>{{playData.singer}}</i></span>
+                    <span class="al-name line-one flex-1" title="{{playData.alName}}">来源：<i>{{playData.alName}}</i></span>
+                </div>
+                <i class="icon-music-minify icon-minify"></i>
+            </div>
+            <div class="wrap">
+                <div class="lyric-text">
+                    {{if lyricList && lyricList.length}}
+                        {{each lyricList item index}}
+                            <p class="lyric-text-item {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
+                        {{/each}}
+                    {{else}}
+                        <p class="lyric-text-item " data-time="">暂无歌词~</p>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </script>
+</div>
+<div id="commentTemp">
+    <script type="text/html" id="commentTemp">
+        {{if data.hotComments && data.hotComments.length}}
+            <h2 class="title">听友评论<span>(已有{{data.total}}条评论)</span></h2>
+            <h3 class="title">精彩评论({{data.hotComments.length}})</h3>
+            {{each data.hotComments hotComment index}}
+                <div class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img src="{{hotComment.user.avatarUrl}}" alt="">
+                    </div>
+                    <div class="text fl">
+                        <p class="name">
+                            {{hotComment.user.nickname}}:
+                            <span class="desc">{{hotComment.content}}</span>
+                        </p>
+                        {{if hotComment.beReplied.length}}
+                            {{each hotComment.beReplied beReplied index}}
+                            <p class="name reply">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
+                            </p>
+                            {{/each}}
+                        {{/if}}
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{hotComment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    {{if hotComment.likedCount}}
+                                        <i class="num">({{hotComment.likedCount}})</i>
+                                    {{/if}}
+                                </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+        {{if data.comments && data.comments.length}}
+            <h3 class="title">最新评论({{data.total - data.hotComments.length}})</h3>
+            {{each data.comments comment index}}
+                <div class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img src="{{comment.user.avatarUrl}}" alt="">
+                    </div>
+                    <div class="text fl">
+                        <p class="name">
+                            {{comment.user.nickname}}：
+                            <span class="desc">{{comment.content}}</span>
+                        </p>
+                        {{if comment.beReplied.length}}
+                            {{each comment.beReplied beReplied index}}
+                            <p class="name reply">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
+                            </p>
+                            {{/each}}
+                        {{/if}}
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{comment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    {{if comment.likedCount}}
+                                        <i class="num">({{comment.likedCount}})</i>
+                                    {{/if}}
+                                </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {{/each}}
+        {{/if}}
+    </script>
+</div>
+<div id="samePlayListTemp">
+    <script type="text/html" id="samePlayListTemp">
+        {{if data.playlist && data.playlist.length}}
+        <h2 class="title">包含这首歌的歌单</h2>
+            {{each data.playlists item findex}}
+            <div class="grid-list-item ftype-0 " data-id="{{item.id}}"
+            data-type="{{item.type}}">
+                <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}"
+                data-type="{{item.type}}">
+                    <div class="img fl">
+                        <span class="icon icon-music-pause"></span>
+                        <img src="{{item.coverImgUrl}}" alt="">
+                    </div>
+                    <div class="text fl" title="{{item.rcmdtext || item.name}}" >
+                        <p class="name line-one">{{item.name}}</p>
+                        <span class="play-count singer">播放：{{item.playCount}}</span>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        {{/if}}
+    </script>
+</div>
+<div id="sameMusicListTemp">
+    <script type="text/html" id="sameMusicListTemp">
+        {{if data.songs && data.songs.length}}
+            <h2 class="title">相似歌曲</h2>
+            {{each data.songs item findex}}
+            <div class="grid-list-item ftype-0" data-id="{{item.id}}" data-url="{{item.mp3Url}}"
+            data-type="{{item.type}}">
+                <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}"
+                data-type="{{item.type}}" data-url="{{item.mp3Url}}">
+                    <div class="img fl">
+                        <span class="icon icon-music-pause"></span>
+                        <img src="{{item.album.picUrl}}" alt="">
+                    </div>
+                    <div class="text fl" title="{{item.rcmdtext || item.name}}" >
+                        <p class="name line-one">{{item.name}}</p>
+                        <span class="singer">
+                            {{each item.album.artists singer index}}
+                                {{singer.name}} {{index < item.album.artists.length - 1 ? '/': ''}}
+                            {{/each}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {{/each}}
+        {{/if}}
+    </script>
+</div>

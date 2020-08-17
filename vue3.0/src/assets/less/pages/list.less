@@ -1,0 +1,209 @@
+.song-detail-list {
+    .cover {
+        min-height: 220px;
+        padding: 20px 20px 0;
+        align-items: flex-start;
+        margin-bottom: 40px;
+        .img {
+            width: 200px;
+            height: 200px;
+            margin-right: 30px;
+            img {
+                height: 100%;
+            }
+        }
+        .text {
+            .top {
+                margin-bottom: 10px;
+                .type {
+                    border: 1px solid @primary;
+                    color: @primary;
+                    margin-right: 5px;
+                    border-radius: 2px;
+                    font-size: 12px;
+                    padding: 2px 5px;
+                }
+                .name {
+                    font-size: 18px;
+                    line-height: 18px;
+                    font-weight: 400;
+                    max-width: 380px;
+                    font-family: '微软雅黑';
+                }
+                .count {
+                    .play-count {
+                        color: @c-999;
+                        width: 60px;
+                        .name {
+                            font-family: '宋体';
+                            font-size: 12px;
+                            margin-bottom: 5px;
+                        }
+                        .num {
+                            color: @c-999;
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+            .userinfo {
+                margin-bottom: 10px;
+                .avatar {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 10px;
+                    img {
+                        height: 100%;
+                        border-radius: 30px;
+                    }
+                }
+                .username {
+                    font-size: 14px;
+                    color: @c-333;
+                    margin-right: 15px;
+                }
+                .create-time {
+                    font-size: 12px;
+                    font-family: '微软雅黑';
+                    color: @c-999;
+                }
+            }
+            .operation {
+                margin-bottom: 30px;
+                .play-btn {
+                    min-width: 90px;
+                    line-height: 26px;
+                    font-size: 12px;
+                    color: @c-333;
+                    padding: 0 10px;
+                    border-radius: 5px;
+                    background-color: @white;
+                    border: 1px solid @c-e8;
+                    margin-right: 15px;
+                    cursor: pointer;
+                    i {
+                        margin-right: 2px;
+                    }
+                    &.play {
+                        width: 100px;
+                        border: 1px solid @primary;
+                        background-color: @primary;
+                        color: @white;
+                        i::after {
+                            color: @white;
+                            font-size: 12px;
+                            padding: 0px;
+                            background-color: transparent;
+                            border: 1px solid @white;
+                        }
+                        i.icon-plus {
+                            margin-right: 0;
+                            &::after {
+                                border: 0;
+                            }
+                        }
+                        span {
+                            padding: 8px 10px 8px 0;
+                            border-right: 1px solid @c-ccc;
+                        }
+                    }
+                }
+            }
+            .tags {
+                font-size: 12px;
+                .name {
+                    margin-right: 5px;
+                }
+                .tag {
+                    color: #1f88dd;
+                }
+            }
+            .desc {
+                margin-top: 10px;
+                line-height: 18px;
+                color: @c-333;
+                height: 55px;
+                min-height: 50px;
+                overflow: hidden;
+                width: calc(100% - 20px);
+                padding-right: 20px;
+                position: relative;
+                &.active {
+                    height: auto;
+                    min-height: 55px;
+                    overflow: auto;
+                }
+                i {
+                    position: absolute;
+                    right: 0;
+                    top: 25px;
+                    cursor: pointer;
+                    &::after {
+                        color: @c-000;
+                        font-weight: bold;
+                        font-size: 18px;
+                    }
+                    &.active {
+                        transform: rotate(-180deg);
+                    }
+                }
+            }
+        }
+    }
+    .music-list-item {
+        padding: 0;
+        >div, >span {
+            padding-left: 10px;
+        }
+        span::after {
+            font-size: 14px;
+            color: @c-999;
+        }
+        .order {
+            padding-left: 0;
+            span {
+                padding-right: 10px;
+            }
+        }
+        .operation {
+            padding-left: 0;
+        }
+        .collect, .singer {
+            color: @c-666;
+        }
+        .source {
+            color: @c-999;
+        }
+    }
+    .order {
+        width: 50px;
+        height: 30px;
+        color: @c-999;
+        font-family: '微软雅黑';
+        font-size: 12px;
+        padding-left: 0;
+    }
+    .list-header {
+        padding: 0;
+        >div {
+            border: 1px solid @c-ddd;
+            border-left: 0;
+            &:hover {
+                background-color: @c-ccc;
+            }
+            &.order {
+                padding-left: 0;
+            }
+            &:nth-child(1),
+            &:nth-child(2) {
+                &:hover {
+                    background-color: transparent;
+                }
+            }
+            &:last-child {
+                border-right: 0;
+            }
+            padding-left: 10px;
+        }
+    }
+}
