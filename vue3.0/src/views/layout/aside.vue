@@ -55,11 +55,13 @@
 
 <script>
 import {
-    // ref,
-    // computed,
-    // watch,
-    getCurrentInstance
+// ref,
+// computed,
+// watch,
+// getCurrentInstance
+// toRefs
 } from 'vue'
+import { useStore } from 'vuex'
 export default {
     data () {
         return {
@@ -70,8 +72,8 @@ export default {
         }
     },
     setup () {
-        const { ctx } = getCurrentInstance()
-        const menu = ctx.$router.options.routes.filter(_ => !_.meta.hideInMenu)
+        const store = useStore()
+        const menu = store.state.menu
         console.log(menu)
         return {
             menu

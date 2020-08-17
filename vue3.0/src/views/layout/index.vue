@@ -16,7 +16,7 @@
                     <div class="img tl">
                         <img src="/src/assets/images/avatar.jpg" alt="">
                     </div>
-                    <p class="name tc">一诺千金到尽头</p>
+                    <p class="name tc">{{playData.lyrc}}</p>
                     <div class="play-btn js-play-btn flexbox-h just-a">
                         <i class="icon-music-play-left"></i>
                         <i class="icon-play js-play icon-music-pause"></i>
@@ -24,9 +24,9 @@
                     </div>
                     <div class="more js-more text">
                         <div class="wrap flexbox-h tc just-c">
-                            <p class="name line-one">菩提偈</p>
+                            <p class="name line-one">{{playData.name}}</p>
                             <span class="line"> - </span>
-                            <span class="singer line-one">刘惜君</span>
+                            <span class="singer line-one">{{playData.singer}}</span>
                         </div>
                     </div>
                 </div>
@@ -65,11 +65,15 @@ import musicAside from './aside'
 import musicFooter from './footer'
 import {
     // ref,
-    // computed,
-    // watch,
-    getCurrentInstance
+    computed,
+    watch,
+    reactive,
+    toRefs
+    // getCurrentInstance
 } from 'vue'
-import { drag } from '@/utils'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+// import { drag } from '@/utils'
 export default {
     name: 'layout',
     components: {
@@ -77,24 +81,33 @@ export default {
         musicAside,
         musicFooter
     },
-    data () {
-        return {
-
-        }
-    },
     setup (props, context) {
-        const { ctx } = getCurrentInstance()
-        const menu = ctx.$router.options.routes.filter(_ => !_.meta.hideInMenu)
-        const dragBox = [ctx.$.refs.dragBox]
-        if (dragBox[0]) {
-            console.log(ctx.$)
-            drag({
-                obj: dragBox,
-                target: dragBox
-            })
-            return {
-                menu
+        const state = reactive({
+            playData: {
+                lyrc: '一诺千金到尽头',
+                name: '菩提偈',
+                singer: '刘惜君'
             }
+        })
+        const store = useStore()
+        const storeState = store.state
+        const router = useRouter()
+        watch(() => {
+            return router.currentRoute.value.meta.title
+        }, (value) => {
+            store.commit('setTitle', value)
+        })
+        // const dragBox = [ctx.$.refs.dragBox]
+        // if (dragBox[0]) {
+        //     console.log(ctx.$)
+        //     drag({
+        //         obj: dragBox,
+        //         target: dragBox
+        //     })
+        // }
+        return {
+            ...computed(() => storeState).value,
+            ...toRefs(state)
         }
     }
 }
