@@ -13,9 +13,12 @@
                 @click="() => {activeClass = !activeClass; activeFindex = findex}"
                 data-path="{{$value.path}}">
                     <p class="name">{{$value.meta.title}}</p>
-                    <span class="icon" :class="`icon-music-${$value.meta.icon}`">{{!$value.meta.unfold ? '>' : ''}}</span>
+                    <span class="icon" v-if="$value.children && $value.children.length" :class="`icon-music-${$value.meta.icon}`"></span>
                 </div>
-                <ul class="list" :class="{'active': activeClass && findex === activeFindex || $value.meta.unfold}">
+                <ul
+                class="list"
+                v-if="$value.children && $value.children.length"
+                :class="{'active': activeClass && findex === activeFindex || $value.meta.unfold}">
                     <li
                     v-for="(item) in $value.children"
                     :key="item.name"
@@ -37,15 +40,18 @@
                 <i class="icon icon-music-max"></i>
             </div>
             <div class="img tl">
-                <img src="@/assets/images/avatar.jpg" alt="">
+                <img :src="playData.picUrl" alt="">
             </div>
             <div class="text flex-3">
                 <div class="top flexbox-h just-b">
-                    <p class="name line-one">至尊宝</p>
-                    <span class="js-love-icon star-icon icon-music-love"></span>
+                    <p class="name line-one">{{playData.name}}</p>
+                    <span
+                    :class="{'icon-music-love-full': isStar}"
+                    class="js-love-icon star-icon icon-music-love"
+                    @click="onStar"></span>
                 </div>
                 <div class="bottom flexbox-h just-b">
-                    <p class="singer line-one">徐良/杨威</p>
+                    <p class="singer line-one">{{playData.singer}}</p>
                     <span class="share-icon icon-music-share"></span>
                 </div>
             </div>
@@ -58,25 +64,31 @@ import {
 // ref,
 // computed,
 // watch,
+    reactive, toRefs
 // getCurrentInstance
 // toRefs
 } from 'vue'
 import { useStore } from 'vuex'
 export default {
-    data () {
-        return {
-            // menu: routes
+    setup () {
+        const state = reactive({
             activeFindex: '',
             activeRoute: '/index',
-            activeClass: false
-        }
-    },
-    setup () {
+            activeClass: false,
+            isStar: false
+        })
         const store = useStore()
         const menu = store.state.menu
-        console.log(menu)
+        const playData = store.state.playData
+
+        const onStar = (e) => {
+            state.isStar = !state.isStar
+        }
         return {
-            menu
+            ...toRefs(state),
+            menu,
+            playData,
+            onStar
         }
     }
 }

@@ -3,16 +3,19 @@ import apiList from './apiList'
 const install = function (Vue) {
     if (install.installed) {
         return false
-    };
-    install.installed = true
-    Vue.prototype.$api = {
-        get () {
-            return apiList
-        },
-        enumerable: false, // 不可枚举
-        configurable: false // 不可重写
     }
-    // Object.defineProperties(Vue.prototype, {
+    install.installed = true
+    const handler = {
+        $api: {
+            get () {
+                return apiList
+            }
+            // enumerable: false, // 不可枚举
+            // configurable: false // 不可重写
+        }
+    }
+    Vue = new Proxy(Vue, handler)
+    // Object.defineProperty(Vue.prototype, {
     //     $api: {
     //         get () {
     //             return apiList

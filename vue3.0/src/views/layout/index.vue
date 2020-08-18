@@ -1,6 +1,6 @@
 <template>
-    <div class="container music-client flexbox-h align-c just-c">
-        <div class="music-box js-music-box flexbox-v"  ref="dragBox">
+    <div class="container music-client flexbox-h align-c just-c" ref="dragBox">
+        <div class="music-box js-music-box flexbox-v" >
             <music-header></music-header>
             <div class="center flexbox-h">
                 <music-aside></music-aside>
@@ -64,10 +64,11 @@ import musicHeader from './header'
 import musicAside from './aside'
 import musicFooter from './footer'
 import {
-    // ref,
+    ref,
     computed,
     watch,
     reactive,
+    onMounted,
     toRefs
     // getCurrentInstance
 } from 'vue'
@@ -87,25 +88,28 @@ export default {
                 lyrc: '一诺千金到尽头',
                 name: '菩提偈',
                 singer: '刘惜君'
-            }
+            },
+            dragBox: null
         })
+        const dragBox = ref(null)
         const store = useStore()
         const storeState = store.state
         const router = useRouter()
+        // const { ctx } = getCurrentInstance()
         watch(() => {
             return router.currentRoute.value.meta.title
         }, (value) => {
             store.commit('setTitle', value)
         })
-        // const dragBox = [ctx.$.refs.dragBox]
-        // if (dragBox[0]) {
-        //     console.log(ctx.$)
-        //     drag({
-        //         obj: dragBox,
-        //         target: dragBox
-        //     })
-        // }
+        onMounted(() => {
+            console.log(dragBox)
+            // drag({
+            //     obj: dragBox.value,
+            //     target: dragBox.value
+            // })
+        })
         return {
+            dragBox,
             ...computed(() => storeState).value,
             ...toRefs(state)
         }

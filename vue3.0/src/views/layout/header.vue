@@ -2,25 +2,25 @@
     <div class="header flexbox-h">
         <div class="logo flexbox-h js-logo">
             <div class="logo-icon icon-music-logo-icon"></div>
-            <h3 class="logo-title">网抑云音乐</h3>
+            <h3 class="logo-title">{{headerData.title}}</h3>
         </div>
         <div class="back-forward tc flexbox-h">
             <div class="back-btn">&lt;</div>
             <div class="forward-btn">&gt;</div>
         </div>
         <div class="search-box flexbox-h">
-            <input type="text" placeholder="搜索音乐，视频，歌词，电台">
-            <div class="input-icon fa fa-search"></div>
+            <input type="text" v-model="searchForm.key" :placeholder="searchForm.placeholder">
+            <div class="input-icon icon-music-search"></div>
         </div>
         <div class="user-info flex-3 tc just-c flexbox-h">
             <div class="avatar ">
-                <img src="@/assets/images/avatar.jpg" alt="">
+                <img :src="headerData.avatar" alt="">
             </div>
             <div class="text name">
-                <span class="name">大唐江流儿</span>
+                <span class="name">{{headerData.username}}</span>
                 <i class="fa fa-caret-down"></i>
             </div>
-            <span class="text vip-text">开通VIP</span>
+            <span class="text vip-text">{{headerData.vipTxt}}</span>
             <div class="text icon theme icon-music-clothes"></div>
             <div class="text icon message icon-music-msg"></div>
             <div class="text icon setting icon-music-setting"></div>
@@ -35,8 +35,36 @@
 </template>
 
 <script>
+import {
+    // ref,
+    // computed,
+    // watch,
+    reactive,
+    toRefs
+    // getCurrentInstance
+} from 'vue'
+// import { useRouter } from 'vue-router'
 export default {
-
+    name: 'musicHeader',
+    setup () {
+        const state = reactive({
+            headerData: {
+                title: '网抑云音乐',
+                avatar: require('@/assets/images/avatar.jpg'),
+                username: '大唐江流儿',
+                vipTxt: '开通VIP'
+            },
+            searchForm: {
+                placeholder: '搜索音乐，视频，歌词，电台',
+                key: ''
+            }
+        })
+        // const storeState = store.state
+        // const router = useRouter()
+        return {
+            ...toRefs(state)
+        }
+    }
 }
 </script>
 

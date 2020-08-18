@@ -1,6 +1,6 @@
 // 根据不同的环境设定不同的baseUrl，
 
-let baseUrl // 本地代理
+let baseUrl = 'http://music.boycot.top:3000' // 本地代理
 let loginUrl
 const env = process.env.NODE_ENV === 'development'
     ? 'development' : process.env.VUE_APP_TITLE === 'show'

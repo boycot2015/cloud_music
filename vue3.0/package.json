@@ -13,7 +13,9 @@
     "element-ui": "^2.13.2",
     "js-cookie": "^2.2.1",
     "less-loader": "^6.2.0",
+    "swiper": "^6.1.2",
     "vue": "^3.0.0-0",
+    "vue-awesome-swiper": "^4.1.1",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },

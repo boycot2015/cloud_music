@@ -37,7 +37,7 @@
                 </div>
                 <div class="list-header flexbox-h just-b">
                     <div class="total tl">
-                        <span class="num">总<i>199</i>首</span>
+                        <span class="num">总<i>{{playList.total}}</i>首</span>
                         <i class="icon-music-info"></i>
                     </div>
                     <div class="operation">
@@ -63,8 +63,50 @@
 </template>
 
 <script>
+import {
+    // ref,
+    computed,
+    // watch,
+    reactive,
+    toRefs
+    // getCurrentInstance
+} from 'vue'
+import { useStore } from 'vuex'
+// import { useRouter } from 'vue-router'
+// import { drag } from '@/utils'
 export default {
-
+    name: 'musicFooter',
+    setup (props, context) {
+        const state = reactive({
+            playData: {
+                startTime: '00:00',
+                endTime: '00:00',
+                type: '标准',
+                isHot: 'new',
+                lyrcTxt: '词'
+            },
+            playList: {
+                data: [],
+                total: 0
+            }
+        })
+        const store = useStore()
+        const playData = store.state.playData
+        // const router = useRouter()
+        // const { ctx } = getCurrentInstance()
+        // const dragBox = [ctx.$.refs.dragBox]
+        // if (dragBox[0]) {
+        //     console.log(ctx.$)
+        //     drag({
+        //         obj: dragBox,
+        //         target: dragBox
+        //     })
+        // }
+        return {
+            ...toRefs(state),
+            ...computed(() => playData).value
+        }
+    }
 }
 </script>
 

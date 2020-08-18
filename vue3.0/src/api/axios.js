@@ -4,8 +4,8 @@
  */
 import axios from 'axios'
 // import Cookies from 'js-cookie'
-import store from '@/store'
-import router from '@/router'
+// import store from '@/store'
+// import router from '@/router'
 const errorHandle = (status, response) => {
     // 401 未登陆
     // 403 token过期
@@ -14,17 +14,17 @@ const errorHandle = (status, response) => {
     case 403:
         console.log('身份认证失败，请重新登录！')
         break
-    // 500 服务器错误
+        // 500 服务器错误
     case 500:
     case 503:
         // router.push({ name: 'error_500' })
         break
-    // 404 请求不存在
+        // 404 请求不存在
     case 404:
         console.log('404 请求不存在')
         // router.push({ name: 'error_404' })
         break
-    // 其它错误，直接抛出错误提示
+        // 其它错误，直接抛出错误提示
     default:
         // console.log('其它错误', response)
         break
@@ -56,24 +56,24 @@ service.interceptors.request.use(
         // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token
         // 后台根据携带的token判断用户的登录情况，并返回给我们对应的状态码
         // 而后我们可以在响应拦截器中，根据状态码进行一些统一的操作。
-        const token = store.state.user.token
-        token && (config.headers.Authorization = 'Bearer ' + token)
-        router.beforeEach((to, from, next) => {
-            config.headers.OperationCode = (to.meta.roles && to.meta.roles[0]) || ''
-            // 本地存储权限code，刷新使用
-            localStorage.setItem('OperationCode', (to.meta.roles && to.meta.roles[0]) || '')
-            next()
-        })
-        let OperationCode = localStorage.getItem('OperationCode')
-        if (config.params && config.params.token) {
-            OperationCode = 'operation_center'
-        }
-        // console.log('OperationCode', OperationCode)
-        // config.headers.OperationCode = OperationCode
-        !config.headers.OperationCode && OperationCode && (config.headers.OperationCode = OperationCode)
+        // const token = store.state.user.token
+        // token && (config.headers.Authorization = 'Bearer ' + token)
+        // router.beforeEach((to, from, next) => {
+        //     config.headers.OperationCode = (to.meta.roles && to.meta.roles[0]) || ''
+        //     // 本地存储权限code，刷新使用
+        //     localStorage.setItem('OperationCode', (to.meta.roles && to.meta.roles[0]) || '')
+        //     next()
+        // })
+        // let OperationCode = localStorage.getItem('OperationCode')
+        // if (config.params && config.params.token) {
+        //     OperationCode = 'operation_center'
+        // }
+        // // config.headers.OperationCode = OperationCode
+        // !config.headers.OperationCode && OperationCode && (config.headers.OperationCode = OperationCode)
 
         // config.headers.OperationCode = 'to.meta.code'
         // console.log('添加请求拦截器config', config)
+        // console.log('config', config)
         return config
     },
     (error) => {
@@ -86,16 +86,16 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response) => {
         // 请求成功
-        // console.log('请求成功', response)
+        console.log('请求成功', response)
         if (response.status === 200) {
             // 是否为首次登录进入系统
-            if (response.headers.menulist && response.headers.menulist.length) {
-                if (store.state.user.menuList && store.state.user.menuList.length) {
-                    store.dispatch('user/setMenuList', response.headers)
-                } else {
-                    return Promise.resolve(response)
-                }
-            }
+            // if (response.headers.menulist && response.headers.menulist.length) {
+            //     if (store.state.user.menuList && store.state.user.menuList.length) {
+            //         store.dispatch('user/setMenuList', response.headers)
+            //     } else {
+            //         return Promise.resolve(response)
+            //     }
+            // }
             return Promise.resolve(response.data)
         } else {
             return Promise.reject(response.data)

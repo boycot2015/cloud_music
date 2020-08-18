@@ -157,7 +157,7 @@ const routes = [
         path: '/index',
         component: Layout,
         meta: {
-            icon: 'record',
+            icon: 'right',
             title: '创建的歌单'
 
         },
@@ -181,7 +181,7 @@ const routes = [
         component: Layout,
         meta: {
             title: '收藏的歌单',
-            icon: 'record'
+            icon: 'right'
 
         }
     },
@@ -190,7 +190,7 @@ const routes = [
         path: '/songs/list',
         component: () => import('../views/songs/list.vue'),
         meta: {
-            icon: 'cloud',
+            icon: 'right',
             hideInMenu: true,
             title: '歌单详情列表'
 

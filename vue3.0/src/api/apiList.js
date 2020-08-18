@@ -11,3 +11,10 @@ export default {
     simi,
     search
 }
+export {
+    comment,
+    song,
+    home,
+    simi,
+    search
+}

@@ -1,17 +1,31 @@
 <template>
     <div class="music-home">
         <div class="tab-list flexbox-h just-c">
-            <div class="tab-list-item active js-tab-item" data-type="home">个性推荐</div>
-            <div class="tab-list-item js-tab-item" data-type="cate">歌单</div>
-            <div class="tab-list-item js-tab-item" data-type="dj">主播电台</div>
-            <div class="tab-list-item js-tab-item" data-type="ph">排行榜</div>
-            <div class="tab-list-item js-tab-item" data-type="singer">歌手</div>
-            <div class="tab-list-item js-tab-item" data-type="newest">最新音乐</div>
+            <div
+            v-for="item in tabMenu"
+            :key="item.name"
+            :class="{'active': item.type === activeTab}"
+            @click="onTabClick(item)"
+            class="tab-list-item js-tab-item"
+            data-type="home">{{item.name}}</div>
         </div>
-        <div class="tab-content tab-home-content">
+        <div class="tab-content tab-home-content" v-if="activeTab === tabMenu[0].type">
+            <!-- <swiper ref="mySwiper" :options="swiperOptions">
+                <swiper-slide>Slide 1</swiper-slide>
+                <swiper-slide>Slide 2</swiper-slide>
+                <swiper-slide>Slide 3</swiper-slide>
+                <swiper-slide>Slide 4</swiper-slide>
+                <swiper-slide>Slide 5</swiper-slide>
+                <div class="swiper-pagination" slot="pagination"></div>
+            </swiper> -->
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <!-- <div class="swiper-slide">Slide 1</div> -->
+                    <div
+                    v-for="item in tab1Data.banner"
+                    :key="item.id"
+                    class="swiper-slide">
+                        <img :src="item.imageUrl" alt="">
+                    </div>
                 </div>
                 <!-- 如果需要分页器 -->
                 <div class="swiper-pagination"></div>
@@ -34,6 +48,10 @@
                             </div>
                             <div class="name tl">每日歌曲推荐</div>
                         </li>
+                        <grid-list
+                        v-for="item in tab1Data.personalized"
+                        :item="item"
+                        :key="item.id"></grid-list>
                     </ul>
                 </div>
             </div>
@@ -70,7 +88,7 @@
                 </ul>
             </div>
         </div>
-        <div class="tab-content tab-cate-content">
+        <div class="tab-content tab-cate-content" v-if="activeTab === tabMenu[1].type">
             <div class="tags">
                 <span class="btn-cate js-toggle-cate"><span class="text">全部歌单</span> <i class="icon-music-down"></i></span>
                 <p class="name">
@@ -94,7 +112,91 @@
     </div>
 </template>
 <script>
+import {
+    // ref,
+    computed,
+    watch,
+    reactive,
+    toRefs,
+    // getCurrentInstance,
+    onBeforeMount
+    // onMounted
+} from 'vue'
+import { useStore } from 'vuex'
+// import { useRouter } from 'vue-router'
+// import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
+import 'swiper/swiper-bundle.min.css'
+import GridList from '@/views/components/GridList'
 export default {
+    components: {
+        // Swiper,
+        // SwiperSlide,
+        GridList
+    },
+    // directives: {
+    //     swiper: directive
+    // },
+    setup () {
+        const store = useStore()
+        const homeStore = store.state.home
+        const state = reactive({
+            tabMenu: [
+                {
+                    name: '个性推荐',
+                    type: 'home'
+                }, {
+                    name: '歌单',
+                    type: 'cate'
+                }, {
+                    name: '主播电台',
+                    type: 'dj'
+                }, {
+                    name: '排行榜',
+                    type: 'ph'
+                }, {
+                    name: '歌手',
+                    type: 'singer'
+                }, {
+                    name: '最新音乐',
+                    type: 'newest'
+                }
+            ],
+            activeTab: 'home',
+            tab1Data: {
+                ...computed(() => store.state.home).value
+            }
+        })
+        // const { ctx } = getCurrentInstance()
+        onBeforeMount(async () => {
+            getData(state.activeTab)
+        })
+        watch(() => [
+            homeStore.banner,
+            homeStore.personalized,
+            homeStore.privatecontent,
+            homeStore.topSong,
+            homeStore.mv
+        ], (value) => {
+            state.tab1Data.banner = value[0]
+            state.tab1Data.personalized = value[1]
+            state.tab1Data.privatecontent = value[2]
+            state.tab1Data.topSong = value[3]
+            state.tab1Data.mv = value[4]
+        })
 
+        // methods
+        const getData = async (type) => {
+            await store.commit('home/getData', type)
+        }
+        // 点击tab切换数据
+        const onTabClick = (item) => {
+            state.activeTab = item.type
+            // getData(item.type)
+        }
+        return {
+            ...toRefs(state),
+            onTabClick
+        }
+    }
 }
 </script>
