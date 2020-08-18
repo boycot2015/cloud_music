@@ -86,7 +86,7 @@ service.interceptors.request.use(
 service.interceptors.response.use(
     (response) => {
         // 请求成功
-        console.log('请求成功', response)
+        console.log('请求成功', response.data)
         if (response.status === 200) {
             // 是否为首次登录进入系统
             // if (response.headers.menulist && response.headers.menulist.length) {

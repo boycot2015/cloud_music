@@ -73,3 +73,15 @@ export const drag = (options) => {
         return this
     }
 }
+
+export const filterPlayCount = (num) => {
+    num = num > 50000 ? parseInt(num / 10000) + '万' : num
+    return num
+}
+export const filterDruationTime = (dt) => {
+    var min = Math.floor(dt / 60 / 1000)
+    var second = Math.round(dt / 1000 % 60)
+    min = min < 10 ? '0' + min : min
+    second = second < 10 ? '0' + second : second
+    return min + ':' + second
+}
