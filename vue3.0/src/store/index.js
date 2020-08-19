@@ -1,6 +1,8 @@
 import { createStore } from 'vuex'
 import router from '@/router'
 import home from './home'
+import list from './list'
+import detail from './detail'
 export default createStore({
     state: {
         metaTitle: '网易云音乐',
@@ -10,7 +12,8 @@ export default createStore({
             name: '菩提偈',
             singer: '刘惜君',
             picUrl: require('@/assets/images/avatar.jpg')
-        }
+        },
+        showMenu: true
     },
     mutations: {
         setTitle (state, title) {
@@ -19,11 +22,16 @@ export default createStore({
         },
         getPlayData () {
 
+        },
+        showMenu (state, showMenu) {
+            state.showMenu = showMenu
         }
     },
     actions: {
     },
     modules: {
-        home
+        home,
+        list,
+        detail
     }
 })

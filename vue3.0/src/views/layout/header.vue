@@ -1,8 +1,10 @@
 <template>
     <div class="header flexbox-h">
-        <div class="logo flexbox-h js-logo">
-            <div class="logo-icon icon-music-logo-icon"></div>
-            <h3 class="logo-title">{{headerData.title}}</h3>
+        <div class="logo">
+            <router-link to="/" class="flexbox-h">
+                <div class="logo-icon icon-music-logo-icon"></div>
+                <h3 class="logo-title">{{headerData.title}}</h3>
+            </router-link>
         </div>
         <div class="back-forward tc flexbox-h">
             <div class="back-btn">&lt;</div>

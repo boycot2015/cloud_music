@@ -3,7 +3,7 @@
         <div class="music-box js-music-box flexbox-v" >
             <music-header></music-header>
             <div class="center flexbox-h">
-                <music-aside></music-aside>
+                <music-aside v-show="showMenu"></music-aside>
                 <div class="main flex-1 flexbox-v">
                     <router-view />
                 </div>
@@ -89,6 +89,7 @@ export default {
                 name: '菩提偈',
                 singer: '刘惜君'
             },
+            showMenu: true,
             dragBox: null
         })
         const dragBox = ref(null)
@@ -100,6 +101,19 @@ export default {
             return router.currentRoute.value.meta.title
         }, (value) => {
             store.commit('setTitle', value)
+        })
+        watch(() => {
+            return router.currentRoute.value.path
+        }, (value) => {
+            if (value === '/songs/detail') {
+                store.commit('showMenu', false)
+            } else {
+                store.commit('showMenu', true)
+            }
+        })
+        watch(() => store.state.showMenu, (value) => {
+            console.log(value, 'showMenushowMenushowMenu')
+            state.showMenu = value
         })
         onMounted(() => {
             console.log(dragBox)

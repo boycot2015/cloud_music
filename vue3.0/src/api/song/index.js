@@ -2,24 +2,39 @@ import axios from '@/api/axios'
 import urls from './urls'
 // const headers = {}
 export default {
-    stockCenterData (params) {
-        return axios.get(urls.stockCenterData, {
-            params,
-            headers: { OperationCode: 'stock_list' }
+    playlist (params) {
+        return axios.get(urls.playlist, {
+            params
         })
     },
-    // 导出接口
-    exportStockGoodsData  (params) {
-        return axios.get(urls.exportStockGoodsData, {
-            params,
-            headers: { OperationCode: 'stock_export' }
+    hotCate (params) {
+        return axios.get(urls.hotCate, {
+            params
         })
     },
-    // 导出接口
-    authskip  (params) {
-        return axios.get(urls.authskip, {
-            params,
-            headers: { OperationCode: 'stock_authskip' }
+    singleList (params) {
+        return axios.get(urls.singleList, {
+            params
+        })
+    },
+    detail (params) {
+        return axios.get(urls.detail, {
+            params
+        })
+    },
+    topPlaylist (params) {
+        return axios.get(urls.topPlaylist, {
+            params
+        })
+    },
+    playUrl (params) {
+        return axios.get(urls.playUrl, {
+            params
+        })
+    },
+    lyric (params) {
+        return axios.get(urls.lyric, {
+            params
         })
     }
 }

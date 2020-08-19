@@ -85,3 +85,13 @@ export const filterDruationTime = (dt) => {
     second = second < 10 ? '0' + second : second
     return min + ':' + second
 }
+export const filterTime = (timeStr) => {
+    const time = new Date(timeStr)
+    const month = time.getMonth() + 1
+    const day = time.getDate()
+    let hours = time.getHours()
+    hours = hours < 10 ? '0' + hours : hours
+    let min = time.getMinutes()
+    min = min < 10 ? '0' + min : min
+    return month + '月' + day + '日 ' + hours + ':' + min
+}

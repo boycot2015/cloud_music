@@ -1,4 +1,5 @@
 import { home } from '@/api/apiList'
+import { filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
     state: {
@@ -19,9 +20,12 @@ export default {
             const mvRes = await home.mv(params)
             const djrecommendRes = await home.djrecommend(params)
             state.banner = bannerRes && bannerRes.banners
-            state.personalized = (personalizedRes && personalizedRes.result.slice(0, 9)) || {}
-            state.privatecontent = (privatecontentRes && privatecontentRes.result) || {}
-            let res = (topSongRes && topSongRes.data) || {}
+            state.personalized = (personalizedRes && personalizedRes.result.slice(0, 9)) || []
+            state.personalized.map(el => {
+                el.playCount = filterPlayCount(el.playCount)
+            })
+            state.privatecontent = (privatecontentRes && privatecontentRes.result) || []
+            let res = (topSongRes && topSongRes.data) || []
             res = topSongRes.data.slice(0, 10)
             res = [{
                 ftype: 0,
@@ -32,7 +36,7 @@ export default {
             }]
             state.topSong = res
             state.mv = (mvRes && mvRes.result.slice(0, 3)) || {}
-            state.djrecommend = (djrecommendRes && djrecommendRes.djRadios.slice(0, 5)) || {}
+            state.djrecommend = (djrecommendRes && djrecommendRes.djRadios.slice(0, 5)) || []
             // console.log(state.djrecommend, 'value')
             return Promise.resolve({ code: 200, success: true })
         }

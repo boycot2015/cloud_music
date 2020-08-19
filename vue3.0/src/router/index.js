@@ -188,24 +188,52 @@ const routes = [
     {
         name: 'list',
         path: '/songs/list',
-        component: () => import('../views/songs/list.vue'),
+        component: Layout,
         meta: {
             icon: 'right',
             hideInMenu: true,
             title: '歌单详情列表'
 
-        }
+        },
+        children: [
+            {
+                id: 1,
+                name: 'list',
+                path: '/songs/list',
+                component: () => import('../views/songs/list.vue'),
+                meta: {
+                    icon: 'right',
+                    title: '歌单详情列表'
+
+                },
+                rightIcon: 'beckoning'
+            }
+        ]
     },
     {
         name: 'detail',
         path: '/songs/detail',
-        component: () => import('../views/songs/detail.vue'),
+        component: Layout,
         meta: {
             icon: '',
             title: '歌单详情',
             hideInMenu: true
 
-        }
+        },
+        children: [
+            {
+                id: 1,
+                name: 'detail',
+                path: '/songs/detail',
+                component: () => import('../views/songs/detail.vue'),
+                meta: {
+                    icon: 'right',
+                    title: '歌单详情'
+
+                },
+                rightIcon: 'beckoning'
+            }
+        ]
     }
 ]
 

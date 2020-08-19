@@ -51,6 +51,7 @@
                     v-for="(item, index) in obj.data"
                     :item="item"
                     :index="index"
+                    @click="onListClick(item)"
                     :key="item.id"></grid-list>
                 </ul>
             </div>
@@ -92,7 +93,7 @@ import {
     onMounted
 } from 'vue'
 import { useStore } from 'vuex'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 // import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
 import GridList from '@/views/components/GridList'
@@ -108,6 +109,7 @@ export default {
     setup () {
         const store = useStore()
         const homeStore = store.state.home
+        const router = useRouter()
         const state = reactive({
             tabMenu: [
                 {
@@ -184,17 +186,22 @@ export default {
             state.tab1Data.list.map((el, i) => {
                 state.tab1Data.list[i].data = value[i]
             })
-            // state.tab1Data.banner = value[0]
-            // state.tab1Data.personalized = value[1]
-            // state.tab1Data.privatecontent = value[2]
-            // state.tab1Data.topSong = value[3]
-            // state.tab1Data.mv = value[4]
-            // state.tab1Data.djrecommend = value[4]
         })
 
         // methods
         const getData = async (type) => {
             await store.commit('home/getData', type)
+        }
+        // 点击tab切换数据
+        const onListClick = (item) => {
+            // getData(item.type)
+            console.log(item.id, 'item.id')
+            router.push({
+                path: '/songs/list',
+                query: {
+                    id: item.id
+                }
+            })
         }
         // 点击tab切换数据
         const onTabClick = (item) => {
@@ -203,7 +210,8 @@ export default {
         }
         return {
             ...toRefs(state),
-            onTabClick
+            onTabClick,
+            onListClick
         }
     }
 }

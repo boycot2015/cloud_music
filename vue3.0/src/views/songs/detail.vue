@@ -1,5 +1,5 @@
 <template>
-      <div class="song-detail">
+      <div class="song-detail active">
         <div class="top flexbox-h just-c">
             <div class="handler">
              <div class="point"></div>
@@ -8,7 +8,7 @@
              <div class="line-3"></div>
              <div class="header-cap"></div>
         </div>
-        <div class="mask" style="background-image: url({{playData.picUrl}})"></div>
+        <div class="mask" :style="{backgroundImage: `url(${playData.picUrl})`}"></div>
         <div class="cover">
             <div class="img">
                 <img :src="playData.picUrl" alt="">
@@ -177,10 +177,69 @@
 </template>
 
 <script>
+import {
+    // ref,
+    // computed,
+    watch,
+    reactive,
+    toRefs,
+    // getCurrentInstance,
+    // onBeforeMount
+    onMounted
+} from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+// import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
+import 'swiper/swiper-bundle.min.css'
 export default {
-    data () {
-        return {
+    components: {
+    },
+    setup () {
+        const store = useStore()
+        const listStore = store.state.detail
+        const router = useRouter()
+        const state = reactive({
+            lyricList: [],
+            data: {
+                total: 0,
+                hotComments: [], // 精彩评论
+                comments: [] // 所有评论
+            },
             playData: {}
+        })
+        // const { ctx } = getCurrentInstance()
+        onMounted(async () => {
+            getData({ id: router.currentRoute.value.query.id })
+        })
+        watch(() => [
+            listStore.lyricList,
+            listStore.data.comments,
+            listStore.data.comments,
+            listStore.playData,
+            listStore.data.total
+        ], (value) => {
+            state.lyricList = value[0]
+            state.data.hotComments = value[1]
+            state.data.comments = value[2]
+            state.playData = value[3]
+            state.data.total = value[4]
+        })
+
+        // methods
+        const getData = async (params) => {
+            await store.commit('detail/getData', params)
+        }
+        const onListItemClick = (item) => {
+            router.push({
+                path: '/songs/detail',
+                query: {
+                    id: item.id
+                }
+            })
+        }
+        return {
+            ...toRefs(state),
+            onListItemClick
         }
     }
 }
