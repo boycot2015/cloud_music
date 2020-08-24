@@ -1,5 +1,5 @@
 import { home } from '@/api/apiList'
-import { filterPlayCount } from '@/utils'
+import { filterPlayCount, store } from '@/utils'
 export default {
     namespaced: true,
     state: {
@@ -13,6 +13,14 @@ export default {
     },
     mutations: {
         async getData (state, params) {
+            const localData = store.get('homeData')
+            if (localData !== null) {
+                for (const key in localData) {
+                    state[key] = localData[key]
+                }
+                console.log(state, 'localData')
+                return Promise.resolve({ code: 200, success: true })
+            }
             const bannerRes = await home.banner(params)
             const personalizedRes = await home.personalized(params)
             const privatecontentRes = await home.privatecontent(params)
@@ -38,6 +46,7 @@ export default {
             state.mv = (mvRes && mvRes.result.slice(0, 3)) || {}
             state.djrecommend = (djrecommendRes && djrecommendRes.djRadios.slice(0, 5)) || []
             // console.log(state.djrecommend, 'value')
+            store.set('homeData', { ...state }, new Date().getTime() + 60 * 1000)
             return Promise.resolve({ code: 200, success: true })
         }
     },

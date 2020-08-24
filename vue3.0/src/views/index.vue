@@ -9,7 +9,7 @@
             class="tab-list-item js-tab-item"
             data-type="home">{{item.name}}</div>
         </div>
-        <div class="tab-content tab-home-content" v-if="activeTab === tabMenu[0].type">
+        <div     class="tab-content tab-home-content" v-if="activeTab === tabMenu[0].type">
             <!-- <swiper ref="mySwiper" :options="swiperOptions">
                 <swiper-slide>Slide 1</swiper-slide>
                 <swiper-slide>Slide 2</swiper-slide>

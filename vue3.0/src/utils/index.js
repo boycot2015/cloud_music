@@ -95,3 +95,45 @@ export const filterTime = (timeStr) => {
     min = min < 10 ? '0' + min : min
     return month + '月' + day + '日 ' + hours + ':' + min
 }
+
+// 本地存储
+export const store = {
+    state: {},
+    getters: () => {
+        return this.state
+    },
+    /**
+         * 获取本地存储
+         * @param {*} key 存储的键
+         */
+    get (key) {
+        const data = JSON.parse(localStorage.getItem(key))
+        if (data != null) {
+            if (data.expirse != null && data.expirse < new Date().getTime()) {
+                this.remove()
+            } else {
+                return data.value
+            }
+        }
+        return null
+    },
+    /**
+         * 获取本地存储
+         * @param {*} key 存储的键名称
+         * @param {*} value 值
+         * @param {*} time 过期时间，不设置为永久
+         */
+    set (key, value, time) {
+        const data = { value, expirse: new Date(time).getTime() }
+        localStorage.setItem(key, JSON.stringify(data))
+    },
+    /**
+         * 移除本地存储
+         * @param {*} key 存储的键
+         */
+    remove (key) {
+        window.localStorage.removeItem(key)
+    },
+    action: {},
+    mutations: {}
+}

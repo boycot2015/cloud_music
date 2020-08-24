@@ -132,12 +132,14 @@ export default {
         const getData = async (params) => {
             await store.commit('list/getData', params)
         }
-        const onListItemClick = (item) => {
-            router.push({
-                path: '/songs/detail',
-                query: {
-                    id: item.id
-                }
+        const onListItemClick = async (item) => {
+            store.dispatch('setPlayData', item).then(res => {
+                router.push({
+                    path: '/songs/detail',
+                    query: {
+                        id: item.id
+                    }
+                })
             })
         }
         return {

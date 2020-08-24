@@ -122,10 +122,10 @@
                 </template>
             </div>
             <div class="same-content">
-                <div class="same-play-list grid-list" v-if="data.playlist && data.playlist.length">
+                <div class="same-play-list grid-list" v-if="data.playLists && data.playLists.length">
                     <h2 class="title">包含这首歌的歌单</h2>
                     <div
-                    v-for="item in data.playlists"
+                    v-for="item in data.playLists"
                     :key="item.id"
                     class="grid-list-item ftype-0 "
                     data-id="{{item.id}}"
@@ -196,14 +196,17 @@ export default {
     },
     setup () {
         const store = useStore()
-        const listStore = store.state.detail
+        const rootStore = store.state
+        const detailStore = rootStore.detail
         const router = useRouter()
         const state = reactive({
             lyricList: [],
             data: {
                 total: 0,
                 hotComments: [], // 精彩评论
-                comments: [] // 所有评论
+                comments: [], // 所有评论
+                playLists: [],
+                songs: []
             },
             playData: {}
         })
@@ -212,17 +215,21 @@ export default {
             getData({ id: router.currentRoute.value.query.id })
         })
         watch(() => [
-            listStore.lyricList,
-            listStore.data.comments,
-            listStore.data.comments,
-            listStore.playData,
-            listStore.data.total
+            detailStore.lyricList,
+            detailStore.data.hotComments,
+            detailStore.data.comments,
+            rootStore.playData,
+            detailStore.data.total,
+            detailStore.data.playLists,
+            detailStore.data.songs
         ], (value) => {
             state.lyricList = value[0]
             state.data.hotComments = value[1]
             state.data.comments = value[2]
             state.playData = value[3]
             state.data.total = value[4]
+            state.data.playLists = value[5]
+            state.data.songs = value[6]
         })
 
         // methods

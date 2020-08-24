@@ -1,13 +1,13 @@
 <template>
   <li class="grid-list-item fl clearfix js-list-detail"
-        title="{{item.rcmdtext || item.name}}"
+        :title="item.rcmdtext || item.name"
         :class="`type-${item.type} ftype-${item.ftype}`"
         data-url="{{item.mp3Url}}"
     >
         <ul v-if="item.list" class="grid-list js-child-list fl">
                 <li class="grid-list-item clearfix js-list-detail"
                     :class="`type-${child.type} ftype-${child.ftype}`"
-                    title="{{child.name}}"
+                    :title="child.name"
                     v-for="(child, cindex) in item.list" :key="cindex"
                     data-url="{{child.mp3Url}}"
                 >
