@@ -3,9 +3,15 @@
         <div class="music-box js-music-box flexbox-v" >
             <music-header></music-header>
             <div class="center flexbox-h">
-                <music-aside v-show="showMenu"></music-aside>
+                <transition name="slide-fade">
+                    <music-aside v-if="showMenu" @hideMenu="goDetail"></music-aside>
+                </transition>
                 <div class="main flex-1 flexbox-v">
-                    <router-view />
+                    <router-view v-slot="{ Component }">
+                        <transition name="slide-fade" mode="out-in">
+                            <component :is="Component" />
+                        </transition>
+                    </router-view>
                 </div>
             </div>
             <music-footer></music-footer>
@@ -82,6 +88,12 @@ export default {
         musicAside,
         musicFooter
     },
+    emits: {
+        hideMenu: val => {
+            console.log(val, 'valvalvalval')
+            return true
+        }
+    },
     setup (props, context) {
         const state = reactive({
             playData: {
@@ -122,11 +134,37 @@ export default {
             //     target: dragBox.value
             // })
         })
+        const goDetail = (val) => {
+            console.log(val, '12312')
+            state.showMenu = false
+            router.push({
+                path: '/songs/detail',
+                query: {
+                    id: 0
+                }
+            })
+        }
         return {
             dragBox,
+            goDetail,
             ...computed(() => storeState).value,
             ...toRefs(state)
         }
     }
 }
 </script>
+<style lang="css">
+/* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active for below version 2.1.8 */ {
+  transform: translateX(10px);
+  opacity: 0;
+}
+</style>

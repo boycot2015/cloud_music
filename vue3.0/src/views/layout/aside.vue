@@ -36,7 +36,7 @@
             </div>
         </div>
         <div class="music-info flexbox-h" data-id="">
-            <div class="mask">
+            <div class="mask" @click="onInfoMaskClick">
                 <i class="icon icon-music-max"></i>
             </div>
             <div class="img tl">
@@ -69,8 +69,9 @@ import {
 // toRefs
 } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 export default {
-    setup () {
+    setup (props, { emit }) {
         const state = reactive({
             activeFindex: '',
             activeRoute: '/index',
@@ -80,15 +81,20 @@ export default {
         const store = useStore()
         const menu = store.state.menu
         const playData = store.state.playData
-
+        /* eslint-disable */
+        const router = useRouter()
         const onStar = (e) => {
             state.isStar = !state.isStar
+        }
+        const onInfoMaskClick = () => {
+            emit('hideMenu', true)
         }
         return {
             ...toRefs(state),
             menu,
             playData,
-            onStar
+            onStar,
+            onInfoMaskClick
         }
     }
 }

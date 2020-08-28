@@ -30,7 +30,7 @@
             </li>
         </ul>
         <div class="img" :class="`${item.ftype == 0 ? 'fl': ''}`" v-else>
-            <span class="copy-writer" v-if="item.type == 0 || category == 3">{{item.copywriter}}</span>
+            <span class="copy-writer" v-if="(item.type == 0 || category == 3) && item.copywriter">{{item.copywriter}}</span>
             <div class="right" v-if="item.playCount">
                 <span class="icon" :class="`icon-music-${item.type == 5? 'video':'erphone'}`"></span>
                 <span class="play-count">{{item.playCount}}</span>

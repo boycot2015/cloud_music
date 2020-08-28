@@ -9,15 +9,12 @@
             class="tab-list-item js-tab-item"
             data-type="home">{{item.name}}</div>
         </div>
-        <div     class="tab-content tab-home-content" v-if="activeTab === tabMenu[0].type">
-            <!-- <swiper ref="mySwiper" :options="swiperOptions">
-                <swiper-slide>Slide 1</swiper-slide>
-                <swiper-slide>Slide 2</swiper-slide>
-                <swiper-slide>Slide 3</swiper-slide>
-                <swiper-slide>Slide 4</swiper-slide>
-                <swiper-slide>Slide 5</swiper-slide>
-                <div class="swiper-pagination" slot="pagination"></div>
-            </swiper> -->
+        <home-temp-tab1 v-show="activeTab === tabMenu[0].type"></home-temp-tab1>
+        <home-temp-tab2 v-show="activeTab === tabMenu[1].type"></home-temp-tab2>
+        <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
+        <!-- <home-temp-tab4 v-show="activeTab === tabMenu[3].type"></home-temp-tab4>
+        <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5> -->
+        <!-- <div class="tab-content tab-home-content" v-show="activeTab === tabMenu[0].type">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
                     <div
@@ -25,11 +22,10 @@
                     :key="item.id"
                     class="swiper-slide">
                         <img :src="item.imageUrl" alt="">
+                        <div class="title" :style="{backgrundColor: item.typeColor}">{{item.typeTitle}}</div>
                     </div>
                 </div>
-                <!-- 如果需要分页器 -->
                 <div class="swiper-pagination"></div>
-                <!-- 如果需要导航按钮 -->
                 <div class="button-prev icon-music-left"></div>
                 <div class="button-next icon-music-right"></div>
             </div>
@@ -41,11 +37,11 @@
                 <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
                     <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
                         <div class="img">
-                            <span class="tip copy-writer">根据您的音乐口味生成每日更新</span>
+                            <span class="tip copy-writer">{{tab1Data.dayData.copywriter}}</span>
                             <p class="week">{{tab1Data.dayData.weeks[new Date().getDay()]}}</p>
                             <div class="date-text">{{tab1Data.dayData.day}}</div>
                         </div>
-                        <div class="name tl">每日歌曲推荐</div>
+                        <div class="name tl">{{tab1Data.dayData.name}}</div>
                     </li>
                     <grid-list
                     v-for="(item, index) in obj.data"
@@ -55,62 +51,43 @@
                     :key="item.id"></grid-list>
                 </ul>
             </div>
-            <div class="recommend">
-            </div>
-        </div>
-        <div class="tab-content tab-cate-content" v-if="activeTab === tabMenu[1].type">
-            <div class="tags">
-                <span class="btn-cate js-toggle-cate"><span class="text">全部歌单</span> <i class="icon-music-down"></i></span>
-                <p class="name">
-                    热门标签：
-                    <span class="cates"></span>
-                </p>
-            </div>
-            <div class="mask-cate">
-            </div>
-            <ul class="recommend-list clearfix">
-                <li class="grid-list-item top js-list-detail fl" data-id="">
-                    <div class="img flexbox-v just-c tc">
-                        <i class="icon icon-music-emoji"></i>
-                        <div class="top-text">精品歌单<i class="icon-music-right"></i></div>
-                    </div>
-                    <div class="name tl">精品歌单倾心推荐，给最懂音乐的你</div>
-                </li>
-            </ul>
-            <div id="cate-page" class="tc"></div>
-        </div>
+        </div> -->
     </div>
 </template>
 <script>
 import {
     // ref,
     // computed,
-    watch,
+    // watch,
     reactive,
-    toRefs,
+    toRefs
     // getCurrentInstance,
     // onBeforeMount
-    onMounted
+    // onMounted
 } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
-// import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
-import 'swiper/swiper-bundle.min.css'
-import GridList from '@/views/components/GridList'
+// import { useRouter } from 'vue-router'
+import homeTempTab1 from '@/views/components/homeTemp/temp1'
+import homeTempTab2 from '@/views/components/homeTemp/temp2'
+import homeTempTab3 from '@/views/components/homeTemp/temp3'
+// import homeTempTab4 from '@/views/components/homeTemp/temp4'
+// import homeTempTab5 from '@/views/components/homeTemp/temp5'
 export default {
+    name: 'home',
     components: {
         // Swiper,
         // SwiperSlide,
-        GridList
+        homeTempTab1,
+        homeTempTab2,
+        homeTempTab3
+        // homeTempTab4,
+        // homeTempTab5
     },
     // directives: {
     //     swiper: directive
     // },
     setup () {
-        const store = useStore()
-        const homeStore = store.state.home
-        const router = useRouter()
         const state = reactive({
+            activeTab: 'home',
             tabMenu: [
                 {
                     name: '个性推荐',
@@ -131,78 +108,8 @@ export default {
                     name: '最新音乐',
                     type: 'newest'
                 }
-            ],
-            activeTab: 'home',
-            tab1Data: {
-                dayData: {
-                    weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-                    day: new Date().getDate(),
-                    name: '每日歌曲推荐',
-                    copywriter: '根据您的音乐口味生成每日更新'
-                },
-                // ...computed(() => store.state.home).value,
-                list: [{
-                    title: '推荐歌单',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '独家放送',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '最新音乐',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '推荐MV',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '主播电台',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }]
-            }
+            ]
         })
-        // const { ctx } = getCurrentInstance()
-        onMounted(async () => {
-            getData(state.activeTab)
-        })
-        watch(() => homeStore.banner, (value) => {
-            state.tab1Data.banner = value
-        })
-        watch(() => [
-            homeStore.personalized,
-            homeStore.privatecontent,
-            homeStore.topSong,
-            homeStore.mv,
-            homeStore.djrecommend
-        ], (value) => {
-            state.tab1Data.list.map((el, i) => {
-                state.tab1Data.list[i].data = value[i]
-            })
-        })
-
-        // methods
-        const getData = async (type) => {
-            await store.commit('home/getData', type)
-        }
-        // 点击tab切换数据
-        const onListClick = (item) => {
-            // getData(item.type)
-            console.log(item.id, 'item.id')
-            router.push({
-                path: '/songs/list',
-                query: {
-                    id: item.id
-                }
-            })
-        }
         // 点击tab切换数据
         const onTabClick = (item) => {
             state.activeTab = item.type
@@ -210,8 +117,7 @@ export default {
         }
         return {
             ...toRefs(state),
-            onTabClick,
-            onListClick
+            onTabClick
         }
     }
 }

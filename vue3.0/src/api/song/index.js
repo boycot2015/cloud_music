@@ -7,6 +7,11 @@ export default {
             params
         })
     },
+    catlist (params) {
+        return axios.get(urls.catlist, {
+            params
+        })
+    },
     hotCate (params) {
         return axios.get(urls.hotCate, {
             params

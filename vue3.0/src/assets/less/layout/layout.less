@@ -241,9 +241,11 @@
         .center {
             height: calc(100% - 100px);
             align-items: flex-start;
+            overflow: hidden;
             .main {
                 overflow: hidden;
                 overflow-y: auto;
+                transition: all 0.5s;
             }
         }
         .aside {
@@ -253,11 +255,7 @@
             overflow: hidden;
             opacity:1;
             border-right: 1px solid @c-ddd;
-            transition: opacity 0.3s;
-            &.active {
-                width: 0;
-                opacity:0;
-            }
+            // transition: opacity 0.3s;
             &-item {
                 // padding: 10px 20px 0 10px;
                 margin-top: 10px;
@@ -347,7 +345,7 @@
                     top: 0;
                     height: 100%;
                     width: 100%;
-                    pointer-events: none;
+                    // pointer-events: none;
                     .icon::after {
                         color: @c-ccc;
                         // line-height: 56px;

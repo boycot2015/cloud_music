@@ -7,8 +7,8 @@
             </router-link>
         </div>
         <div class="back-forward tc flexbox-h">
-            <div class="back-btn">&lt;</div>
-            <div class="forward-btn">&gt;</div>
+            <div class="back-btn" @click="router.back()">&lt;</div>
+            <div class="forward-btn" @click="router.forward()">&gt;</div>
         </div>
         <div class="search-box flexbox-h">
             <input type="text" v-model="searchForm.key" :placeholder="searchForm.placeholder">
@@ -45,7 +45,7 @@ import {
     toRefs
     // getCurrentInstance
 } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 export default {
     name: 'musicHeader',
     setup () {
@@ -62,8 +62,9 @@ export default {
             }
         })
         // const storeState = store.state
-        // const router = useRouter()
+        const router = useRouter()
         return {
+            router,
             ...toRefs(state)
         }
     }

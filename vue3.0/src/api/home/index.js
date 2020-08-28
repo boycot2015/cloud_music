@@ -16,10 +16,22 @@ export default {
     mv (params) {
         return axios.get(urls.mv, { params })
     },
+    djBanner (params) {
+        return axios.get(urls.djBanner, { params })
+    },
     djprogram (params) {
         return axios.get(urls.djprogram, { params })
     },
+    djCatelist (params) {
+        return axios.get(urls.djCatelist, { params })
+    },
     djrecommend (params) {
         return axios.get(urls.djrecommend, { params })
+    },
+    djPaygift (params) {
+        return axios.get(urls.djPaygift, { params })
+    },
+    hotRadio (params) {
+        return axios.get(urls.hotRadio, { params })
     }
 }

@@ -50,6 +50,14 @@
             border-radius: 5px;
             cursor: pointer;
             border: 1px solid @c-ccc;
+            i {
+                display: inline-block;
+            }
+            &.active {
+                i {
+                    transform: rotate(-180deg);
+                }
+            }
             i::after {
                 font-size: 14px;
                 color: @c-000;
@@ -57,7 +65,6 @@
         }
         .mask-cate {
             position: absolute;
-            display: none;
             top: 30px;
             left: 0;
             z-index: 10;
@@ -229,7 +236,7 @@
         }
         .title {
             position: absolute;
-            right: 400px;
+            right: 475px;
             border-radius: 20px 0 0 20px;
             background-color: @primary;
             color: @white;
@@ -248,6 +255,7 @@
             position: relative;
             z-index: 99;
             opacity: 1;
+            right: -100px;
         }
         .swiper-slide-next,
         .swiper-slide-prev {
@@ -257,9 +265,11 @@
         }
         .swiper-slide-active {
             .title {
-                right: 104px;
+                right: 230px;
                 bottom: 5px;
             }
+            position: relative;
+            left: 150px;
         }
         .swiper-pagination {
             .swiper-pagination-bullet {
