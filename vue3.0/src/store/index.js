@@ -44,6 +44,9 @@ export default createStore({
                         muted: false,
                         volume: 0.3
                     }
+                    console.log(data, 'datadatadata')
+                    data.al = data.al || data.album
+                    data.ar = data.ar || data.artists
                     playData.name = data.al.name
                     playData.singer = ''
                     data.ar.map(el => {

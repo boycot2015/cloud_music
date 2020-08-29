@@ -10,18 +10,6 @@ export default {
             songs: [],
             hotComments: [], // 精彩评论
             comments: [] // 所有评论
-        },
-        playData: {
-            src: '',
-            name: '至尊宝',
-            singer: '徐良/杨威',
-            coverImg: '/dist/images/avatar.jpg',
-            volume: 0.1,
-            loop: false,
-            ended: false,
-            muted: false,
-            currentTime: 0,
-            duration: 0
         }
     },
     mutations: {

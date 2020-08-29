@@ -1,45 +1,38 @@
 <template>
-    <div class="tab-content tab-home-content">
-        <div class="swiper-container dj-swiper">
-            <div class="swiper-wrapper">
-                <div
-                v-for="item in tabData.banner"
-                :key="item.id"
-                class="swiper-slide">
-                    <img :src="item.pic || item.imageUrl" alt="">
-                    <div class="title" :style="{backgrundColor: item.typeColor}">{{item.typeTitle}}</div>
-                </div>
+<div class="tab-content tab-home-content">
+    <div class="swiper-container dj-swiper">
+        <div class="swiper-wrapper">
+            <div v-for="item in tabData.banner" :key="item.id" class="swiper-slide">
+                <img :src="item.pic || item.imageUrl" alt="">
+                <div class="title" :style="{backgrundColor: item.typeColor}">{{item.typeTitle}}</div>
             </div>
-            <!-- 如果需要分页器 -->
-            <div class="swiper-pagination"></div>
-            <!-- 如果需要导航按钮 -->
-            <div class="button-prev icon-music-left"></div>
-            <div class="button-next icon-music-right"></div>
         </div>
-        <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
-            <div class="title clearfix">
-                <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
-            </div>
-            <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
-                <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
-                    <div class="img">
-                        <span class="tip copy-writer">{{tabData.dayData.copywriter}}</span>
-                        <p class="week">{{tabData.dayData.weeks[new Date().getDay()]}}</p>
-                        <div class="date-text">{{tabData.dayData.day}}</div>
-                    </div>
-                    <div class="name tl">{{tabData.dayData.name}}</div>
-                </li>
-                <grid-list
-                v-for="(item, index) in obj.data"
-                :item="item"
-                :index="index"
-                @click="onListClick(item)"
-                :key="item.id"></grid-list>
-            </ul>
-        </div>
+        <!-- 如果需要分页器 -->
+        <div class="swiper-pagination"></div>
+        <!-- 如果需要导航按钮 -->
+        <div class="button-prev icon-music-left"></div>
+        <div class="button-next icon-music-right"></div>
     </div>
+    <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
+        <div class="title clearfix">
+            <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
+            <span class="fr more">更多<i class="icon-music-right"></i></span>
+        </div>
+        <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
+            <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
+                <div class="img">
+                    <span class="tip copy-writer">{{tabData.dayData.copywriter}}</span>
+                    <p class="week">{{tabData.dayData.weeks[new Date().getDay()]}}</p>
+                    <div class="date-text">{{tabData.dayData.day}}</div>
+                </div>
+                <div class="name tl">{{tabData.dayData.name}}</div>
+            </li>
+            <grid-list v-for="(item, index) in obj.data" :item="item" :index="index" @click="onListClick(item)" :key="item.id"></grid-list>
+        </ul>
+    </div>
+</div>
 </template>
+
 <script>
 import {
     // ref,
@@ -51,8 +44,12 @@ import {
     // onBeforeMount
     onMounted
 } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import {
+    useStore
+} from 'vuex'
+import {
+    useRouter
+} from 'vue-router'
 // import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import '@/plugins/swiper/swiper.min.css'
 import Swiper from '@/plugins/swiper/swiper.min.js'
@@ -67,7 +64,7 @@ export default {
     // directives: {
     //     swiper: directive
     // },
-    setup () {
+    setup() {
         const store = useStore()
         const tabData = store.state.home.tab3Data
         const router = useRouter()
@@ -81,34 +78,29 @@ export default {
                 },
                 // ...computed(() => store.state.home).value,
                 list: [{
-                    title: '推荐歌单',
+                    title: '付费精品',
+                    category: 3,
+                    type: 2,
+                    data: []
+                }, {
+                    title: '电台个性推荐',
                     category: 3,
                     type: 1,
                     data: []
                 }, {
-                    title: '独家放送',
+                    title: '创作|翻唱',
                     category: 3,
                     type: 1,
                     data: []
                 }, {
-                    title: '最新音乐',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '推荐MV',
-                    category: 3,
-                    type: 1,
-                    data: []
-                }, {
-                    title: '主播电台',
+                    title: '3D|电子',
                     category: 3,
                     type: 1,
                     data: []
                 }]
             },
             swiperOption: {
-            // direction: 'vertical', // 垂直切换选项
+                // direction: 'vertical', // 垂直切换选项
                 // slidesPerView: 1,
                 // spaceBetween: -40,
                 slidesPerView: 'auto',
@@ -146,9 +138,8 @@ export default {
         })
         watch(() => [
             tabData.personalized,
-            tabData.privatecontent,
-            tabData.topSong,
-            tabData.mv,
+            tabData.djrecommend,
+            tabData.djrecommend,
             tabData.djrecommend
         ], (value) => {
             state.tabData.list.map((el, i) => {

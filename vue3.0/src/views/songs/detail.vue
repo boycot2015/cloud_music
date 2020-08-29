@@ -1,12 +1,12 @@
 <template>
-      <div class="song-detail active">
-        <div class="top flexbox-h just-c">
-            <div class="handler">
-             <div class="point"></div>
-             <div class="line-1"></div>
-             <div class="line-2"></div>
-             <div class="line-3"></div>
-             <div class="header-cap"></div>
+<div class="song-detail active">
+    <div class="top flexbox-h just-c">
+        <div class="handler">
+            <div class="point"></div>
+            <div class="line-1"></div>
+            <div class="line-2"></div>
+            <div class="line-3"></div>
+            <div class="header-cap"></div>
         </div>
         <div class="mask" :style="{backgroundImage: `url(${playData.picUrl})`}"></div>
         <div class="cover">
@@ -31,149 +31,117 @@
                 <i class="icon-music-minify icon-minify"></i>
             </div>
             <div class="wrap">
-                <div class="lyric-text" >
+                <div class="lyric-text">
                     <template v-if="lyricList && lyricList.length">
-                            <p v-for="item in lyricList"
-                            :key="item.id"
-                            class="lyric-text-item
-                            {{index == 0 ?'active' : ''}}"
-                            data-time="{{item.time}}"
-                            >{{item.text}}</p>
+                        <p v-for="item in lyricList" :key="item.id" class="lyric-text-item
+                            {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
                     </template>
                     <p class="lyric-text-item " v-else data-time="">暂无歌词~</p>
                 </div>
             </div>
         </div>
-        </div>
-        <div class="bottom flexbox-h">
-            <div class="comment">
-                <template v-if="data.hotComments && data.hotComments.length">
-                    <h2 class="title">听友评论<span>(已有{{data.total}}条评论)</span></h2>
-                    <h3 class="title">精彩评论({{data.hotComments.length}})</h3>
-                    <div
-                    v-for="hotComment in data.hotComments"
-                    :key="hotComment.id"
-                    class="comment-item clearfix">
-                        <div class="avatar fl">
-                            <img :src="hotComment.user.avatarUrl" alt="">
-                        </div>
-                        <div class="text fl">
-                            <p class="name">
-                                {{hotComment.user.nickname}}:
-                                <span class="desc">{{hotComment.content}}</span>
-                            </p>
-                            <template v-if="hotComment.beReplied.length">
-                                <p class="name reply"
-                                v-for="beReplied in hotComment.beReplied"
-                                :key="beReplied.id">
-                                    @{{beReplied.user.nickname}}:
-                                    <span class="desc">{{beReplied.content}}</span>
-                                </p>
-                            </template>
-                            <div class="info flexbox-h just-b">
-                                <span class="time flex-1 tl">{{hotComment.time}}</span>
-                                <div class="right flex-3 tr">
-                                    <span class="star">
-                                        <i class="icon-music-star"></i>
-                                            <i class="num" v-if="hotComment.likedCount">({{hotComment.likedCount}})</i>
-                                    </span>
-                                    <span class="share">分享</span>
-                                    <span class="repeat">回复</span>
-                                </div>
-                            </div>
-                        </div>
+    </div>
+    <div class="bottom flexbox-h">
+        <div class="comment">
+            <template v-if="data.hotComments && data.hotComments.length">
+                <h2 class="title">听友评论<span>(已有{{data.total}}条评论)</span></h2>
+                <h3 class="title">精彩评论({{data.hotComments.length}})</h3>
+                <div v-for="hotComment in data.hotComments" :key="hotComment.id" class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img :src="hotComment.user.avatarUrl" alt="">
                     </div>
-                </template>
-                <template v-if="data.comments && data.comments.length">
-                    <h3 class="title">最新评论({{data.total - data.hotComments.length}})</h3>
-                    <div
-                    v-for="comment in data.comments"
-                    :key="comment.id"
-                    class="comment-item clearfix">
-                        <div class="avatar fl">
-                            <img :src="comment.user.avatarUrl" alt="">
-                        </div>
-                        <div class="text fl">
-                            <p class="name">
-                                {{comment.user.nickname}}：
-                                <span class="desc">{{comment.content}}</span>
+                    <div class="text fl">
+                        <p class="name">
+                            {{hotComment.user.nickname}}:
+                            <span class="desc">{{hotComment.content}}</span>
+                        </p>
+                        <template v-if="hotComment.beReplied.length">
+                            <p class="name reply" v-for="beReplied in hotComment.beReplied" :key="beReplied.id">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
                             </p>
-                            <template v-if="comment.beReplied.length">
-                                <p class="name reply"
-                                v-for="beReplied in comment.beReplied"
-                                :key="beReplied.id">
-                                    @{{beReplied.user.nickname}}:
-                                    <span class="desc">{{beReplied.content}}</span>
-                                </p>
-                            </template>
-                            <div class="info flexbox-h just-b">
-                                <span class="time flex-1 tl">{{comment.time}}</span>
-                                <div class="right flex-3 tr">
-                                    <span class="star">
-                                        <i class="icon-music-star"></i>
-                                            <i class="num" v-if="comment.likedCount">({{comment.likedCount}})</i>
-                                    </span>
-                                    <span class="share">分享</span>
-                                    <span class="repeat">回复</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-            </div>
-            <div class="same-content">
-                <div class="same-play-list grid-list" v-if="data.playLists && data.playLists.length">
-                    <h2 class="title">包含这首歌的歌单</h2>
-                    <div
-                    v-for="item in data.playLists"
-                    :key="item.id"
-                    class="grid-list-item ftype-0 "
-                    data-id="{{item.id}}"
-                    data-type="{{item.type}}">
-                        <div class="same-play-list-item grid-list-item js-list-detail ftype-0"
-                        data-id="{{item.id}}"
-                        data-type="{{item.type}}">
-                            <div class="img fl">
-                                <span class="icon icon-music-pause"></span>
-                                <img :src="item.coverImgUrl" alt="">
-                            </div>
-                            <div class="text fl" title="{{item.rcmdtext || item.name}}" >
-                                <p class="name line-one">{{item.name}}</p>
-                                <span class="play-count singer">播放：{{item.playCount}}</span>
+                        </template>
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{hotComment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    <i class="num" v-if="hotComment.likedCount">({{hotComment.likedCount}})</i>
+                                </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="same-music-list grid-list" v-if="data.songs && data.songs.length">
-                    <h2 class="title">相似歌曲</h2>
-                    <div
-                    v-for="item in data.songs"
-                    :key="item.id"
-                    class="grid-list-item ftype-0"
-                    data-id="{{item.id}}"
-                    data-url="{{item.mp3Url}}"
-                    data-type="{{item.type}}">
-                        <div class="same-play-list-item grid-list-item js-list-detail ftype-0"
-                        data-id="{{item.id}}"
-                        data-type="{{item.type}}" data-url="{{item.mp3Url}}">
-                            <div class="img fl">
-                                <span class="icon icon-music-pause"></span>
-                                <img :src="item.album.picUrl" alt="">
-                            </div>
-                            <div class="text fl" title="{{item.rcmdtext || item.name}}" >
-                                <p class="name line-one">{{item.name}}</p>
-                                <span
-                                v-for="singer in item.album.artists"
-                                :key="singer.id"
-                                class="singer" v-html="singer.name + (index < item.album.artists.length - 1 ? '/': '')">
+            </template>
+            <template v-if="data.comments && data.comments.length">
+                <h3 class="title">最新评论({{data.total - data.hotComments.length}})</h3>
+                <div v-for="comment in data.comments" :key="comment.id" class="comment-item clearfix">
+                    <div class="avatar fl">
+                        <img :src="comment.user.avatarUrl" alt="">
+                    </div>
+                    <div class="text fl">
+                        <p class="name">
+                            {{comment.user.nickname}}：
+                            <span class="desc">{{comment.content}}</span>
+                        </p>
+                        <template v-if="comment.beReplied.length">
+                            <p class="name reply" v-for="beReplied in comment.beReplied" :key="beReplied.id">
+                                @{{beReplied.user.nickname}}:
+                                <span class="desc">{{beReplied.content}}</span>
+                            </p>
+                        </template>
+                        <div class="info flexbox-h just-b">
+                            <span class="time flex-1 tl">{{comment.time}}</span>
+                            <div class="right flex-3 tr">
+                                <span class="star">
+                                    <i class="icon-music-star"></i>
+                                    <i class="num" v-if="comment.likedCount">({{comment.likedCount}})</i>
                                 </span>
+                                <span class="share">分享</span>
+                                <span class="repeat">回复</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="same-content">
+            <div class="same-play-list grid-list" v-if="data.playLists && data.playLists.length">
+                <h2 class="title">包含这首歌的歌单</h2>
+                <div v-for="item in data.playLists" :key="item.id" @click="onItemlistClick(item, 1)" class="grid-list-item ftype-0 " data-id="{{item.id}}" data-type="{{item.type}}">
+                    <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}" data-type="{{item.type}}">
+                        <div class="img fl">
+                            <span class="icon icon-music-pause"></span>
+                            <img :src="item.coverImgUrl" alt="">
+                        </div>
+                        <div class="text fl" title="{{item.rcmdtext || item.name}}">
+                            <p class="name line-one">{{item.name}}</p>
+                            <span class="play-count singer">播放：{{item.playCount}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="same-music-list grid-list" v-if="data.songs && data.songs.length">
+                <h2 class="title">相似歌曲</h2>
+                <div v-for="item in data.songs" @click="onItemlistClick(item, 2)" :key="item.id" class="grid-list-item ftype-0" data-id="{{item.id}}" data-url="{{item.mp3Url}}" data-type="{{item.type}}">
+                    <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}" data-type="{{item.type}}" data-url="{{item.mp3Url}}">
+                        <div class="img fl">
+                            <span class="icon icon-music-pause"></span>
+                            <img :src="item.album.picUrl" alt="">
+                        </div>
+                        <div class="text fl" title="{{item.rcmdtext || item.name}}">
+                            <p class="name line-one">{{item.name}}</p>
+                            <span v-for="singer in item.album.artists" :key="singer.id" class="singer" v-html="singer.name + (index < item.album.artists.length - 1 ? '/': '')">
+                            </span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </template>
 
 <script>
@@ -184,17 +152,20 @@ import {
     reactive,
     toRefs,
     // getCurrentInstance,
-    // onBeforeMount
-    onMounted
+    // onMounted,
+    onBeforeMount
 } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import {
+    useStore
+} from 'vuex'
+import {
+    useRouter
+} from 'vue-router'
 // import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
 export default {
-    components: {
-    },
-    setup () {
+    components: {},
+    setup() {
         const store = useStore()
         const rootStore = store.state
         const detailStore = rootStore.detail
@@ -211,8 +182,11 @@ export default {
             playData: {}
         })
         // const { ctx } = getCurrentInstance()
-        onMounted(async () => {
-            getData({ id: router.currentRoute.value.query.id })
+        onBeforeMount(async () => {
+            getData({
+                id: router.currentRoute.value.query.id
+            })
+            store.commit('showMenu', false)
         })
         watch(() => [
             detailStore.lyricList,
@@ -244,8 +218,23 @@ export default {
                 }
             })
         }
+        const onItemlistClick = (item, type) => {
+            if (type === 1) {
+                const route = {
+                    path: '/songs/list',
+                    query: {
+                        id: item.id
+                    }
+                }
+                router.push(route)
+                return
+            }
+            getData(item)
+            store.dispatch('setPlayData', item)
+        }
         return {
             ...toRefs(state),
+            onItemlistClick,
             onListItemClick
         }
     }

@@ -1,70 +1,71 @@
 <template>
-    <div class="container music-client flexbox-h align-c just-c" ref="dragBox">
-        <div class="music-box js-music-box flexbox-v" >
-            <music-header></music-header>
-            <div class="center flexbox-h">
-                <transition name="slide-fade">
-                    <music-aside v-if="showMenu" @hideMenu="goDetail"></music-aside>
-                </transition>
-                <div class="main flex-1 flexbox-v">
-                    <router-view v-slot="{ Component }">
-                        <transition name="slide-fade" mode="out-in">
-                            <component :is="Component" />
-                        </transition>
-                    </router-view>
-                </div>
+<div class="container music-client flexbox-h align-c just-c" ref="dragBox">
+    <div class="music-box js-music-box flexbox-v">
+        <music-header></music-header>
+        <div class="center flexbox-h">
+            <transition name="slide-fade">
+                <music-aside v-if="showMenu" @hideMenu="goDetail"></music-aside>
+            </transition>
+            <div class="main flex-1 flexbox-v">
+                <router-view v-slot="{ Component }">
+                    <transition name="slide-fade" mode="out-in">
+                        <component :is="Component" />
+                    </transition>
+                </router-view>
             </div>
-            <music-footer></music-footer>
         </div>
-        <div class="mini-music-box js-mini-music-box flexbox-v">
-            <div class="wrap flexbox-h just-b">
-                <div class="left flex-2 flexbox-h just-b">
-                    <div class="img tl">
-                        <img src="/src/assets/images/avatar.jpg" alt="">
-                    </div>
-                    <p class="name tc">{{playData.lyrc}}</p>
-                    <div class="play-btn js-play-btn flexbox-h just-a">
-                        <i class="icon-music-play-left"></i>
-                        <i class="icon-play js-play icon-music-pause"></i>
-                        <i class="icon-music-play-right"></i>
-                    </div>
-                    <div class="more js-more text">
-                        <div class="wrap flexbox-h tc just-c">
-                            <p class="name line-one">{{playData.name}}</p>
-                            <span class="line"> - </span>
-                            <span class="singer line-one">{{playData.singer}}</span>
-                        </div>
+        <music-footer></music-footer>
+    </div>
+    <div class="mini-music-box js-mini-music-box flexbox-v">
+        <div class="wrap flexbox-h just-b">
+            <div class="left flex-2 flexbox-h just-b">
+                <div class="img tl">
+                    <img src="/src/assets/images/avatar.jpg" alt="">
+                </div>
+                <p class="name tc">{{playData.lyrc}}</p>
+                <div class="play-btn js-play-btn flexbox-h just-a">
+                    <i class="icon-music-play-left"></i>
+                    <i class="icon-play js-play icon-music-pause"></i>
+                    <i class="icon-music-play-right"></i>
+                </div>
+                <div class="more js-more text">
+                    <div class="wrap flexbox-h tc just-c">
+                        <p class="name line-one">{{playData.name}}</p>
+                        <span class="line"> - </span>
+                        <span class="singer line-one">{{playData.singer}}</span>
                     </div>
                 </div>
-                <div class="right flex-1 flexbox-h just-b">
-                    <span class="js-love-icon love-icon icon-music-love"></span>
-                    <span class="volume-icon icon-music-volume js-min-music-volume"></span>
-                    <span class="list-icon icon-music-list js-list-icon"></span>
-                    <div class="volume flex-2 flexbox-h just-b tc">
-                        <!-- <i class="icon-music-volume js-music-volume flex-1"></i> -->
-                        <div class="progress-bar flex-4">
-                            <span class="point"></span>
-                            <span class="line js-line"></span>
-                        </div>
-                        <!-- <i class="heart-icon icon-music-beckoning flex-1"></i> -->
-                    </div>
-                </div>
-                <!-- <div class="text flex-3 flexbox-h just-b">
-                </div> -->
             </div>
-            <div class="more js-mini-music-list">
-                <ul class="music-list js-music-list">
-                    <!-- <li class="music-list-item flexbox-h jsut-b">
+            <div class="right flex-1 flexbox-h just-b">
+                <span class="js-love-icon love-icon icon-music-love"></span>
+                <span class="volume-icon icon-music-volume js-min-music-volume"></span>
+                <span class="list-icon icon-music-list js-list-icon"></span>
+                <div class="volume flex-2 flexbox-h just-b tc">
+                    <!-- <i class="icon-music-volume js-music-volume flex-1"></i> -->
+                    <div class="progress-bar flex-4">
+                        <span class="point"></span>
+                        <span class="line js-line"></span>
+                    </div>
+                    <!-- <i class="heart-icon icon-music-beckoning flex-1"></i> -->
+                </div>
+            </div>
+            <!-- <div class="text flex-3 flexbox-h just-b">
+                </div> -->
+        </div>
+        <div class="more js-mini-music-list">
+            <ul class="music-list js-music-list">
+                <!-- <li class="music-list-item flexbox-h jsut-b">
                         <span class="name">一眼万年</span>
                         <span class="source flex-4 line-one">(电视剧《孤独天下》片尾曲)</span>
                     </li> -->
-                </ul>
-            </div>
+            </ul>
         </div>
-        <!-- /src/source/前世今生-文武贝钢琴版.mp3 -->
-        <audio id="play-audio" controls="controls"></audio>
     </div>
+    <!-- /src/source/前世今生-文武贝钢琴版.mp3 -->
+    <audio id="play-audio" controls="controls"></audio>
+</div>
 </template>
+
 <script>
 import musicHeader from './header'
 import musicAside from './aside'
@@ -78,8 +79,12 @@ import {
     toRefs
     // getCurrentInstance
 } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter } from 'vue-router'
+import {
+    useStore
+} from 'vuex'
+import {
+    useRouter
+} from 'vue-router'
 // import { drag } from '@/utils'
 export default {
     name: 'layout',
@@ -94,7 +99,7 @@ export default {
             return true
         }
     },
-    setup (props, context) {
+    setup(props, context) {
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',
@@ -140,7 +145,7 @@ export default {
             router.push({
                 path: '/songs/detail',
                 query: {
-                    id: 0
+                    id: store.state.playData.id
                 }
             })
         }
@@ -153,18 +158,24 @@ export default {
     }
 }
 </script>
+
 <style lang="css">
 /* 可以设置不同的进入和离开动画 */
 /* 设置持续时间和动画函数 */
 .slide-fade-enter-active {
-  transition: all .3s ease;
+    transition: all 0.3s ease;
 }
+
 .slide-fade-leave-active {
-  transition: all .3s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
-.slide-fade-enter, .slide-fade-leave-to
-/* .slide-fade-leave-active for below version 2.1.8 */ {
-  transform: translateX(10px);
-  opacity: 0;
+
+.slide-fade-enter,
+.slide-fade-leave-to
+
+/* .slide-fade-leave-active for below version 2.1.8 */
+    {
+    transform: translateX(-10px);
+    opacity: 0;
 }
 </style>
