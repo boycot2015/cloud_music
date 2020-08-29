@@ -99,7 +99,7 @@ export default {
             return true
         }
     },
-    setup(props, context) {
+    setup (props, context) {
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',

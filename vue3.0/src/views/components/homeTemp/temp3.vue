@@ -64,7 +64,7 @@ export default {
     // directives: {
     //     swiper: directive
     // },
-    setup() {
+    setup () {
         const store = useStore()
         const tabData = store.state.home.tab3Data
         const router = useRouter()

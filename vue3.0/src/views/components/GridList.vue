@@ -38,14 +38,14 @@
 
 <script>
 import {
-    // ref,
-    // computed,
-    // watch,
-    // reactive,
-    // toRefs
-    // getCurrentInstance,
-    // onBeforeMount
-    // onMounted
+// ref,
+// computed,
+// watch,
+// reactive,
+// toRefs
+// getCurrentInstance,
+// onBeforeMount
+// onMounted
 } from 'vue'
 export default {
     props: {
@@ -62,7 +62,7 @@ export default {
             default: 0
         }
     },
-    setup(props) {
+    setup (props) {
         // const state = reactive({
         //     item: {
         //         ...props

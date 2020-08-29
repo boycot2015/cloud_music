@@ -50,7 +50,7 @@ import {
 } from 'vue-router'
 export default {
     name: 'musicHeader',
-    setup() {
+    setup () {
         const state = reactive({
             headerData: {
                 title: '网抑云音乐',

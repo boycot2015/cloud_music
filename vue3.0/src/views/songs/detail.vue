@@ -165,7 +165,7 @@ import {
 import 'swiper/swiper-bundle.min.css'
 export default {
     components: {},
-    setup() {
+    setup () {
         const store = useStore()
         const rootStore = store.state
         const detailStore = rootStore.detail
