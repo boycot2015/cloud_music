@@ -2,7 +2,7 @@
     <div class="tab-content tab-cate-content">
         <div class="tags">
             <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click="showAllCate = !showAllCate">
-                <span class="text">全部歌单</span> <i class="icon-music-down"></i>
+                <span class="text">{{activedCate || '全部歌单'}}</span> <i class="icon-music-down"></i>
             </span>
             <p class="name">
                 热门标签：
@@ -20,7 +20,7 @@
         <div class="mask-cate" v-show="showAllCate">
             <div id="cate-page" class="tc">
                 <div class="wrap flexbox-v">
-                    <span class="btn-cate tc" :class="{'active': !activedCate}" @click="onCateTagClick()">{{tabData.all.name}}</span>
+                    <span class="btn-cate tc" :class="{'active': activedCate === '全部歌单'}" @click="onCateTagClick()">{{tabData.all.name}}</span>
                     <div class="content">
                         <div
                         v-for="(subsItem, index) in tabData.subs"
@@ -95,7 +95,7 @@ export default {
         const router = useRouter()
         const state = reactive({
             showAllCate: false,
-            activedCate: '',
+            activedCate: '全部歌单',
             tabData: {
                 dayData: {
                     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -141,9 +141,9 @@ export default {
         // 点击分类标签获取对应数据
         const onCateTagClick = (item) => {
             // getData(item.type)
-            item && (state.activedCate = item.name)
+            state.activedCate = (item && item.name) || '全部歌单'
             state.showAllCate = false
-            store.dispatch('home/getListByCate', { current: 1, cat: (item && item.name) || '' })
+            store.dispatch('home/getListByCate', { current: 1, cat: (item && item.name) || '全部歌单' })
         }
         const onListClick = (item) => {
             // getData(item.type)

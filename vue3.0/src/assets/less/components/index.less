@@ -3,8 +3,8 @@
     overflow: hidden;
     clear: both;
     &-item {
-        height: 180px;
-        width: 134px;
+        height: 185px;
+        width: 138px;
         margin-right: 20px;
         margin-bottom: 30px;
         overflow: hidden;
@@ -100,7 +100,7 @@
         }
         &.type-5 {
             height: 180px;
-            width: 237px;
+            width: 244px;
             &:nth-child(3n) {
                 margin-right: 0;
             }
@@ -118,10 +118,53 @@
             }
         }
         &.type-2 {
-            width: 400px;
+            width: 380px;
+            height: 150px;
+            margin-right: 10px;
+            &:nth-child(2n) {
+                margin-right: 0;
+            }
+            &:nth-child(5n) {
+                margin-right: 10px;
+            }
+            .img {
+                width: 120px;
+                float: left;
+                position: relative;
+                .time {
+                    position: absolute;
+                    bottom: 0;
+                    width: 100%;
+                    padding: 0 10px;
+                    color: @white;
+                    background-image: linear-gradient(to right, rgba(255,255,255, 0), rgba(0,0,0, 0.3));
+                    line-height: 20px;
+                }
+            }
+            .text {
+                margin-left: 10px;
+                float: left;
+                .name {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                }
+                span {
+                    width: 230px;
+                    font-size: 12px;
+                    line-height: 20px;
+                    color: @c-999;
+                    display: block;
+                }
+                .price {
+                    font-size: 14px;
+                    font-family: 微软雅黑;
+                    font-weight: 400;
+                    margin-top: 10px;
+                }
+            }
         }
         &.ftype-0 {
-            width: 375px;
+            width: 385px;
             margin-bottom: 0;
             height: auto;
             margin-right: 0;

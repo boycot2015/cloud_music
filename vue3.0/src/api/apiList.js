@@ -4,17 +4,20 @@ import song from './song'
 import home from './home'
 import simi from './simi'
 import search from './search'
+import toplist from './toplist'
 export default {
     comment,
     song,
     home,
     simi,
-    search
+    search,
+    toplist
 }
 export {
     comment,
     song,
     home,
     simi,
-    search
+    search,
+    toplist
 }

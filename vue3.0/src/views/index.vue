@@ -9,11 +9,11 @@
             class="tab-list-item js-tab-item"
             data-type="home">{{item.name}}</div>
         </div>
-        <home-temp-tab1 v-show="activeTab === tabMenu[0].type"></home-temp-tab1>
-        <home-temp-tab2 v-show="activeTab === tabMenu[1].type"></home-temp-tab2>
+        <home-temp-tab1 v-if="activeTab === tabMenu[0].type"></home-temp-tab1>
+        <home-temp-tab2 v-if="activeTab === tabMenu[1].type"></home-temp-tab2>
         <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
-        <!-- <home-temp-tab4 v-show="activeTab === tabMenu[3].type"></home-temp-tab4>
-        <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5> -->
+        <home-temp-tab4 v-if="activeTab === tabMenu[3].type"></home-temp-tab4>
+        <!-- <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5> -->
         <!-- <div class="tab-content tab-home-content" v-show="activeTab === tabMenu[0].type">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
@@ -65,11 +65,11 @@ import {
     // onBeforeMount
     // onMounted
 } from 'vue'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import homeTempTab1 from '@/views/components/homeTemp/temp1'
 import homeTempTab2 from '@/views/components/homeTemp/temp2'
 import homeTempTab3 from '@/views/components/homeTemp/temp3'
-// import homeTempTab4 from '@/views/components/homeTemp/temp4'
+import homeTempTab4 from '@/views/components/homeTemp/temp4'
 // import homeTempTab5 from '@/views/components/homeTemp/temp5'
 export default {
     name: 'home',
@@ -78,16 +78,19 @@ export default {
         // SwiperSlide,
         homeTempTab1,
         homeTempTab2,
-        homeTempTab3
-        // homeTempTab4,
+        homeTempTab3,
+        homeTempTab4
         // homeTempTab5
     },
     // directives: {
     //     swiper: directive
     // },
     setup () {
+        const router = useRouter()
+        console.log(router.currentRoute.value, 'router.currentRoute')
+        const query = router.currentRoute.value.query.type || 'home'
         const state = reactive({
-            activeTab: 'home',
+            activeTab: query,
             tabMenu: [
                 {
                     name: '个性推荐',
@@ -113,6 +116,12 @@ export default {
         // 点击tab切换数据
         const onTabClick = (item) => {
             state.activeTab = item.type
+            router.push({
+                path: '/index',
+                query: {
+                    type: state.activeTab
+                }
+            })
             // getData(item.type)
         }
         return {

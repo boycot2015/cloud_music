@@ -1,5 +1,5 @@
 <template>
-<li class="grid-list-item fl clearfix js-list-detail" :title="item.rcmdtext || item.name" :class="`type-${item.type} ftype-${item.ftype}`" data-url="{{item.mp3Url}}">
+<li class="grid-list-item fl clearfix js-list-detail" :title="item.rcmdtext || item.name" :class="`type-${item.type || type} ftype-${item.ftype}`" data-url="{{item.mp3Url}}">
     <ul v-if="item.list" class="grid-list js-child-list fl">
         <li class="grid-list-item clearfix js-list-detail" :class="`type-${child.type} ftype-${child.ftype}`" :title="child.name" v-for="(child, cindex) in item.list" :key="cindex" data-url="{{child.mp3Url}}">
             <span class="order fl" v-html="index * (item.list.length) + (cindex + 1) < 10 ? '0' + (index * (item.list.length) + (cindex + 1)) : index * (item.list.length) + (cindex + 1)"></span>
@@ -28,10 +28,14 @@
         </div>
         <p class="desc line-one" v-if="item.rcmdtext" title="{{item.name}}">{{item.name}}</p>
         <img :src="item.coverImgUrl || item.sPicUrl || item.picUrl" alt="">
+        <p class="time" v-if="type === 2">{{ new Date().toLocaleDateString() }}</p>
         <span class="creator" v-if="item.creator"><i class="icon-music-user"></i> {{item.creator.nickname}}</span>
     </div>
     <div class="text" :class="`${item.ftype == 0 ? 'fl': ''}`">
         <p class="name tl">{{item.rcmdtext || item.name}}</p>
+        <span class="rcmdText line-one" v-if="item.rcmdText">{{item.rcmdText}}</span>
+        <span class="lastProgramName line-one" v-if="item.lastProgramName">{{item.lastProgramName}}</span>
+        <div class="price red" v-if="item.originalPrice">￥{{item.originalPrice / 100}}</div>
     </div>
 </li>
 </template>
@@ -60,6 +64,10 @@ export default {
         index: {
             type: Number,
             default: 0
+        },
+        type: {
+            type: Number,
+            default: 1
         }
     },
     setup (props) {

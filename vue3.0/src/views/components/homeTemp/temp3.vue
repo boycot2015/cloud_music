@@ -13,21 +13,25 @@
         <div class="button-prev icon-music-left"></div>
         <div class="button-next icon-music-right"></div>
     </div>
+    <div class="swiper-container dj-cate-swiper">
+        <div class="swiper-wrapper">
+            <div v-for="item in tabData.categories" :key="item.id" class="swiper-slide flexbox-v align-c">
+                <div class="img tc" :style="`background-image: url(${item.picPCBlackUrl})`"></div>
+                <!-- <img :src="item.picWebUrl || item.imageUrl" alt=""> -->
+                <div class="name" >{{item.name}}</div>
+            </div>
+        </div>
+        <!-- 如果需要导航按钮 -->
+        <div class="button-prev icon-music-left"></div>
+        <div class="button-next icon-music-right"></div>
+    </div>
     <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
         <div class="title clearfix">
             <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
             <span class="fr more">更多<i class="icon-music-right"></i></span>
         </div>
         <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
-            <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
-                <div class="img">
-                    <span class="tip copy-writer">{{tabData.dayData.copywriter}}</span>
-                    <p class="week">{{tabData.dayData.weeks[new Date().getDay()]}}</p>
-                    <div class="date-text">{{tabData.dayData.day}}</div>
-                </div>
-                <div class="name tl">{{tabData.dayData.name}}</div>
-            </li>
-            <grid-list v-for="(item, index) in obj.data" :item="item" :index="index" @click="onListClick(item)" :key="item.id"></grid-list>
+            <grid-list v-for="(item, index) in obj.data" :item="item" :type="obj.type" :index="index" @click="onListClick(item)" :key="item.id"></grid-list>
         </ul>
     </div>
 </div>
@@ -70,13 +74,6 @@ export default {
         const router = useRouter()
         const state = reactive({
             tabData: {
-                dayData: {
-                    weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-                    day: new Date().getDate(),
-                    name: '每日歌曲推荐',
-                    copywriter: '根据您的音乐口味生成每日更新'
-                },
-                // ...computed(() => store.state.home).value,
                 list: [{
                     title: '付费精品',
                     category: 3,
@@ -97,7 +94,18 @@ export default {
                     category: 3,
                     type: 1,
                     data: []
-                }]
+                }],
+                banner: [],
+                categories: []
+            },
+            cateSwiperOption: {
+                slidesPerView: 9,
+                slidesPerGroup: 9,
+                navigation: {
+                    nextEl: '.button-next',
+                    prevEl: '.button-prev'
+                },
+                speed: 200
             },
             swiperOption: {
                 // direction: 'vertical', // 垂直切换选项
@@ -126,7 +134,7 @@ export default {
                     nextEl: '.button-next',
                     prevEl: '.button-prev'
                 },
-                speed: 400
+                speed: 200
             }
         })
         // const { ctx } = getCurrentInstance()
@@ -136,11 +144,14 @@ export default {
         watch(() => tabData.banner, (value) => {
             state.tabData.banner = value
         })
+        watch(() => tabData.categories, (value) => {
+            state.tabData.categories = value
+        })
         watch(() => [
-            tabData.personalized,
+            tabData.djPaygift,
             tabData.djrecommend,
-            tabData.djrecommend,
-            tabData.djrecommend
+            tabData.djRap,
+            tabData.dj3D
         ], (value) => {
             state.tabData.list.map((el, i) => {
                 state.tabData.list[i].data = value[i]
@@ -165,6 +176,7 @@ export default {
         const initSwiper = () => {
             /* eslint-disable */
             new Swiper('.swiper-container.dj-swiper', state.swiperOption)
+            new Swiper('.swiper-container.dj-cate-swiper', state.cateSwiperOption)
         }
         return {
             ...toRefs(state),
