@@ -5,13 +5,15 @@ import home from './home'
 import simi from './simi'
 import search from './search'
 import toplist from './toplist'
+import artist from './artist'
 export default {
     comment,
     song,
     home,
     simi,
     search,
-    toplist
+    toplist,
+    artist
 }
 export {
     comment,
@@ -19,5 +21,6 @@ export {
     home,
     simi,
     search,
-    toplist
+    toplist,
+    artist
 }

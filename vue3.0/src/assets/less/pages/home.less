@@ -33,12 +33,12 @@
             .name {
                 color: @c-333;
                 margin-top: 20px;
-                .cates {
-                    color: @c-666;
-                    cursor: pointer;
-                    span.active {
-                        color: @primary
-                    }
+            }
+            .cates {
+                color: @c-666;
+                cursor: pointer;
+                .active {
+                    color: @primary
                 }
             }
             .line {
@@ -210,6 +210,72 @@
                     .icon::after {
                         font-size: 50px;
                         color: #ddc125;
+                    }
+                }
+            }
+        }
+    }
+    .tab-singer-content {
+        .tags {
+            .name {
+                margin-top: 0;
+            }
+            .cates {
+                max-width: 715px;
+                line-height: 24px;
+                &-item {
+                    padding: 3px 5px;
+                    font-family: 微软雅黑;
+                    &.active {
+                        background-color: @c-666;
+                        color: @white;
+                        padding: 3px 5px;
+                        border-radius: 3px;
+                    }
+                }
+            }
+            .ctitle {
+                font-size: 12px;
+                color: @c-666;
+                line-height: 24px;
+                margin-right: 10px;
+            }
+        }
+        .recommend-list {
+            .grid-list-item {
+                width: 135px;
+                height: 180px;
+                &:nth-child(4n) {
+                    margin-right: 20px;
+                }
+                &:nth-child(5n) {
+                    margin-right: 0;
+                }
+                .img {
+                    height: 135px;
+                    height: 135px;
+                }
+                &.top {
+                    .img {
+                        height: 135px;
+                        height: 135px;
+                        background-image: linear-gradient(to bottom right, #733EA5,  #BC65D1);
+                    }
+                    .top-text {
+                        position: absolute;
+                        width: 100%;
+                        top: 50%;
+                        left: 0;
+                        font-family: 微软雅黑;
+                        font-size: 32px;
+                        line-height: 32px;
+                        margin-top: -28px;
+                        color: @white;
+                        font-style: italic;
+                        span {
+                            font-size: 12px;
+                            line-height: 24px;
+                        }
                     }
                 }
             }

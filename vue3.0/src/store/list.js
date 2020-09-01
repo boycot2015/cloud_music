@@ -1,5 +1,5 @@
 import { song } from '@/api/apiList'
-import { filterDruationTime } from '@/utils'
+import { filterDruationTime, filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
     state: {
@@ -26,6 +26,7 @@ export default {
                 playlistRes.playlist.tracks.map(el => {
                     el.dt = filterDruationTime(el.dt)
                 })
+                playlistRes.playlist.playCount = filterPlayCount(playlistRes.playlist.playCount)
                 state.playlistData = playlistRes.playlist
                 console.log(state.playlistData, 'state.playlistData')
                 return Promise.resolve({ code: 200, success: true })

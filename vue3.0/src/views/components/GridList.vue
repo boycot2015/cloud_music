@@ -27,7 +27,7 @@
             <span class="icon icon-music-video"></span>
         </div>
         <p class="desc line-one" v-if="item.rcmdtext" title="{{item.name}}">{{item.name}}</p>
-        <img :src="item.coverImgUrl || item.sPicUrl || item.picUrl" alt="">
+        <img :src="item.img1v1Url || item.coverImgUrl || item.sPicUrl || item.picUrl" alt="">
         <p class="time" v-if="type === 2">{{ new Date().toLocaleDateString() }}</p>
         <span class="creator" v-if="item.creator"><i class="icon-music-user"></i> {{item.creator.nickname}}</span>
     </div>

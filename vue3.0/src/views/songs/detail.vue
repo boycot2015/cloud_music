@@ -133,7 +133,7 @@
                         </div>
                         <div class="text fl" title="{{item.rcmdtext || item.name}}">
                             <p class="name line-one">{{item.name}}</p>
-                            <span v-for="singer in item.album.artists" :key="singer.id" class="singer" v-html="singer.name + (index < item.album.artists.length - 1 ? '/': '')">
+                            <span v-for="(singer, index) in item.album.artists" :key="singer.id" class="singer" v-html="singer.name + (index < item.album.artists.length - 1 ? '/': '')">
                             </span>
                         </div>
                     </div>
@@ -161,8 +161,6 @@ import {
 import {
     useRouter
 } from 'vue-router'
-// import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
-import 'swiper/swiper-bundle.min.css'
 export default {
     components: {},
     setup () {
@@ -219,16 +217,16 @@ export default {
             })
         }
         const onItemlistClick = (item, type) => {
-            if (type === 1) {
-                const route = {
-                    path: '/songs/list',
-                    query: {
-                        id: item.id
-                    }
+            const route = {
+                path: '/songs/detail',
+                query: {
+                    id: item.id
                 }
-                router.push(route)
-                return
             }
+            if (type === 1) {
+                route.path = '/songs/list'
+            }
+            router.push(route)
             getData(item)
             store.dispatch('setPlayData', item)
         }

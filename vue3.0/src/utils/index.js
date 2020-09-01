@@ -1,3 +1,5 @@
+import Dexie from 'dexie'
+
 export const drag = (options) => {
     var obj = this
     var target = options.target || obj
@@ -137,3 +139,8 @@ export const store = {
     action: {},
     mutations: {}
 }
+
+//
+// 本地存储indexedDB
+//
+export const db = new Dexie('musicdatebase', { keyPath: '2222' })

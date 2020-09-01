@@ -5,8 +5,10 @@ import list from './list'
 import detail from './detail'
 import { song } from '@/api/apiList'
 // filterDruationTime
-import { store } from '@/utils'
-
+import {
+    store
+    // db
+} from '@/utils'
 export default createStore({
     state: {
         metaTitle: '网易云音乐',
@@ -24,7 +26,23 @@ export default createStore({
             state.metaTitle = title
             document.title = title
         },
-        setPlayData (state, data) {
+        async setPlayData (state, data) {
+            // db.open()
+            // db.version(1).stores({ playData: '++id,brcanExtend,code,encodeType,endStr,ended,expi,fee,flag,freeTrialInfo,gain,id,level,loop,md5,muted,name,payed,picUrl,singer,size,type,uf,url,volume' })
+            // db.transaction('rw', db.playData, async () => {
+            //     // Make sure we have something in DB:
+            //     // if ((await db.friends.where({ name: 'Josephine' }).count()) === 0) {
+            //     //     const id = await db.friends.add({ name: 'Josephine', age: 21 })
+            //     //     alert(`Addded friend with id ${id}`)
+            //     // }
+            //     if ((await db.playData.where({ id: 1 }).count()) === 0) {
+            //         const res = await db.playData.add({ id: 1, ...data })
+            //         console.log(res, 'q121213123')
+            //         db.close()
+            //     }
+            // }).catch(e => {
+            //     alert(e.stack || e)
+            // })
             state.playData = data
             store.set('playData', data)
         },

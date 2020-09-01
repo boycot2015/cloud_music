@@ -10,10 +10,10 @@
             data-type="home">{{item.name}}</div>
         </div>
         <home-temp-tab1 v-if="activeTab === tabMenu[0].type"></home-temp-tab1>
-        <home-temp-tab2 v-if="activeTab === tabMenu[1].type"></home-temp-tab2>
+        <home-temp-tab2 v-show="activeTab === tabMenu[1].type"></home-temp-tab2>
         <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
         <home-temp-tab4 v-if="activeTab === tabMenu[3].type"></home-temp-tab4>
-        <!-- <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5> -->
+        <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5>
         <!-- <div class="tab-content tab-home-content" v-show="activeTab === tabMenu[0].type">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
@@ -70,7 +70,7 @@ import homeTempTab1 from '@/views/components/homeTemp/temp1'
 import homeTempTab2 from '@/views/components/homeTemp/temp2'
 import homeTempTab3 from '@/views/components/homeTemp/temp3'
 import homeTempTab4 from '@/views/components/homeTemp/temp4'
-// import homeTempTab5 from '@/views/components/homeTemp/temp5'
+import homeTempTab5 from '@/views/components/homeTemp/temp5'
 export default {
     name: 'home',
     components: {
@@ -79,8 +79,8 @@ export default {
         homeTempTab1,
         homeTempTab2,
         homeTempTab3,
-        homeTempTab4
-        // homeTempTab5
+        homeTempTab4,
+        homeTempTab5
     },
     // directives: {
     //     swiper: directive
@@ -88,7 +88,7 @@ export default {
     setup () {
         const router = useRouter()
         console.log(router.currentRoute.value, 'router.currentRoute')
-        const query = router.currentRoute.value.query.type || 'home'
+        const query = router.currentRoute.value.query.tabName || 'home'
         const state = reactive({
             activeTab: query,
             tabMenu: [
@@ -119,7 +119,7 @@ export default {
             router.push({
                 path: '/index',
                 query: {
-                    type: state.activeTab
+                    tabName: state.activeTab
                 }
             })
             // getData(item.type)

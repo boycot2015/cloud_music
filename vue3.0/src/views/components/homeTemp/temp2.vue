@@ -95,7 +95,7 @@ export default {
         const router = useRouter()
         const state = reactive({
             showAllCate: false,
-            activedCate: '全部歌单',
+            activedCate: router.currentRoute.value.query.cate || '全部歌单',
             tabData: {
                 dayData: {
                     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -113,10 +113,21 @@ export default {
                     type: 1,
                     data: []
                 }
-            }
+            },
+            offset: 1,
+            limit: 39
         })
         onMounted(async () => {
-            getData(state.activeTab)
+            getData()
+            document.querySelector('.music-box .main').addEventListener('scroll', function (e) {
+                // 获取定义好的scroll盒子
+                // const el = scrollDom.value
+                const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
+                if (condition && router.currentRoute.value.query.tabName === 'cate') {
+                    state.offset++
+                    store.dispatch('home/getListByCate', { offset: state.offset, limit: state.limit, cat: state.activedCate })
+                }
+            })
         })
         watch(() => [
             tabData.all,
@@ -129,13 +140,17 @@ export default {
             state.tabData.categories = value[1]
             state.tabData.tags = value[2]
             state.tabData.subs = value[3]
+            if (state.offset !== 1) {
+                state.tabData.list.data = [...state.tabData.list.data, ...value[4]]
+                return
+            }
             state.tabData.list.data = value[4]
         })
 
         // methods
         const getData = async (type) => {
             store.dispatch('home/getTab2Data', type).then(res => {
-                store.dispatch('home/getListByCate', { current: 1, cat: '' })
+                store.dispatch('home/getListByCate', { current: 1, cat: state.activedCate || '' })
             })
         }
         // 点击分类标签获取对应数据
@@ -143,7 +158,17 @@ export default {
             // getData(item.type)
             state.activedCate = (item && item.name) || '全部歌单'
             state.showAllCate = false
-            store.dispatch('home/getListByCate', { current: 1, cat: (item && item.name) || '全部歌单' })
+            state.offset = 1
+            state.tabData.list.data = []
+            store.dispatch('home/getListByCate', { current: 1, cat: (item && item.name) || '全部歌单' }).then(res => {
+                router.push({
+                    path: router.currentRoute.value.path,
+                    query: {
+                        ...router.currentRoute.value.query,
+                        cate: state.activedCate
+                    }
+                })
+            })
         }
         const onListClick = (item) => {
             // getData(item.type)

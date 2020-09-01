@@ -1,4 +1,4 @@
-import { home, song, toplist } from '@/api/apiList'
+import { home, song, toplist, artist } from '@/api/apiList'
 import { filterPlayCount, store } from '@/utils'
 export default {
     namespaced: true,
@@ -33,6 +33,10 @@ export default {
         tab4Data: {
             topList: [], // 官方榜单
             globalTopList: [] // 全球榜单
+        },
+        tab5Data: {
+            categories: [], // 歌手分类
+            topList: [] // 歌手排行列表
         }
     },
     mutations: {
@@ -60,9 +64,15 @@ export default {
             }
             store.set('homeTab4Data', { ...data }, new Date().getTime() + 60 * 1000)
         },
+        setTab5Data (state, data) {
+            for (const key in data) {
+                state.tab5Data[key] = data[key]
+            }
+            store.set('homeTab5Data', { ...data }, new Date().getTime() + 60 * 1000)
+        },
         updateTab2Data (state, list) {
-            const localData = store.get('homeTab2Data')
             state.tab2Data.list = list
+            const localData = store.get('homeTab2Data')
             store.set('homeTab2Data', { ...localData, list }, new Date().getTime() + 60 * 1000)
         }
     },
@@ -156,22 +166,6 @@ export default {
             commit('setTab3Data', data)
             return Promise.resolve({ code: 200, success: true })
         },
-        // 根据分类标签获取列表数据
-        getListByCate ({ commit }, { current, cat }) {
-            return new Promise((resolve, reject) => {
-                song.topPlaylist({ limit: 39, order: 'hot', cat, offset: current }).then(res => {
-                    if (res && res.code === 200) {
-                        res.playlists.map(el => {
-                            el.playCount = filterPlayCount(el.playCount)
-                        })
-                        commit('updateTab2Data', res.playlists)
-                        resolve(res)
-                    }
-                }).catch(err => {
-                    reject(err)
-                })
-            })
-        },
         async getTab4Data ({ commit }, params) {
             const localData = store.get('homeTab4Data')
             const data = {}
@@ -207,6 +201,56 @@ export default {
                 }
                 return Promise.resolve({ code: 200, success: true })
             }
+        },
+        async getTab5Data ({ commit },
+            { offset = 1, limit = 39, type = -1, initial = -1, area = -1, refresh = false }) {
+            const localData = store.get('homeTab5Data')
+            if (localData !== null && offset === 1 && !refresh) {
+                commit('setTab5Data', localData)
+                return Promise.resolve({ code: 200, success: true })
+            }
+            const data = {}
+            const res = await artist.list({ offset, limit, type, initial, area })
+            if (res && res.code === 200) {
+                data.topList = res.artists
+                commit('setTab5Data', data)
+                return Promise.resolve({ code: 200, success: true })
+            }
+        },
+        // 根据分类标签获取列表数据
+        getSingerByParams ({ commit }, { current = 1, limit = 39, ...ohters }) {
+            return new Promise((resolve, reject) => {
+                artist.list({
+                    limit,
+                    offset: current,
+                    ...ohters
+                }).then(res => {
+                    const data = {}
+                    if (res && res.code === 200) {
+                        data.topList = res.artists
+                        commit('setTab5Data', data)
+                        resolve({ code: 200, success: true })
+                    }
+                }).catch(err => {
+                    reject(err)
+                })
+            })
+        },
+        // 根据分类标签获取列表数据
+        getListByCate ({ commit }, { offset, cat }) {
+            return new Promise((resolve, reject) => {
+                song.topPlaylist({ limit: 39, order: 'hot', cat, offset }).then(res => {
+                    if (res && res.code === 200) {
+                        res.playlists.map(el => {
+                            el.playCount = filterPlayCount(el.playCount)
+                        })
+                        commit('updateTab2Data', res.playlists)
+                        resolve(res)
+                    }
+                }).catch(err => {
+                    reject(err)
+                })
+            })
         }
     }
 }
