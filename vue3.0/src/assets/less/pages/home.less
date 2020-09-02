@@ -177,7 +177,7 @@
         .recommend-list {
             .grid-list-item {
                 width: 178px;
-                height: 220px;
+                height: 225px;
                 &:nth-child(5n) {
                     margin-right: 20px;
                 }
@@ -369,17 +369,28 @@
         .button-next {
             right: 0;
         }
+        &.dj-swiper {
+            .swiper-slide-active {
+                left: 165px;
+                .title {
+                    right: 255px;
+                }
+            }
+        }
         &.dj-cate-swiper {
             height: 60px;
-            margin-top: 20px;
+            margin: 20px 40px 0;
             .swiper-slide {
                 position: relative;
                 opacity: 1;
                 left: auto;
                 right: auto;
-            }
-            &.swiper-slide-active {
-                left: 0;
+                padding: 5px 0;
+                border-radius: 5px;
+                &:hover {
+                    background-color: @c-e8;
+                    cursor: pointer;
+                }
             }
             .img {
                 width: 30px;
@@ -391,19 +402,47 @@
             .name {
                 color: @c-666;
             }
+        }
+    }
+    .dj-cate {
+        position: relative;
+        &:hover {
             .button-next,
             .button-prev {
-                margin-top: -32px;
-                &:hover::after {
-                    color: @c-666;
-                }
+                display: block;
             }
-            .button-prev {
-                left: -12px;
+        }
+        .button-next,
+        .button-prev {
+            margin-top: -32px;
+            &:focus {
+                outline: none;
             }
-            .button-next {
-                right: -12px;
+            &:hover::after {
+                color: @c-666;
             }
+        }
+        .button-next,
+        .button-prev {
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            z-index: 1000;
+            display: none;
+            cursor: pointer;
+            &:hover::after {
+                color: @c-666;
+            }
+            &::after {
+                font-size: 36px;
+                color: @c-ccc;
+            }
+        }
+        .button-prev {
+            left: 0;
+        }
+        .button-next {
+            right: 0;
         }
     }
     .title {

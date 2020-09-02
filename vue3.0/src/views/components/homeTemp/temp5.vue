@@ -16,7 +16,7 @@
             </div>
         </div>
         <ul class="recommend-list clearfix">
-            <li class="grid-list-item top js-list-detail fl">
+            <li class="grid-list-item top js-list-detail fl" v-if="showBegining">
                 <div class="img tc">
                     <!-- <img src="" alt=""> -->
                     <!-- <i class="icon icon-music-emoji"></i> -->
@@ -126,11 +126,12 @@ export default {
                 }
             },
             offset: 1,
-            limit: 39
+            limit: 39,
+            showBegining: true
         })
         onMounted(async () => {
+            setBegining(router.currentRoute.value.query)
             getData({ ...sortData(), refresh: true })
-            console.dir(scrollDom.value, 'refs')
             document.querySelector('.music-box .main').addEventListener('scroll', function (e) {
                 // 获取定义好的scroll盒子
                 // const el = scrollDom.value
@@ -148,11 +149,24 @@ export default {
             }
             state.tabData.list.data = value
         })
-
+        watch(() => router.currentRoute.value.query, (val) => {
+            // 显示排行
+            setBegining(val)
+        })
         // methods
         const getData = async (data) => {
-            store.dispatch('home/getTab5Data', data).then(res => {
+            store.dispatch('home/getTab5Data', { ...data, limit: state.showBegining ? 39 : 40 }).then(res => {
             })
+        }
+        const setBegining = async (data) => {
+            const { type, initial, area } = data
+            if (!type || !initial || !area) {
+                state.showBegining = true
+            } else {
+                state.showBegining = initial && parseInt(initial) === -1 &&
+                type && parseInt(type) === -1
+            }
+            state.limit = state.showBegining ? 39 : 40
         }
         // 整理筛选条件
         const sortData = () => {
@@ -168,14 +182,18 @@ export default {
             formItem.value = item.code !== undefined ? item.code : item
             state.offset = 1
             state.tabData.list.data = []
-            store.dispatch('home/getSingerByParams', sortData()).then(res => {
-                router.push({
-                    path: router.currentRoute.value.path,
-                    query: {
-                        ...router.currentRoute.value.query,
-                        ...sortData()
-                    }
-                })
+            const data = sortData()
+            router.push({
+                path: router.currentRoute.value.path,
+                query: {
+                    ...router.currentRoute.value.query,
+                    ...data
+                }
+            })
+            setBegining(data)
+            data.limit = state.limit
+            // console.log(state.limit, 'data.limit')
+            store.dispatch('home/getSingerByParams', data).then(res => {
             })
         }
         const onListClick = (item) => {

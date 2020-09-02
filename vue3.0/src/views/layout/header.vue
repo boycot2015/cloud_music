@@ -1,5 +1,7 @@
 <template>
-<div class="header flexbox-h">
+<div
+    @dblclick="onExtend"
+    class="header flexbox-h">
     <div class="logo">
         <router-link to="/" class="flexbox-h">
             <div class="logo-icon icon-music-logo-icon"></div>
@@ -28,10 +30,10 @@
         <div class="text icon setting icon-music-setting"></div>
     </div>
     <div class="operation flex-1 align-c flexbox-h tc just-c">
-        <i class="full-sreen-btn flex-1 icon-music-min js-music-min"></i>
-        <i class="full-sreen-btn flex-1 fa icon-music-minus js-music-minus"></i>
-        <i class="min-btn flex-1 icon-music-rectangle js-music-rectangle"></i>
-        <i class="close-btn flex-1 icon-music-close js-music-close"></i>
+        <i class="full-sreen-btn flex-1 icon-music-min js-music-min" @click="onMinifty"></i>
+        <i class="full-sreen-btn flex-1 fa icon-music-minus js-music-minus" @click="onBoxHide"></i>
+        <i class="min-btn flex-1 icon-music-rectangle js-music-rectangle" @click="onExtend"></i>
+        <i class="close-btn flex-1 icon-music-close js-music-close" @click="onBoxHide"></i>
     </div>
 </div>
 </template>
@@ -50,7 +52,7 @@ import {
 } from 'vue-router'
 export default {
     name: 'musicHeader',
-    setup () {
+    setup (props, { emit }) {
         const state = reactive({
             headerData: {
                 title: '网抑云音乐',
@@ -61,12 +63,26 @@ export default {
             searchForm: {
                 placeholder: '搜索音乐，视频，歌词，电台',
                 key: ''
-            }
+            },
+            ismini: true
         })
         // const storeState = store.state
         const router = useRouter()
+        const onMinifty = () => {
+            emit('on-minify', true)
+        }
+        const onBoxHide = () => {
+            emit('on-hide', true)
+        }
+        const onExtend = () => {
+            state.ismini = !state.ismini
+            emit('on-extend', !state.ismini)
+        }
         return {
             router,
+            onBoxHide,
+            onExtend,
+            onMinifty,
             ...toRefs(state)
         }
     }

@@ -218,11 +218,11 @@ export default {
             }
         },
         // 根据分类标签获取列表数据
-        getSingerByParams ({ commit }, { current = 1, limit = 39, ...ohters }) {
+        getSingerByParams ({ commit }, { offset = 1, limit = 39, ...ohters }) {
             return new Promise((resolve, reject) => {
                 artist.list({
                     limit,
-                    offset: current,
+                    offset,
                     ...ohters
                 }).then(res => {
                     const data = {}

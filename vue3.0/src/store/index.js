@@ -73,6 +73,9 @@ export default createStore({
                     playData.singer = playData.singer.slice(0, -1)
                     playData.picUrl = data.al.picUrl
                     playData.endStr = data.dt
+                    for (const key in urlData) {
+                        playData[key] = urlData[key]
+                    }
                     playData.duration = urlData.size
                     playData.alName = data.al.name
                     playData = { ...playData, ...urlData.data[0] }

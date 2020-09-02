@@ -1,12 +1,33 @@
 <template>
-<div class="container music-client flexbox-h align-c just-c" ref="dragBox">
-    <div class="music-box js-music-box flexbox-v">
-        <music-header></music-header>
+<div class="container music-client flexbox-h align-c just-c">
+    <div
+    :style="{
+        width: isExtend ? '100%': '',
+        height: isExtend ? '100%': '',
+        left: isExtend ? '0px': '',
+        top: isExtend ? '0px': '',
+    }"
+    class="music-box js-music-box flexbox-v"
+    ref="dragBox" v-show="!showMiniBox && showBox">
+        <music-header
+        @on-minify="() => showMiniBox = true"
+        @on-hide="() => {
+            showBox = false
+            showMiniBox = true
+        }"
+        @on-extend="(val) => isExtend = val"
+        ></music-header>
         <div class="center flexbox-h">
             <transition name="slide-fade">
-                <music-aside v-if="showMenu" @hideMenu="goDetail"></music-aside>
+                <music-aside v-show="showMenu" @hideMenu="goDetail"></music-aside>
             </transition>
-            <div class="main flex-1 flexbox-v">
+            <div
+            :style="{
+                width: isExtend ? '820px': '',
+                flex: isExtend ? 'none': '',
+                margin: isExtend ? '0 auto': ''
+            }"
+            class="main flex-1 flexbox-v">
                 <router-view v-slot="{ Component }">
                     <transition name="slide-fade" mode="out-in">
                         <component :is="Component" />
@@ -16,7 +37,16 @@
         </div>
         <music-footer></music-footer>
     </div>
-    <div class="mini-music-box js-mini-music-box flexbox-v">
+    <div
+    @dblclick="() => {
+        showMiniBox = false
+        showBox = true
+    }"
+    :style="{
+        top: !showBox ? 0: ''
+    }"
+    class="mini-music-box js-mini-music-box flexbox-v"
+    v-show="showMiniBox" ref="dragMiniBox">
         <div class="wrap flexbox-h just-b">
             <div class="left flex-2 flexbox-h just-b">
                 <div class="img tl">
@@ -85,7 +115,7 @@ import {
 import {
     useRouter
 } from 'vue-router'
-// import { drag } from '@/utils'
+import { drag } from '@/utils'
 export default {
     name: 'layout',
     components: {
@@ -107,9 +137,12 @@ export default {
                 singer: '刘惜君'
             },
             showMenu: true,
-            dragBox: null
+            showBox: true,
+            showMiniBox: false,
+            isExtend: false
         })
         const dragBox = ref(null)
+        const dragMiniBox = ref(null)
         const store = useStore()
         const storeState = store.state
         const router = useRouter()
@@ -133,11 +166,15 @@ export default {
             state.showMenu = value
         })
         onMounted(() => {
-            console.log(dragBox)
-            // drag({
-            //     obj: dragBox.value,
-            //     target: dragBox.value
-            // })
+            console.dir(dragBox.value)
+            drag({
+                obj: [dragBox.value.children[0]],
+                target: [dragBox.value]
+            })
+            drag({
+                obj: [dragMiniBox.value],
+                target: [dragMiniBox.value]
+            })
         })
         const goDetail = (val) => {
             console.log(val, '12312')
@@ -151,6 +188,7 @@ export default {
         }
         return {
             dragBox,
+            dragMiniBox,
             goDetail,
             ...computed(() => storeState).value,
             ...toRefs(state)

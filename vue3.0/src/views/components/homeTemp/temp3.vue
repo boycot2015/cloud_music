@@ -13,12 +13,14 @@
         <div class="button-prev icon-music-left"></div>
         <div class="button-next icon-music-right"></div>
     </div>
-    <div class="swiper-container dj-cate-swiper">
-        <div class="swiper-wrapper">
-            <div v-for="item in tabData.categories" :key="item.id" class="swiper-slide flexbox-v align-c">
-                <div class="img tc" :style="`background-image: url(${item.picPCBlackUrl})`"></div>
-                <!-- <img :src="item.picWebUrl || item.imageUrl" alt=""> -->
-                <div class="name" >{{item.name}}</div>
+    <div class="dj-cate">
+        <div class="swiper-container dj-cate-swiper">
+            <div class="swiper-wrapper">
+                <div v-for="item in tabData.categories" :key="item.id" class="swiper-slide flexbox-v align-c">
+                    <div class="img tc" :style="`background-image: url(${item.picPCBlackUrl})`"></div>
+                    <!-- <img :src="item.picWebUrl || item.imageUrl" alt=""> -->
+                    <div class="name" >{{item.name}}</div>
+                </div>
             </div>
         </div>
         <!-- 如果需要导航按钮 -->

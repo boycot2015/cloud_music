@@ -1,7 +1,7 @@
 import Dexie from 'dexie'
 
 export const drag = (options) => {
-    var obj = this
+    var obj = options.obj
     var target = options.target || obj
     var site = options.site || {}
     var fn = options.fn

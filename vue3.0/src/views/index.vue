@@ -14,44 +14,6 @@
         <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
         <home-temp-tab4 v-if="activeTab === tabMenu[3].type"></home-temp-tab4>
         <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5>
-        <!-- <div class="tab-content tab-home-content" v-show="activeTab === tabMenu[0].type">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div
-                    v-for="item in tab1Data.banner"
-                    :key="item.id"
-                    class="swiper-slide">
-                        <img :src="item.imageUrl" alt="">
-                        <div class="title" :style="{backgrundColor: item.typeColor}">{{item.typeTitle}}</div>
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-                <div class="button-prev icon-music-left"></div>
-                <div class="button-next icon-music-right"></div>
-            </div>
-            <div class="recommend" v-for="(obj, findex) in tab1Data.list" :key="obj.title">
-                <div class="title clearfix">
-                    <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
-                    <span class="fr more">更多<i class="icon-music-right"></i></span>
-                </div>
-                <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
-                    <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
-                        <div class="img">
-                            <span class="tip copy-writer">{{tab1Data.dayData.copywriter}}</span>
-                            <p class="week">{{tab1Data.dayData.weeks[new Date().getDay()]}}</p>
-                            <div class="date-text">{{tab1Data.dayData.day}}</div>
-                        </div>
-                        <div class="name tl">{{tab1Data.dayData.name}}</div>
-                    </li>
-                    <grid-list
-                    v-for="(item, index) in obj.data"
-                    :item="item"
-                    :index="index"
-                    @click="onListClick(item)"
-                    :key="item.id"></grid-list>
-                </ul>
-            </div>
-        </div> -->
     </div>
 </template>
 <script>
@@ -107,10 +69,11 @@ export default {
                 }, {
                     name: '歌手',
                     type: 'singer'
-                }, {
-                    name: '最新音乐',
-                    type: 'newest'
                 }
+                // , {
+                //     name: '最新音乐',
+                //     type: 'newest'
+                // }
             ]
         })
         // 点击tab切换数据
