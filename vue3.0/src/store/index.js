@@ -17,7 +17,21 @@ export default createStore({
             lyrc: '一诺千金到尽头',
             name: '菩提偈',
             singer: '刘惜君',
-            picUrl: require('@/assets/images/avatar.jpg')
+            picUrl: require('@/assets/images/avatar.jpg'),
+            startTime: '00:00',
+            endTime: '00:00',
+            type: '标准',
+            isHot: 'new',
+            lyrcTxt: '词',
+            ended: false,
+            muted: false,
+            curStr: '00:00',
+            endStr: '00:00',
+            duration: 0,
+            volume: 0.2,
+            currentTime: '00:00',
+            url: '',
+            paused: true
         },
         showMenu: true
     },
@@ -27,24 +41,11 @@ export default createStore({
             document.title = title
         },
         async setPlayData (state, data) {
-            // db.open()
-            // db.version(1).stores({ playData: '++id,brcanExtend,code,encodeType,endStr,ended,expi,fee,flag,freeTrialInfo,gain,id,level,loop,md5,muted,name,payed,picUrl,singer,size,type,uf,url,volume' })
-            // db.transaction('rw', db.playData, async () => {
-            //     // Make sure we have something in DB:
-            //     // if ((await db.friends.where({ name: 'Josephine' }).count()) === 0) {
-            //     //     const id = await db.friends.add({ name: 'Josephine', age: 21 })
-            //     //     alert(`Addded friend with id ${id}`)
-            //     // }
-            //     if ((await db.playData.where({ id: 1 }).count()) === 0) {
-            //         const res = await db.playData.add({ id: 1, ...data })
-            //         console.log(res, 'q121213123')
-            //         db.close()
-            //     }
-            // }).catch(e => {
-            //     alert(e.stack || e)
-            // })
-            state.playData = data
-            store.set('playData', data)
+            state.playData = { ...state.playData, ...data }
+            store.set('playData', state.playData)
+        },
+        setAudio (state, data) {
+            store.set('playData', { ...state.playData, ...data })
         },
         showMenu (state, showMenu) {
             state.showMenu = showMenu
@@ -54,15 +55,7 @@ export default createStore({
         setPlayData ({ commit }, data) {
             return new Promise((resolve, reject) => {
                 song.playUrl({ id: data.id }).then(urlData => {
-                    let playData = {
-                        ended: false,
-                        id: data.id,
-                        level: 'exhigh',
-                        loop: false,
-                        muted: false,
-                        volume: 0.3
-                    }
-                    console.log(data, 'datadatadata')
+                    let playData = store.get('playData') !== null ? store.get('playData') : {}
                     data.al = data.al || data.album
                     data.ar = data.ar || data.artists
                     playData.name = data.al.name
@@ -78,6 +71,8 @@ export default createStore({
                     }
                     playData.duration = urlData.size
                     playData.alName = data.al.name
+                    playData.paused = false
+                    playData.url = urlData.url
                     playData = { ...playData, ...urlData.data[0] }
                     commit('setPlayData', playData)
                     resolve(playData)

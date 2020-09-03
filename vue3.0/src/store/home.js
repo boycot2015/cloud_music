@@ -44,36 +44,36 @@ export default {
             for (const key in data) {
                 state.tab1Data[key] = data[key]
             }
-            store.set('homeTab1Data', { ...data }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab1Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         setTab2Data (state, data) {
             for (const key in data) {
                 state.tab2Data[key] = data[key]
             }
-            store.set('homeTab2Data', { ...data }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab2Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         setTab3Data (state, data) {
             for (const key in data) {
                 state.tab3Data[key] = data[key]
             }
-            store.set('homeTab3Data', { ...data }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab3Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         setTab4Data (state, data) {
             for (const key in data) {
                 state.tab4Data[key] = data[key]
             }
-            store.set('homeTab4Data', { ...data }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab4Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         setTab5Data (state, data) {
             for (const key in data) {
                 state.tab5Data[key] = data[key]
             }
-            store.set('homeTab5Data', { ...data }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab5Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         updateTab2Data (state, list) {
             state.tab2Data.list = list
             const localData = store.get('homeTab2Data')
-            store.set('homeTab2Data', { ...localData, list }, new Date().getTime() + 60 * 1000)
+            store.set('homeTab2Data', { ...localData, list }, new Date().getTime() + 300 * 1000)
         }
     },
     actions: {

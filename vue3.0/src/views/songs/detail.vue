@@ -1,7 +1,7 @@
 <template>
 <div class="song-detail active">
     <div class="top flexbox-h just-c">
-        <div class="handler">
+        <div class="handler" :class="{'active': !playData.paused}">
             <div class="point"></div>
             <div class="line-1"></div>
             <div class="line-2"></div>
@@ -9,7 +9,7 @@
             <div class="header-cap"></div>
         </div>
         <div class="mask" :style="{backgroundImage: `url(${playData.picUrl})`}"></div>
-        <div class="cover">
+        <div class="cover" :class="{'active play': !playData.paused, 'active pause': playData.paused}">
             <div class="img">
                 <img :src="playData.picUrl" alt="">
             </div>
@@ -208,14 +208,6 @@ export default {
         const getData = async (params) => {
             await store.commit('detail/getData', params)
         }
-        const onListItemClick = (item) => {
-            router.push({
-                path: '/songs/detail',
-                query: {
-                    id: item.id
-                }
-            })
-        }
         const onItemlistClick = (item, type) => {
             const route = {
                 path: '/songs/detail',
@@ -232,8 +224,7 @@ export default {
         }
         return {
             ...toRefs(state),
-            onItemlistClick,
-            onListItemClick
+            onItemlistClick
         }
     }
 }

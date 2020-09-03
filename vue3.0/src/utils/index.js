@@ -64,10 +64,10 @@ export const drag = (options) => {
             var oEvent = ev || event
             var iLeft = oEvent.clientX - siteX
             var iTop = oEvent.clientY - siteY
+            if (options.end) options.end({ left: iLeft, top: iTop })
             if (obj.setCapture) { // 拖放结束后释放捕获
                 obj.releaseCapture()
             }
-            if (options.end) options.end({ left: iLeft, top: iTop })
             this.onmousemove = null
             this.onmouseup = null
             this.onclick = null
