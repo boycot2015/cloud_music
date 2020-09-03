@@ -15,7 +15,7 @@
             showBox = false
             showMiniBox = true
         }"
-        @on-extend="(val) => isExtend = val"
+        @on-extend="(val) => onExtend(val)"
         ></music-header>
         <div class="center flexbox-h">
             <transition name="slide-fade">
@@ -23,7 +23,7 @@
             </transition>
             <div
             :style="{
-                width: isExtend ? '820px': '',
+                width: isExtend ? '1020px': '',
                 flex: isExtend ? 'none': '',
                 margin: isExtend ? '0 auto': ''
             }"
@@ -186,10 +186,46 @@ export default {
                 }
             })
         }
+        const onExtend = (val) => {
+            state.isExtend = val
+            handleFullScreen()
+        }
+        // 全屏事件
+        const handleFullScreen = () => {
+            const element = document.documentElement
+            // 判断是否已经是全屏
+            // 如果是全屏，退出
+            if (!state.isExtend) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen()
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen()
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen()
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen()
+                }
+                state.isExtend = false
+                console.log('已还原！')
+            } else { // 否则，进入全屏
+                if (element.requestFullscreen) {
+                    element.requestFullscreen()
+                } else if (element.webkitRequestFullScreen) {
+                    element.webkitRequestFullScreen()
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen()
+                } else if (element.msRequestFullscreen) {
+                // IE11
+                    element.msRequestFullscreen()
+                }
+                console.log('已全屏！')
+            }
+        }
         return {
             dragBox,
             dragMiniBox,
             goDetail,
+            onExtend,
             ...computed(() => storeState).value,
             ...toRefs(state)
         }

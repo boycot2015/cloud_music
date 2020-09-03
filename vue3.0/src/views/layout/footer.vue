@@ -85,54 +85,54 @@ import {
 import { useStore } from 'vuex'
 // import { useRouter } from 'vue-router'
 import { drag } from '@/utils'
-class AudioPlayer {
-    constructor (props) {
-        this.state = {
-            lyrc: '一诺千金到尽头',
-            name: '菩提偈',
-            singer: '刘惜君',
-            picUrl: require('@/assets/images/avatar.jpg'),
-            startTime: '00:00',
-            endTime: '00:00',
-            type: '标准',
-            isHot: 'new',
-            lyrcTxt: '词',
-            ended: false,
-            muted: false,
-            curStr: '00:00',
-            endStr: '00:00',
-            duration: 0,
-            volume: 0.2,
-            currentTime: '00:00',
-            paused: true,
-            ...props
-        }
-    }
+// class AudioPlayer {
+//     constructor (props) {
+//         this.state = {
+//             lyrc: '一诺千金到尽头',
+//             name: '菩提偈',
+//             singer: '刘惜君',
+//             picUrl: require('@/assets/images/avatar.jpg'),
+//             startTime: '00:00',
+//             endTime: '00:00',
+//             type: '标准',
+//             isHot: 'new',
+//             lyrcTxt: '词',
+//             ended: false,
+//             muted: false,
+//             curStr: '00:00',
+//             endStr: '00:00',
+//             duration: 0,
+//             volume: 0.2,
+//             currentTime: '00:00',
+//             paused: true,
+//             ...props
+//         }
+//     }
 
-    getAudioInfo (_audio, call) {
-        var time = _audio.duration || 0
-        var min = parseInt(time / 60)
-        var second = parseInt(time % 60)
-        var currentTime = _audio.currentTime
-        var duration = min * 60 + second
-        min = min < 10 ? '0' + min : min
-        second = second < 10 ? '0' + second : second
-        var endStr = min + ':' + second
-        min = Math.round(currentTime) > 59 ? (Math.round(currentTime / 60) < 10 ? ('0' + parseInt(currentTime / 60)) : Math.round(currentTime / 60)) : '00'
-        second = parseInt(currentTime % 60) < 10 ? ('0' + parseInt(currentTime % 60)) : parseInt(currentTime % 60)
-        second = second === 60 ? '00' : second
-        var curStr = min + ':' + second
-        // state.playData.src = _audio.src
-        _audio.volume = this.state.playData.volume
-        this.state.playData.ended = _audio.ended
-        this.state.playData.muted = _audio.muted
-        this.state.playData.curStr = curStr
-        this.state.playData.endStr = endStr
-        this.state.playData.duration = duration
-        this.state.playData.currentTime = parseInt(currentTime)
-        if (call) call({ currentTime: parseInt(currentTime), curStr, endStr, duration })
-    }
-}
+//     getAudioInfo (_audio, call) {
+//         var time = _audio.duration || 0
+//         var min = parseInt(time / 60)
+//         var second = parseInt(time % 60)
+//         var currentTime = _audio.currentTime
+//         var duration = min * 60 + second
+//         min = min < 10 ? '0' + min : min
+//         second = second < 10 ? '0' + second : second
+//         var endStr = min + ':' + second
+//         min = Math.round(currentTime) > 59 ? (Math.round(currentTime / 60) < 10 ? ('0' + parseInt(currentTime / 60)) : Math.round(currentTime / 60)) : '00'
+//         second = parseInt(currentTime % 60) < 10 ? ('0' + parseInt(currentTime % 60)) : parseInt(currentTime % 60)
+//         second = second === 60 ? '00' : second
+//         var curStr = min + ':' + second
+//         // state.playData.src = _audio.src
+//         _audio.volume = this.state.playData.volume
+//         this.state.playData.ended = _audio.ended
+//         this.state.playData.muted = _audio.muted
+//         this.state.playData.curStr = curStr
+//         this.state.playData.endStr = endStr
+//         this.state.playData.duration = duration
+//         this.state.playData.currentTime = parseInt(currentTime)
+//         if (call) call({ currentTime: parseInt(currentTime), curStr, endStr, duration })
+//     }
+// }
 export default {
     name: 'musicFooter',
     setup (props, context) {
@@ -232,7 +232,7 @@ export default {
             // store.commit('setAudio', { paused: true, currentTime: 0 })
             initPlayer(audio, setTimerStatus, setVolume)
             /* eslint-disable */
-            audio = new AudioPlayer({ ...state, el: audio })
+            // audio = new AudioPlayer({ ...state, el: audio })
         })
         const getAudioInfo = (_audio, call) => {
             var time = _audio.duration || 0
