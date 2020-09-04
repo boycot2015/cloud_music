@@ -159,6 +159,9 @@ export default {
                 state.tabData.list[i].data = value[i]
             })
         })
+        watch(() => store.state.isExtend, (value) => {
+            initSwiper()
+        })
         // methods
         const getData = async () => {
             store.dispatch('home/getTab3Data').then(res => {

@@ -49,7 +49,7 @@ export default {
     // },
     setup () {
         const router = useRouter()
-        console.log(router.currentRoute.value, 'router.currentRoute')
+        // console.log(router.currentRoute.value, 'router.currentRoute')
         const query = router.currentRoute.value.query.tabName || 'home'
         const state = reactive({
             activeTab: query,

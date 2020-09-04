@@ -1,14 +1,14 @@
 <template>
     <div class="footer flexbox-h just-a">
         <div class="play-btn flexbox-h just-a">
-            <i class="icon-music-play-left"></i>
+            <i class="icon-music-play-left" @click="playPrev"></i>
             <i class="js-play"
             :class="{
                 'icon-music-play': !playData.paused,
                 'icon-music-pause': playData.paused
                 }"
             @click="toggleAudioPlay"></i>
-            <i class="icon-music-play-right"></i>
+            <i class="icon-music-play-right" @click="playNext"></i>
         </div>
         <div class="progress flex-2 flexbox-h just-b">
             <span class="start-time tl">{{playData.curStr}}</span>
@@ -30,20 +30,20 @@
                 <span class="line js-line" :style="{width: audioVolumePos.w + 'px' || ''}"></span>
             </div>
             <!-- icon-music-beckoning-->
-            <i class="order-icon icon-music-loop flex-1"></i>
+            <i class="order-icon icon-music-loop flex-1" @click="toggleLoop()"></i>
         </div>
         <div class="others flex-3 flexbox-h just-b">
             <i class="type">标准</i>
             <i class="new">new</i>
             <i class="word">词</i>
-            <i class="icon js-play-list-btn icon-music-play-list"></i>
-            <div class="play-list js-play-list">
+            <i class="icon js-play-list-btn icon-music-play-list" @click="showList = !showList"></i>
+            <div class="play-list js-play-list" v-show="showList">
                 <div class="title flexbox-h just-c">
                     <div class="btn tc flex-1 flexbox-h just-c">
                         <span class="active js-list-btn list-btn">播放列表</span>
                         <span class="js-history-btn history-btn">历史记录</span>
                     </div>
-                    <i class="tr js-list-close icon-close icon-music-close"></i>
+                    <i class="tr js-list-close icon-close icon-music-close"  @click="showList = false"></i>
                 </div>
                 <div class="list-header flexbox-h just-b">
                     <div class="total tl">
@@ -57,14 +57,21 @@
                     </div>
                 </div>
                 <div class="wrap">
-                    <ul class="music-list js-footer-music-list">
-                        <!-- <li class="music-list-item flexbox-h jsut-b">
-                            <span class="name flex-1">一眼万年</span>
-                            <span class="source flex-4 line-one">(电视剧《孤独天下》片尾曲)</span>
-                            <span class="singer flex-1">群星</span>
-                            <span class="icon-music-link"></span>
-                            <span class="time tr flex-1">00:00</span>
-                        </li> -->
+                    <ul class="music-list js-footer-music-list song-list">
+                        <list
+                        @dblclick="onListItemdbClick(item)"
+                        @click="() => activeIndex = index"
+                        v-for="(item, index) in playList.data"
+                        :class="{
+                            'active': activeIndex === index,
+                            'play': playIndex === index && !playData.paused,
+                            'pause': playIndex === index && playData.paused
+                            }"
+                        :data="item"
+                        :index="index"
+                        :operation="false"
+                        :order="false"
+                        :key="index"></list>
                     </ul>
                 </div>
             </div>
@@ -83,7 +90,7 @@ import {
     // getCurrentInstance
 } from 'vue'
 import { useStore } from 'vuex'
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { drag } from '@/utils'
 // class AudioPlayer {
 //     constructor (props) {
@@ -133,10 +140,15 @@ import { drag } from '@/utils'
 //         if (call) call({ currentTime: parseInt(currentTime), curStr, endStr, duration })
 //     }
 // }
+import List from '@/views/components/List'
 export default {
     name: 'musicFooter',
+    components: {
+        List
+    },
     setup (props, context) {
         const store = useStore()
+        const router = useRouter()
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',
@@ -178,19 +190,31 @@ export default {
             },
             isMove: false, // 拖动与点击事件隔离
             showVolumeBtn: false,
-            progressPsition: '' // 进度条位置
+            progressPsition: '', // 进度条位置
+            activeIndex: 0,
+            playIndex: 0,
+            showList: false
         })
         let audio = null
         const progressTimeDom = ref(null)
         const progressVolumeDom = ref(null)
+        state.playList.data = store.state.playList
+        state.playList.total = store.state.playList.length
         watch(() => store.state.playData.url, (value) => {
             audio.src = value || null
             state.playData.url = value || null
             state.playData.paused = false
+            progressTimeDom.value.style.left = 0
             state.progressPsition = state.playData.volume * 100
-            console.log(value, 'value')
             initPlayer(audio, setTimerStatus, setVolume)
             playAudio()
+        })
+        watch(() => store.state.playData.playIndex, (value) => {
+            state.playIndex = value || 0
+        })
+        watch(() => store.state.playList, (value) => {
+            state.playList.data = value
+            state.playList.data.total = value.length
         })
 
         onMounted(() => {
@@ -219,7 +243,6 @@ export default {
                     setVolume(obj)
                 },
                 end (obj) {
-                    state.progressPsition = obj.left
                     setTimeout(() => {
                         state.isMove = false
                     }, 300)
@@ -228,7 +251,7 @@ export default {
             audio = document.getElementById('play-audio')
             audio.src = state.playData.url || null
             state.playData.paused = true
-            state.progressPsition = state.playData.volume * 100
+            state.progressPsition = store.state.playData.volume * 100
             // store.commit('setAudio', { paused: true, currentTime: 0 })
             initPlayer(audio, setTimerStatus, setVolume)
             /* eslint-disable */
@@ -248,7 +271,7 @@ export default {
             second = second === 60 ? '00' : second
             var curStr = min + ':' + second
             // state.playData.src = _audio.src
-            _audio.volume = state.playData.volume
+            // _audio.volume = state.playData.volume
             state.playData.ended = _audio.ended
             state.playData.muted = _audio.muted
             state.playData.curStr = curStr
@@ -264,6 +287,7 @@ export default {
             })
             // 加载事件监听
             audioPlayer.addEventListener('loadedmetadata', function () {
+                setVolume()
                 getAudioInfo(audioPlayer, setStatus)
             })
             // 结束事件监听
@@ -273,7 +297,10 @@ export default {
             })
         }
         const playAudio = () => {
-            if (!state.playData.url) return
+            if (!state.playData.url || state.playData.url === null) {
+                state.playData.paused = true
+                return
+            }
             audio.src = state.playData.url
             state.playData.paused = false
             audio.play()
@@ -282,15 +309,49 @@ export default {
             if (!state.playData.url) return
             state.playData.paused = !state.playData.paused
             audio.paused && state.playData.url ? audio.play() : audio.pause()
-            store.commit('setPlayData', { paused: state.playData.paused })
+            // store.commit('setPlayData', { paused: state.playData.paused })
         }
         const toggleAudioMouted = () => {
             state.playData.muted = !state.playData.muted
             audio.muted = state.playData.muted
-            console.log(audio.muted, state.progressPsition, 'setVolume')
+            // console.log(audio.muted, state.progressPsition, 'setVolume')
             audio.muted ? setVolume({ left: 0 }) : setVolume({ left: state.progressPsition })
             store.commit('setPlayData', { muted: state.playData.muted })
         }
+        const playPrev = () => {
+            state.playIndex--
+            if (!state.playIndex) return
+            store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex })
+            if (router.currentRoute.value.path === '/songs/detail') {
+                router.push({
+                    path: '/songs/detail',
+                    query: {
+                        id: state.playList.data[state.playIndex].id
+                    }
+                })
+                store.dispatch('detail/getData', state.playList.data[state.playIndex])
+            }
+        }
+        const playNext = () => {
+            state.playIndex++
+            if (state.playIndex > state.playList.data.length - 1) return
+            store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
+            if (router.currentRoute.value.path === '/songs/detail') {
+                 router.push({
+                    path: '/songs/detail',
+                    query: {
+                        id: state.playList.data[state.playIndex].id
+                    }
+                })
+                store.dispatch('detail/getData', state.playList.data[state.playIndex])
+            }
+        }
+
+        const toggleLoop = (val) => {
+            state.playData.loop = val
+            aduio.loop = val
+        }
+
         const setTimerStatus = ({ currentTime, curStr, endStr, duration }) => {
             if (!progressTimeDom.value) return
             let left = 0
@@ -301,15 +362,16 @@ export default {
             left = left > w - 8 ? w - 8 : left
             setTimer({ left, offsetX: left })
             if (audio.ended) {
-                audio.pause()
-                state.playData.paused = true
-                store.commit('setPlayData', { paused: state.playData.paused })
-                if (audio.loop) {
-                    audio.play()
-                    state.playData.paused = false
-                    audio.loop = true
+                if (!state.playData.loop) {
+                    audio.pause()
+                    state.playData.paused = true
+                    store.commit('setPlayData', { paused: state.playData.paused })
+                    return
                 }
+                state.playIndex++
+                store.dispatch('setPlayData', state.playList.data[state.playIndex])
             }
+            store.commit('detail/setCurrentLyric', curStr)
         }
         const setTimer = (obj) => {
             if (obj.offsetX) {
@@ -320,14 +382,14 @@ export default {
         const setVolume = (obj) => {
             if (!progressVolumeDom.value && audio !== null) return
             let volume = state.playData.volume
-            let left = volume * 10
+            let left = volume * 100
             if (obj) {
                 left = obj.left || obj.offsetX || 0
                 left = left > 8 ? left + 8 : left
                 if (obj.offsetX) {
                     progressVolumeDom.value.style.left = left + 'px'
                 }
-                volume = Math.abs(left / progressVolumeDom.value.parentNode.offsetWidth).toFixed(2)
+                volume = Math.abs(left / progressVolumeDom.value.parentNode.offsetWidth).toFixed(1)
                 volume = volume > 1 ? 1 : volume
             } else {
                 left = left > 8 ? left - 8 : left
@@ -337,12 +399,13 @@ export default {
                 progressVolumeDom.value.style.left = '-8px'
                 return
             }
-            state.progressPsition = obj.left
             audio.muted = false
             progressVolumeDom.value.style.left = left + 'px'
             state.audioVolumePos.w = left
+            state.progressPsition = left > 8 ? left - 8 : left
             audio.volume = volume
             state.playData.volume = volume
+            // console.log(audio.volume, state.progressPsition, 'setVolume')
             store.commit('setAudio', { volume })
         }
         const onSetTimerClick = (e) => {
@@ -355,6 +418,34 @@ export default {
         const onSetVolumeClick = (e) => {
             !state.isMove && setVolume(e)
         }
+        const onListItemdbClick = (item) => {
+            state.playList.data.map((el, index) => {
+                if (item.id === el.id) {
+                    state.playIndex = index
+                    playAll(item)
+                }
+            })
+        }
+        const playAll = (item) => {
+            store.dispatch('setPlayList', state.playList.data).then(res => {
+                store.dispatch('setPlayData', { ...item, playIndex: state.playIndex }).then(res => {
+                    if (res.code === 0) {
+                        state.playIndex++
+                        if (!state.playList.data[state.playIndex]) return
+                        store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
+                    }
+                    if (router.currentRoute.value.path === '/songs/detail') {
+                         router.push({
+                            path: '/songs/detail',
+                            query: {
+                                id: state.playList.data[state.playIndex].id
+                            }
+                        })
+                        store.dispatch('detail/getData', state.playList.data[state.playIndex])
+                    }
+                })
+            })
+        }
         return {
             ...toRefs(state),
             progressTimeDom,
@@ -364,7 +455,10 @@ export default {
             onSetTimerClick,
             onSetVolumeClick,
             toggleAudioPlay,
-            toggleAudioMouted
+            toggleAudioMouted,
+            playPrev,
+            playNext,
+            onListItemdbClick
         }
     }
 }

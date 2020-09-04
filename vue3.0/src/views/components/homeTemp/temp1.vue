@@ -155,6 +155,10 @@ export default {
                 state.tabData.list[i].data = value[i]
             })
         })
+        watch(() => store.state.isExtend, (value) => {
+            console.log(value, 'state.isExtend')
+            initSwiper()
+        })
         // methods
         const getData = async () => {
             store.dispatch('home/getTab1Data').then(res => {

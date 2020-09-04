@@ -18,9 +18,7 @@
         @on-extend="(val) => onExtend(val)"
         ></music-header>
         <div class="center flexbox-h">
-            <transition name="slide-fade">
-                <music-aside v-show="showMenu" @hideMenu="goDetail"></music-aside>
-            </transition>
+                <music-aside :class="{'isClose': !showMenu}" @hideMenu="goDetail"></music-aside>
             <div
             :style="{
                 width: isExtend ? '1020px': '',
@@ -153,20 +151,18 @@ export default {
             store.commit('setTitle', value)
         })
         watch(() => {
-            return router.currentRoute.value.path
+            return router.currentRoute.value
         }, (value) => {
-            if (value === '/songs/detail') {
+            if (value.meta.hideMenu) {
                 store.commit('showMenu', false)
             } else {
                 store.commit('showMenu', true)
             }
         })
         watch(() => store.state.showMenu, (value) => {
-            console.log(value, 'showMenushowMenushowMenu')
             state.showMenu = value
         })
         onMounted(() => {
-            console.dir(dragBox.value)
             drag({
                 obj: [dragBox.value.children[0]],
                 target: [dragBox.value]
@@ -175,9 +171,18 @@ export default {
                 obj: [dragMiniBox.value],
                 target: [dragMiniBox.value]
             })
+            window.addEventListener('resize', (e) => {
+                drag({
+                    obj: [dragBox.value.children[0]],
+                    target: [dragBox.value]
+                })
+                drag({
+                    obj: [dragMiniBox.value],
+                    target: [dragMiniBox.value]
+                })
+            })
         })
         const goDetail = (val) => {
-            console.log(val, '12312')
             state.showMenu = false
             router.push({
                 path: '/songs/detail',
@@ -220,6 +225,7 @@ export default {
                 }
                 console.log('已全屏！')
             }
+            store.commit('setExtend', state.isExtend)
         }
         return {
             dragBox,
@@ -237,19 +243,18 @@ export default {
 /* 可以设置不同的进入和离开动画 */
 /* 设置持续时间和动画函数 */
 .slide-fade-enter-active {
-    transition: all 0.3s ease;
+    /* transform: translate(-100px); */
+    transition: all 0.3s ease-in-out;
+     opacity: 0;
 }
 
 .slide-fade-leave-active {
-    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
-}
-
-.slide-fade-enter,
-.slide-fade-leave-to
-
-/* .slide-fade-leave-active for below version 2.1.8 */
-    {
-    transform: translateX(-10px);
+    /* cubic-bezier(1, 0.5, 0.8, 1) */
+    transition: all 0.3s ease-in-out;
     opacity: 0;
+}
+.slide-fade-enter-to ,.slide-fade-leave-to {
+    transform: translate(0px);
+    opacity: 1;
 }
 </style>

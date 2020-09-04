@@ -28,7 +28,7 @@ export default {
                 })
                 playlistRes.playlist.playCount = filterPlayCount(playlistRes.playlist.playCount)
                 state.playlistData = playlistRes.playlist
-                console.log(state.playlistData, 'state.playlistData')
+                // console.log(state.playlistData, 'state.playlistData')
                 return Promise.resolve({ code: 200, success: true })
             } else {
                 return Promise.reject(playlistRes)

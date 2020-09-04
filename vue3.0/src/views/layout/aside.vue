@@ -62,8 +62,8 @@
 <script>
 import {
 // ref,
-// computed,
-// watch,
+    computed,
+    watch,
     reactive, toRefs
 // getCurrentInstance
 // toRefs
@@ -72,15 +72,22 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 export default {
     setup (props, { emit }) {
+        const store = useStore()
         const state = reactive({
             activeFindex: '',
             activeRoute: '/index',
             activeClass: false,
-            isStar: false
+            isStar: false,
+            playData: {
+                ...computed(() => store.state.playData)
+            }
         })
-        const store = useStore()
+        watch(() => store.state.playData, (value) => {
+            for (const key in value) {
+                state.playData[key] = value[key]
+            }
+        })
         const menu = store.state.menu
-        const playData = store.state.playData
         /* eslint-disable */
         const router = useRouter()
         const onStar = (e) => {
@@ -92,7 +99,6 @@ export default {
         return {
             ...toRefs(state),
             menu,
-            playData,
             onStar,
             onInfoMaskClick
         }

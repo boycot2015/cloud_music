@@ -27,7 +27,7 @@
                     <div class="create-time fl"><span>{{coverDetail.createTime}}</span>创建</div>
                 </div>
                 <div class="operation flexbox-h">
-                    <div class="play-btn play">
+                    <div class="play-btn play" @click="playAll(coverDetail.tracks[0], 1)">
                         <i class="icon-music-pause"></i>
                         <span>播放全部</span>
                         <i class="icon-plus icon-music-plus"></i>
@@ -81,7 +81,18 @@
         </div>
         <div class="wrap">
             <ul class="music-list js-footer-music-list song-list">
-                <list @click="onListItemClick(item)" v-for="(item, index) in coverDetail.tracks" :data="item" :index="index" :key="index"></list>
+                <list
+                @dblclick="onListItemdbClick(item)"
+                @click="() => activeIndex = index"
+                v-for="(item, index) in coverDetail.tracks"
+                :class="{
+                    'active': activeIndex === index,
+                    'play': playIndex === index && !playData.paused,
+                    'pause': playIndex === index && playData.paused
+                    }"
+                :data="item"
+                :index="index"
+                :key="index"></list>
             </ul>
         </div>
     </div>
@@ -90,7 +101,7 @@
 <script>
 import {
     // ref,
-    // computed,
+    computed,
     watch,
     reactive,
     toRefs,
@@ -113,38 +124,56 @@ export default {
         const router = useRouter()
         const state = reactive({
             coverDetail: {},
-            playUrl: ''
+            playUrl: '',
+            playIndex: 0,
+            playData: {
+                ...computed(() => store.state.playData)
+            },
+            activeIndex: 0
         })
         // const { ctx } = getCurrentInstance()
-        onMounted(async () => {
-            console.log(router, 'playlistRes')
+        onMounted(() => {
+            // console.log(router, 'playlistRes')
             getData({ id: router.currentRoute.value.query.id })
         })
         watch(() => [
             listStore.playlistData,
-            listStore.playUrl
+            listStore.playUrl,
+            store.state.playData.playIndex
         ], (value) => {
             state.coverDetail = value[0]
             state.playUrl = value[1]
+            state.playIndex = value[2]
         })
 
         // methods
         const getData = async (params) => {
             await store.commit('list/getData', params)
         }
-        const onListItemClick = async (item) => {
-            store.dispatch('setPlayData', item).then(res => {
-                router.push({
-                    path: '/songs/detail',
-                    query: {
-                        id: item.id
+        const onListItemdbClick = (item) => {
+            state.coverDetail.tracks.map((el, index) => {
+                if (item.id === el.id) {
+                    state.playIndex = index
+                }
+            })
+            store.dispatch('setPlayList', state.coverDetail.tracks).then(res => {
+                store.dispatch('setPlayData', { ...item, playIndex: state.playIndex }).then(res => {
+                    if (res.code === 0) {
+                        state.playIndex++
+                        if (!state.coverDetail.tracks[state.playIndex]) return
+                        store.dispatch('setPlayData', { ...state.coverDetail.tracks[state.playIndex], playIndex: state.playIndex })
                     }
                 })
             })
         }
+        const playAll = (item) => {
+            state.playIndex = 0
+            onListItemdbClick(item)
+        }
         return {
             ...toRefs(state),
-            onListItemClick
+            onListItemdbClick,
+            playAll
         }
     }
 }

@@ -144,3 +144,40 @@ export const store = {
 // 本地存储indexedDB
 //
 export const db = new Dexie('musicdatebase', { keyPath: '2222' })
+
+export const animate = (ele, target, attr, type) => {
+    // 先清定时器
+    clearInterval(ele.timer)
+    ele.timer = setInterval(function () {
+        // 四部
+        // 1.获取步长
+        var leader = 0
+        if (type === 1) {
+            leader = ele[attr]
+        } else {
+            leader = parseInt(getStyle(ele, attr)) || 0// 获取值可能含有px，我们只取数字部分parseInt()
+        }
+        var step = (target - leader) / 10
+        // 2.二次加工步长
+        step = step > 0 ? Math.ceil(step) : Math.floor(step)
+        leader = leader + step
+        // 3.赋值
+        !type && (ele.style[attr] = leader + 'px')
+        type && (ele[attr] = leader)
+        // 4.清除定时器
+        if (Math.abs(target - leader)) {
+            !type && (ele.style[attr] = target + 'px')
+            type === 1 && (ele[attr] = target)
+            clearInterval(ele.timer)
+        }
+    }, 250)
+}
+
+// 兼容方法获取元素样式
+
+function getStyle (ele, attr) {
+    if (window.getComputedStyle) {
+        return window.getComputedStyle(ele, null)[attr]
+    }
+    return ele.currentStyle[attr]
+}

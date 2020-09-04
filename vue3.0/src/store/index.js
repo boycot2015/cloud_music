@@ -33,7 +33,9 @@ export default createStore({
             url: '',
             paused: true
         },
-        showMenu: true
+        playList: (store.get('playList') !== null && store.get('playList')) || [],
+        showMenu: true,
+        isExtend: false
     },
     mutations: {
         setTitle (state, title) {
@@ -41,7 +43,9 @@ export default createStore({
             document.title = title
         },
         async setPlayData (state, data) {
-            state.playData = { ...state.playData, ...data }
+            for (const key in data) {
+                state.playData[key] = data[key]
+            }
             store.set('playData', state.playData)
         },
         setAudio (state, data) {
@@ -49,13 +53,20 @@ export default createStore({
         },
         showMenu (state, showMenu) {
             state.showMenu = showMenu
+        },
+        setPlayList (state, playList) {
+            state.playList = playList
+            store.set('playList', playList)
+        },
+        setExtend (state, isExtend) {
+            state.isExtend = isExtend
         }
     },
     actions: {
         setPlayData ({ commit }, data) {
             return new Promise((resolve, reject) => {
                 song.playUrl({ id: data.id }).then(urlData => {
-                    let playData = store.get('playData') !== null ? store.get('playData') : {}
+                    const playData = store.get('playData') !== null ? store.get('playData') : {}
                     data.al = data.al || data.album
                     data.ar = data.ar || data.artists
                     playData.name = data.al.name
@@ -65,21 +76,30 @@ export default createStore({
                     })
                     playData.singer = playData.singer.slice(0, -1)
                     playData.picUrl = data.al.picUrl
-                    playData.endStr = data.dt
-                    for (const key in urlData) {
-                        playData[key] = urlData[key]
+                    playData.playIndex = data.playIndex
+                    if (urlData.code === 200) {
+                        urlData = urlData.data[0]
+                        playData.endStr = data.dt
+                        playData.duration = urlData.size
+                        playData.alName = data.al.name
+                        playData.paused = false
+                        for (const key in urlData) {
+                            playData[key] = urlData[key]
+                        }
+                        commit('setPlayData', playData)
+                        if (urlData.url === null) {
+                            resolve({ code: 0 })
+                            return
+                        }
+                        resolve({ code: 200 })
                     }
-                    playData.duration = urlData.size
-                    playData.alName = data.al.name
-                    playData.paused = false
-                    playData.url = urlData.url
-                    playData = { ...playData, ...urlData.data[0] }
-                    commit('setPlayData', playData)
-                    resolve(playData)
                 }).catch(err => {
                     reject(err)
                 })
             })
+        },
+        setPlayList ({ commit }, data) {
+            commit('setPlayList', data)
         }
     },
     modules: {

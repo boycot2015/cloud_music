@@ -14,7 +14,7 @@
                 <img :src="playData.picUrl" alt="">
             </div>
         </div>
-        <div class="lyric-text-content flex-1">
+        <div class="lyric-text-content">
             <div class="info">
                 <div class="song-info flexbox-h">
                     <p class="name">
@@ -30,11 +30,25 @@
                 </div>
                 <i class="icon-music-minify icon-minify"></i>
             </div>
-            <div class="wrap">
+            <div class="wrap" ref="lyricScrollDom">
+                <!-- <div class="swiper-container lyric-swiper-container">
+                    <div class="swiper-wrapper">
+                        <div
+                        v-for="item in lyricList" :key="item.id"
+                        :class="{'active': currLyric.time === item.time}"
+                        class="lyric-text-item swiper-slide">
+                            {{item.text}}
+                        </div>
+                    </div>
+                </div> -->
                 <div class="lyric-text">
                     <template v-if="lyricList && lyricList.length">
-                        <p v-for="item in lyricList" :key="item.id" class="lyric-text-item
-                            {{index == 0 ?'active' : ''}}" data-time="{{item.time}}">{{item.text}}</p>
+                        <p
+                        v-for="item in lyricList" :key="item.id"
+                        :class="{'active': currLyric.time === item.time}"
+                        class="lyric-text-item">
+                        {{item.text}}
+                        </p>
                     </template>
                     <p class="lyric-text-item " v-else data-time="">暂无歌词~</p>
                 </div>
@@ -146,13 +160,13 @@
 
 <script>
 import {
-    // ref,
+    ref,
     // computed,
     watch,
     reactive,
     toRefs,
     // getCurrentInstance,
-    // onMounted,
+    onMounted,
     onBeforeMount
 } from 'vue'
 import {
@@ -161,6 +175,9 @@ import {
 import {
     useRouter
 } from 'vue-router'
+// import { animate } from '@/utils'
+import '@/plugins/swiper/swiper.min.css'
+// import Swiper from '@/plugins/swiper/swiper.min.js'
 export default {
     components: {},
     setup () {
@@ -168,6 +185,7 @@ export default {
         const rootStore = store.state
         const detailStore = rootStore.detail
         const router = useRouter()
+        const lyricScrollDom = ref(null)
         const state = reactive({
             lyricList: [],
             data: {
@@ -177,14 +195,23 @@ export default {
                 playLists: [],
                 songs: []
             },
+            swiperOption: {
+                direction: 'vertical', // 垂直切换选项
+                // slidesPerView: 1,
+                // spaceBetween: -40,
+                slidesPerView: 40,
+                slidesPerGroup: 40,
+                // autoplay: {
+                //     delay: 5000,
+                //     disableOnInteraction: false
+                // },
+                speed: 400
+            },
+            currLyric: {}, // 当前播放的歌词
             playData: {}
         })
         // const { ctx } = getCurrentInstance()
         onBeforeMount(async () => {
-            getData({
-                id: router.currentRoute.value.query.id
-            })
-            store.commit('showMenu', false)
         })
         watch(() => [
             detailStore.lyricList,
@@ -203,10 +230,30 @@ export default {
             state.data.playLists = value[5]
             state.data.songs = value[6]
         })
-
+        watch(() => detailStore.currLyric, (value) => {
+            state.currLyric = value
+            state.lyricList.map((el, index) => {
+                if (value.time === el.time) {
+                    if (index > 4) {
+                        const offsetHeight = lyricScrollDom.value.children[0].children[0].offsetHeight * (index - 4)
+                        // animate(lyricScrollDom.value, offsetHeight, 'scrollTop', 1)
+                        lyricScrollDom.value.scrollTop = offsetHeight * (index - 4)
+                    }
+                }
+            })
+        })
+        onMounted(() => {
+            getData({
+                id: router.currentRoute.value.query.id
+            })
+            store.commit('showMenu', false)
+        })
         // methods
         const getData = async (params) => {
-            await store.commit('detail/getData', params)
+            await store.dispatch('detail/getData', params).then(res => {
+                // initSwiper()
+                state.currLyric = state.lyricList[0]
+            })
         }
         const onItemlistClick = (item, type) => {
             const route = {
@@ -222,8 +269,13 @@ export default {
             getData(item)
             store.dispatch('setPlayData', item)
         }
+        // const initSwiper = () => {
+        //     /* eslint-disable */
+        //     new Swiper('.lyric-swiper-container', state.swiperOption)
+        // }
         return {
             ...toRefs(state),
+            lyricScrollDom,
             onItemlistClick
         }
     }
@@ -231,5 +283,21 @@ export default {
 </script>
 
 <style>
+.scale-fade-enter-active {
+    transition: all 0.3s ease;
+}
 
+.scale-fade-leave-active {
+    transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.scale-fade-enter,
+.scale-fade-leave-to
+
+/* .scale-fade-leave-active for below version 2.1.8 */
+    {
+    transform:scale(0.5);
+    transform-origin: 80px 200px;
+    opacity: 0;
+}
 </style>

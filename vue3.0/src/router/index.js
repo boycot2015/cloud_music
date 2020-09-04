@@ -217,6 +217,7 @@ const routes = [
         meta: {
             icon: '',
             title: '歌单详情',
+            hideMenu: true,
             hideInMenu: true
 
         },
