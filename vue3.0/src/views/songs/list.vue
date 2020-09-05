@@ -47,15 +47,23 @@
                 </div>
                 <div class="tags flexbox-h">
                     <p class="name">标签：</p>
-                    <span
-                        class="tag"
-                        v-for="(tag, tindex) in coverDetail.tags" :key="tag.id"
-                        v-html="tag + (tindex < coverDetail.tags.length - 1 ? ' /': '')">
-                    </span>
+                    <template v-if="coverDetail.tags && coverDetail.tags.length">
+                        <span
+                            class="tag"
+                            v-for="(tag, tindex) in coverDetail.tags" :key="tag.id"
+                            v-html="tag + (tindex < coverDetail.tags.length - 1 ? '/': '')">
+                        </span>
+                    </template>
+                    <span v-else>暂无~</span>
                 </div>
-                <div class="desc line-two" v-if="coverDetail.description && coverDetail.description !== null">
+                <div class="desc"
+                :class="{
+                    'line-two': !showMore,
+                    'active': showMore
+                    }"
+                    v-if="coverDetail.description && coverDetail.description !== null">
                     <p>{{coverDetail.description}}</p>
-                    <i class="icon-music-down js-more" v-if=" coverDetail.description.length > 50"></i>
+                    <i class="icon-music-down js-more" :class="{'active': showMore}" @click="showMore = !showMore" v-if="coverDetail.description.length > 80"></i>
                 </div>
             </div>
         </div>
@@ -87,8 +95,8 @@
                 v-for="(item, index) in coverDetail.tracks"
                 :class="{
                     'active': activeIndex === index,
-                    'play': playIndex === index && !playData.paused,
-                    'pause': playIndex === index && playData.paused
+                    'play': playIndex === index && playData.playListId === id && !playData.paused,
+                    'pause': playIndex === index && playData.playListId === id && playData.paused
                     }"
                 :data="item"
                 :index="index"
@@ -129,12 +137,14 @@ export default {
             playData: {
                 ...computed(() => store.state.playData)
             },
-            activeIndex: 0
+            id: router.currentRoute.value.query.id,
+            activeIndex: '',
+            showMore: false
         })
         // const { ctx } = getCurrentInstance()
         onMounted(() => {
             // console.log(router, 'playlistRes')
-            getData({ id: router.currentRoute.value.query.id })
+            getData({ id: state.id })
         })
         watch(() => [
             listStore.playlistData,
@@ -144,6 +154,9 @@ export default {
             state.coverDetail = value[0]
             state.playUrl = value[1]
             state.playIndex = value[2]
+            if (state.id === state.playData.playListId) {
+                state.activeIndex = state.playIndex
+            }
         })
 
         // methods
@@ -157,11 +170,11 @@ export default {
                 }
             })
             store.dispatch('setPlayList', state.coverDetail.tracks).then(res => {
-                store.dispatch('setPlayData', { ...item, playIndex: state.playIndex }).then(res => {
+                store.dispatch('setPlayData', { ...item, playIndex: state.playIndex, playListId: state.id }).then(res => {
                     if (res.code === 0) {
                         state.playIndex++
                         if (!state.coverDetail.tracks[state.playIndex]) return
-                        store.dispatch('setPlayData', { ...state.coverDetail.tracks[state.playIndex], playIndex: state.playIndex })
+                        store.dispatch('setPlayData', { ...state.coverDetail.tracks[state.playIndex], playListId: state.id, playIndex: state.playIndex })
                     }
                 })
             })

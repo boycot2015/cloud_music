@@ -546,15 +546,19 @@
                 margin-right: 10px;
             }
             .name {
-                width: 135px;
+                width: 100px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 vertical-align: bottom;
+                line-height: 18px;
+                span {
+                    color: @c-999;
+                }
             }
             .play-btn {
                 position: absolute;
-                left: 60px;
+                left: 50px;
                 top: 2px;
                 height: 38px;
                 width: 135px;
@@ -562,7 +566,12 @@
                 padding: 0 20px;
                 box-sizing: border-box;
                 background-color: @white;
-                display: none;
+                // display: none;
+                opacity: 0;
+                transition: all 0.5s;
+                &.active {
+                    opacity: 1;
+                }
                 i::after {
                     background-color: @white;
                     color: @primary;
@@ -659,11 +668,20 @@
             border: 1px solid @c-ccc;
             border-top: 0;
             line-height: 24px;
-            display: none;
-            max-height: 280px;
+            // display: none;
             overflow: hidden;
             overflow-y: auto;
             color: @c-666;
+            max-height: 280px;
+            height: 0;
+            transition: all 0.3s;
+            &.active {
+                height: 24px;
+                overflow: hidden;
+            }
+            &.actived {
+                height: 280px;
+            }
             .name {
                 width: auto;
                 color: @c-333;
@@ -716,7 +734,7 @@
             }
         }
         &.active {
-            background-color: @c-ccc;
+            background-color: @c-e8;
             .name {
                 color: @c-000;
             }

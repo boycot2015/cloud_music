@@ -46,17 +46,31 @@
     class="mini-music-box js-mini-music-box flexbox-v"
     v-show="showMiniBox" ref="dragMiniBox">
         <div class="wrap flexbox-h just-b">
-            <div class="left flex-2 flexbox-h just-b">
+            <div class="left flex-2 flexbox-h just-b"
+            @mouseout.stop.prevent="showPlayer = false"
+            @mouseover.stop.prevent="showPlayer = true">
                 <div class="img tl">
-                    <img src="/src/assets/images/avatar.jpg" alt="">
+                    <img :src="playData.picUrl" alt="">
                 </div>
-                <p class="name tc">{{playData.lyrc}}</p>
-                <div class="play-btn js-play-btn flexbox-h just-a">
-                    <i class="icon-music-play-left"></i>
-                    <i class="icon-play js-play icon-music-pause"></i>
-                    <i class="icon-music-play-right"></i>
+                <div class="name tc">
+                    <p>{{playData.paused ? playData.name : currLyric.text }}</p>
+                    <span v-show="playData.paused" class="name tc">{{playData.singer}}</span>
                 </div>
-                <div class="more js-more text">
+                <div class="play-btn js-play-btn flexbox-h just-a"
+                :class="{'active': showPlayer}">
+                    <i class="icon-music-play-left"
+                    @click="playPrev"></i>
+                    <i class="icon-play js-play"
+                    :class="{
+                        'icon-music-pause': playData.paused,
+                        'icon-music-play': !playData.paused,
+                        }"
+                        @click="toggleAudioPlay"></i>
+                    <i class="icon-music-play-right"
+                    @click="playNext"></i>
+                </div>
+                <div class="more js-more text"
+                :class="{'active': showPlayer}">
                     <div class="wrap flexbox-h tc just-c">
                         <p class="name line-one">{{playData.name}}</p>
                         <span class="line"> - </span>
@@ -67,7 +81,7 @@
             <div class="right flex-1 flexbox-h just-b">
                 <span class="js-love-icon love-icon icon-music-love"></span>
                 <span class="volume-icon icon-music-volume js-min-music-volume"></span>
-                <span class="list-icon icon-music-list js-list-icon"></span>
+                <span class="list-icon icon-music-list js-list-icon" @click="showList = !showList"></span>
                 <div class="volume flex-2 flexbox-h just-b tc">
                     <!-- <i class="icon-music-volume js-music-volume flex-1"></i> -->
                     <div class="progress-bar flex-4">
@@ -80,12 +94,24 @@
             <!-- <div class="text flex-3 flexbox-h just-b">
                 </div> -->
         </div>
-        <div class="more js-mini-music-list">
+        <div class="more js-mini-music-list"
+        :class="{'actived': showList}">
             <ul class="music-list js-music-list">
-                <!-- <li class="music-list-item flexbox-h jsut-b">
-                        <span class="name">一眼万年</span>
-                        <span class="source flex-4 line-one">(电视剧《孤独天下》片尾曲)</span>
-                    </li> -->
+                    <list
+                        @dblclick="onListItemdbClick(item)"
+                        @click="() => activeIndex = index"
+                        v-for="(item, index) in playList.data"
+                        :class="{
+                            'active': activeIndex === index,
+                            'play': playIndex === index && !playData.paused,
+                            'pause': playIndex === index && playData.paused
+                            }"
+                        :data="item"
+                        isminiPlay
+                        :index="index"
+                        :operation="false"
+                        :order="false"
+                        :key="index"></list>
             </ul>
         </div>
     </div>
@@ -98,6 +124,7 @@
 import musicHeader from './header'
 import musicAside from './aside'
 import musicFooter from './footer'
+import List from '@/views/components/List'
 import {
     ref,
     computed,
@@ -119,7 +146,8 @@ export default {
     components: {
         musicHeader,
         musicAside,
-        musicFooter
+        musicFooter,
+        List
     },
     emits: {
         hideMenu: val => {
@@ -128,22 +156,35 @@ export default {
         }
     },
     setup (props, context) {
+        const store = useStore()
+        const storeState = store.state
+        const router = useRouter()
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',
                 name: '菩提偈',
-                singer: '刘惜君'
+                singer: '刘惜君',
+                ...computed(() => storeState.playData)
             },
+            currLyric: storeState.detail.currLyric || {
+                time: '00:01',
+                text: '纯音乐，请欣赏~'
+            },
+            playList: {
+                data: storeState.playList || []
+            },
+            playIndex: storeState.playData.playIndex,
+            activeIndex: 0,
             showMenu: true,
             showBox: true,
             showMiniBox: false,
-            isExtend: false
+            isExtend: false,
+            showPlayer: false,
+            showList: false
         })
         const dragBox = ref(null)
         const dragMiniBox = ref(null)
-        const store = useStore()
-        const storeState = store.state
-        const router = useRouter()
+        let audio = null
         // const { ctx } = getCurrentInstance()
         watch(() => {
             return router.currentRoute.value.meta.title
@@ -159,8 +200,18 @@ export default {
                 store.commit('showMenu', true)
             }
         })
-        watch(() => store.state.showMenu, (value) => {
+        watch(() => storeState.showMenu, (value) => {
             state.showMenu = value
+        })
+        watch(() => storeState.detail.currLyric, (value) => {
+            state.currLyric = value
+        })
+        watch(() => storeState.playList, (value) => {
+            // console.log(value, 'storeStatestoreStatestoreState')
+            state.playList.data = value
+        })
+        watch(() => storeState.playData.playIndex, (value) => {
+            state.playIndex = value || 0
         })
         onMounted(() => {
             drag({
@@ -168,8 +219,7 @@ export default {
                 target: [dragBox.value]
             })
             drag({
-                obj: [dragMiniBox.value],
-                target: [dragMiniBox.value]
+                obj: [dragMiniBox.value]
             })
             window.addEventListener('resize', (e) => {
                 drag({
@@ -177,17 +227,17 @@ export default {
                     target: [dragBox.value]
                 })
                 drag({
-                    obj: [dragMiniBox.value],
-                    target: [dragMiniBox.value]
+                    obj: [dragMiniBox.value]
                 })
             })
+            audio = document.getElementById('play-audio')
         })
         const goDetail = (val) => {
             state.showMenu = false
             router.push({
                 path: '/songs/detail',
                 query: {
-                    id: store.state.playData.id
+                    id: storeState.playData.id
                 }
             })
         }
@@ -227,11 +277,55 @@ export default {
             }
             store.commit('setExtend', state.isExtend)
         }
+        const onListItemdbClick = (item) => {
+            state.playList.data.map((el, index) => {
+                if (item.id === el.id) {
+                    state.playIndex = index
+                }
+            })
+            store.dispatch('setPlayList', state.playList.data).then(res => {
+                store.dispatch('setPlayData', { ...item, playIndex: state.playIndex }).then(res => {
+                    if (res.code === 0) {
+                        state.playIndex++
+                        if (!state.playList.data[state.playIndex]) return
+                        store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
+                    }
+                })
+            })
+        }
+        const toggleAudioPlay = () => {
+            if (!state.playData.url) return
+            store.dispatch('toggleAudioPlay', { audio, state })
+        }
+        const toggleAudioMouted = () => {
+            store.dispatch('toggleAudioMouted', { audio, state }).then(res => {})
+        }
+        const playPrev = () => {
+            state.playIndex--
+            if (state.playIndex < 1) {
+                state.playIndex = 0
+                return
+            }
+            store.dispatch('playPrev', state)
+        }
+        const playNext = () => {
+            state.playIndex++
+            if (state.playIndex > state.playList.data.length - 1) {
+                state.playIndex = state.playList.data.length - 1
+                return
+            }
+            store.dispatch('playNext', state)
+        }
         return {
             dragBox,
             dragMiniBox,
             goDetail,
             onExtend,
+            onListItemdbClick,
+            toggleAudioPlay,
+            toggleAudioMouted,
+            playPrev,
+            playNext,
             ...computed(() => storeState).value,
             ...toRefs(state)
         }

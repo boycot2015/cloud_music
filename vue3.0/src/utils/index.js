@@ -157,7 +157,7 @@ export const animate = (ele, target, attr, type) => {
         } else {
             leader = parseInt(getStyle(ele, attr)) || 0// 获取值可能含有px，我们只取数字部分parseInt()
         }
-        var step = (target - leader) / 10
+        var step = (target - leader) / 50
         // 2.二次加工步长
         step = step > 0 ? Math.ceil(step) : Math.floor(step)
         leader = leader + step
@@ -165,12 +165,14 @@ export const animate = (ele, target, attr, type) => {
         !type && (ele.style[attr] = leader + 'px')
         type && (ele[attr] = leader)
         // 4.清除定时器
-        if (Math.abs(target - leader)) {
+        // console.log(target - leader, step, ele[attr])
+        // Math.abs(target - leader)
+        if (target === leader || target < leader) {
             !type && (ele.style[attr] = target + 'px')
             type === 1 && (ele[attr] = target)
             clearInterval(ele.timer)
         }
-    }, 250)
+    }, 10)
 }
 
 // 兼容方法获取元素样式

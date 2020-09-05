@@ -92,54 +92,6 @@ import {
 import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { drag } from '@/utils'
-// class AudioPlayer {
-//     constructor (props) {
-//         this.state = {
-//             lyrc: '一诺千金到尽头',
-//             name: '菩提偈',
-//             singer: '刘惜君',
-//             picUrl: require('@/assets/images/avatar.jpg'),
-//             startTime: '00:00',
-//             endTime: '00:00',
-//             type: '标准',
-//             isHot: 'new',
-//             lyrcTxt: '词',
-//             ended: false,
-//             muted: false,
-//             curStr: '00:00',
-//             endStr: '00:00',
-//             duration: 0,
-//             volume: 0.2,
-//             currentTime: '00:00',
-//             paused: true,
-//             ...props
-//         }
-//     }
-
-//     getAudioInfo (_audio, call) {
-//         var time = _audio.duration || 0
-//         var min = parseInt(time / 60)
-//         var second = parseInt(time % 60)
-//         var currentTime = _audio.currentTime
-//         var duration = min * 60 + second
-//         min = min < 10 ? '0' + min : min
-//         second = second < 10 ? '0' + second : second
-//         var endStr = min + ':' + second
-//         min = Math.round(currentTime) > 59 ? (Math.round(currentTime / 60) < 10 ? ('0' + parseInt(currentTime / 60)) : Math.round(currentTime / 60)) : '00'
-//         second = parseInt(currentTime % 60) < 10 ? ('0' + parseInt(currentTime % 60)) : parseInt(currentTime % 60)
-//         second = second === 60 ? '00' : second
-//         var curStr = min + ':' + second
-//         // state.playData.src = _audio.src
-//         _audio.volume = this.state.playData.volume
-//         this.state.playData.ended = _audio.ended
-//         this.state.playData.muted = _audio.muted
-//         this.state.playData.curStr = curStr
-//         this.state.playData.endStr = endStr
-//         this.state.playData.duration = duration
-//         this.state.playData.currentTime = parseInt(currentTime)
-//         if (call) call({ currentTime: parseInt(currentTime), curStr, endStr, duration })
-//     }
-// }
 import List from '@/views/components/List'
 export default {
     name: 'musicFooter',
@@ -162,6 +114,7 @@ export default {
                 lyrcTxt: '词',
                 ended: false,
                 muted: false,
+                loop: false,
                 curStr: '00:00',
                 endStr: '00:00',
                 duration: 0,
@@ -188,11 +141,12 @@ export default {
                 b: -4,
                 w: 20
             },
+            onPlayCount: 0,
             isMove: false, // 拖动与点击事件隔离
             showVolumeBtn: false,
             progressPsition: '', // 进度条位置
             activeIndex: 0,
-            playIndex: 0,
+            playIndex: store.state.playData.playIndex || 0,
             showList: false
         })
         let audio = null
@@ -289,11 +243,18 @@ export default {
             audioPlayer.addEventListener('loadedmetadata', function () {
                 setVolume()
                 getAudioInfo(audioPlayer, setStatus)
+                state.onPlayCount = 0
             })
             // 结束事件监听
             audioPlayer.addEventListener('ended', function () {
                 getAudioInfo(audioPlayer, setStatus)
                 clearInterval(state.playData.timer)
+                if (audio.ended) {
+                    state.onPlayCount++
+                    if (!state.playData.loop && state.onPlayCount === 1) {
+                        playNext()
+                    }
+                }
             })
         }
         const playAudio = () => {
@@ -307,44 +268,28 @@ export default {
         }
         const toggleAudioPlay = () => {
             if (!state.playData.url) return
-            state.playData.paused = !state.playData.paused
-            audio.paused && state.playData.url ? audio.play() : audio.pause()
-            // store.commit('setPlayData', { paused: state.playData.paused })
+            store.dispatch('toggleAudioPlay', { audio, state })
         }
         const toggleAudioMouted = () => {
-            state.playData.muted = !state.playData.muted
-            audio.muted = state.playData.muted
-            // console.log(audio.muted, state.progressPsition, 'setVolume')
-            audio.muted ? setVolume({ left: 0 }) : setVolume({ left: state.progressPsition })
-            store.commit('setPlayData', { muted: state.playData.muted })
+            store.dispatch('toggleAudioMouted', { audio, state }).then(res => {
+                audio.muted ? setVolume({left: 0}) : setVolume({ left: state.progressPsition })
+            })
         }
         const playPrev = () => {
             state.playIndex--
-            if (!state.playIndex) return
-            store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex })
-            if (router.currentRoute.value.path === '/songs/detail') {
-                router.push({
-                    path: '/songs/detail',
-                    query: {
-                        id: state.playList.data[state.playIndex].id
-                    }
-                })
-                store.dispatch('detail/getData', state.playList.data[state.playIndex])
+            if (state.playIndex < 1) {
+                state.playIndex = 0
+                return
             }
+            store.dispatch('playPrev', state)
         }
         const playNext = () => {
             state.playIndex++
-            if (state.playIndex > state.playList.data.length - 1) return
-            store.dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
-            if (router.currentRoute.value.path === '/songs/detail') {
-                 router.push({
-                    path: '/songs/detail',
-                    query: {
-                        id: state.playList.data[state.playIndex].id
-                    }
-                })
-                store.dispatch('detail/getData', state.playList.data[state.playIndex])
+            if (state.playIndex > state.playList.data.length - 1) {
+                state.playIndex = state.playList.data.length - 1
+                return
             }
+            store.dispatch('playNext', state)
         }
 
         const toggleLoop = (val) => {
@@ -361,16 +306,6 @@ export default {
             left = Math.abs(left)
             left = left > w - 8 ? w - 8 : left
             setTimer({ left, offsetX: left })
-            if (audio.ended) {
-                if (!state.playData.loop) {
-                    audio.pause()
-                    state.playData.paused = true
-                    store.commit('setPlayData', { paused: state.playData.paused })
-                    return
-                }
-                state.playIndex++
-                store.dispatch('setPlayData', state.playList.data[state.playIndex])
-            }
             store.commit('detail/setCurrentLyric', curStr)
         }
         const setTimer = (obj) => {
@@ -425,6 +360,7 @@ export default {
                     playAll(item)
                 }
             })
+
         }
         const playAll = (item) => {
             store.dispatch('setPlayList', state.playList.data).then(res => {

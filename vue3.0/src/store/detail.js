@@ -12,8 +12,8 @@ export default {
             comments: [] // 所有评论
         },
         currLyric: {
-            time: '',
-            text: ''
+            time: '00:01',
+            text: (store.get('playData') !== null && store.get('playData').name) || '纯音乐，请欣赏~'
         }
     },
     mutations: {
@@ -32,7 +32,7 @@ export default {
             })
             // 首次播放存第一行
             if (!currLyric && store.get('currLyric') === null) {
-                currLyric = state.lyricList[0]
+                currLyric = state.playData.name
             }
             currLyric && (state.currLyric = currLyric)
             currLyric && store.set('currLyric', currLyric)
@@ -47,12 +47,12 @@ export default {
                 data: {}
             }
             const newArr = []
-            if (lyricRes.code === 200 && !lyricRes.nolyric) {
+            if (lyricRes.code === 200 && !lyricRes.nolyric && lyricRes.lrc && lyricRes.lrc.lyric) {
                 const tempArr = lyricRes.lrc.lyric.split('\n')
                 tempArr.map((el, i) => {
                     const obj = {}
                     el = (el && el.split(']')) || ''
-                    if (i > 0 && el && !el[1].includes('[')) {
+                    if (i > 0 && el && el[1] && !el[1].includes('[')) {
                         let timeStr = el[0].split('[')[1]
                         timeStr = timeStr.split(':')
                         timeStr[1] = Math.round(timeStr[1]) + ''
@@ -60,7 +60,7 @@ export default {
                         timeStr = timeStr.join(':')
                         obj.time = timeStr
                         obj.text = el[1]
-                        newArr.push(obj)
+                        obj.text && newArr.push(obj)
                     }
                 })
                 state.lyricList = newArr

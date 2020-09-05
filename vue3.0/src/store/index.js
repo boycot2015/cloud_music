@@ -31,6 +31,8 @@ export default createStore({
             volume: 0.2,
             currentTime: '00:00',
             url: '',
+            playIndex: 0,
+            playListId: 0, // 播放列表id用于详情返回
             paused: true
         },
         playList: (store.get('playList') !== null && store.get('playList')) || [],
@@ -42,7 +44,7 @@ export default createStore({
             state.metaTitle = title
             document.title = title
         },
-        async setPlayData (state, data) {
+        setPlayData (state, data) {
             for (const key in data) {
                 state.playData[key] = data[key]
             }
@@ -69,7 +71,7 @@ export default createStore({
                     const playData = store.get('playData') !== null ? store.get('playData') : {}
                     data.al = data.al || data.album
                     data.ar = data.ar || data.artists
-                    playData.name = data.al.name
+                    playData.name = data.name || (data.al && data.al.name) || ''
                     playData.singer = ''
                     data.ar.map(el => {
                         playData.singer += el.name + '/'
@@ -77,6 +79,7 @@ export default createStore({
                     playData.singer = playData.singer.slice(0, -1)
                     playData.picUrl = data.al.picUrl
                     playData.playIndex = data.playIndex
+                    data.playListId && (playData.playListId = data.playListId)
                     if (urlData.code === 200) {
                         urlData = urlData.data[0]
                         playData.endStr = data.dt
@@ -100,6 +103,42 @@ export default createStore({
         },
         setPlayList ({ commit }, data) {
             commit('setPlayList', data)
+        },
+        toggleAudioPlay ({ commit }, { audio, state }) {
+            if (!state.playData.url) return
+            state.playData.paused = !state.playData.paused
+            audio.paused && state.playData.url ? audio.play() : audio.pause()
+            commit('setPlayData', { paused: state.playData.paused })
+        },
+        toggleAudioMouted ({ commit }, { audio, state }) {
+            state.playData.muted = !state.playData.muted
+            audio.muted = state.playData.muted
+            // console.log(audio.muted, state.progressPsition, 'setVolume')
+            commit('setPlayData', { muted: state.playData.muted })
+        },
+        playPrev ({ commit, dispatch }, state) {
+            dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
+            if (router.currentRoute.value.path === '/songs/detail') {
+                router.push({
+                    path: '/songs/detail',
+                    query: {
+                        id: state.playList.data[state.playIndex].id
+                    }
+                })
+                dispatch('detail/getData', state.playList.data[state.playIndex])
+            }
+        },
+        playNext ({ commit, dispatch }, state) {
+            dispatch('setPlayData', { ...state.playList.data[state.playIndex], playIndex: state.playIndex })
+            if (router.currentRoute.value.path === '/songs/detail') {
+                router.push({
+                    path: '/songs/detail',
+                    query: {
+                        id: state.playList.data[state.playIndex].id
+                    }
+                })
+                dispatch('detail/getData', state.playList.data[state.playIndex])
+            }
         }
     },
     modules: {

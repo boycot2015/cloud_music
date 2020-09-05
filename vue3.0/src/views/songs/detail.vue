@@ -28,19 +28,16 @@
                     <span class="al-name line-one flex-1" title="{{playData.singer}}">歌手：<i>{{playData.singer}}</i></span>
                     <span class="al-name line-one flex-1" title="{{playData.alName}}">来源：<i>{{playData.alName}}</i></span>
                 </div>
-                <i class="icon-music-minify icon-minify"></i>
+                <i class="icon-music-minify icon-minify"
+                @click="
+                router.push({
+                    path: '/songs/list',
+                    query: {
+                        id: playData.playListId
+                    }
+                })"></i>
             </div>
             <div class="wrap" ref="lyricScrollDom">
-                <!-- <div class="swiper-container lyric-swiper-container">
-                    <div class="swiper-wrapper">
-                        <div
-                        v-for="item in lyricList" :key="item.id"
-                        :class="{'active': currLyric.time === item.time}"
-                        class="lyric-text-item swiper-slide">
-                            {{item.text}}
-                        </div>
-                    </div>
-                </div> -->
                 <div class="lyric-text">
                     <template v-if="lyricList && lyricList.length">
                         <p
@@ -175,9 +172,7 @@ import {
 import {
     useRouter
 } from 'vue-router'
-// import { animate } from '@/utils'
-import '@/plugins/swiper/swiper.min.css'
-// import Swiper from '@/plugins/swiper/swiper.min.js'
+import { animate } from '@/utils'
 export default {
     components: {},
     setup () {
@@ -207,8 +202,8 @@ export default {
                 // },
                 speed: 400
             },
-            currLyric: {}, // 当前播放的歌词
-            playData: {}
+            currLyric: detailStore.currLyric || {}, // 当前播放的歌词
+            playData: rootStore.playData
         })
         // const { ctx } = getCurrentInstance()
         onBeforeMount(async () => {
@@ -234,10 +229,9 @@ export default {
             state.currLyric = value
             state.lyricList.map((el, index) => {
                 if (value.time === el.time) {
-                    if (index > 4) {
-                        const offsetHeight = lyricScrollDom.value.children[0].children[0].offsetHeight * (index - 4)
-                        // animate(lyricScrollDom.value, offsetHeight, 'scrollTop', 1)
-                        lyricScrollDom.value.scrollTop = offsetHeight * (index - 4)
+                    if (index > 5 && index < state.lyricList.length - 5) {
+                        const offsetHeight = lyricScrollDom.value.children[0].children[0].offsetHeight
+                        animate(lyricScrollDom.value, offsetHeight * (index - 5), 'scrollTop', 1)
                     }
                 }
             })
@@ -253,6 +247,7 @@ export default {
             await store.dispatch('detail/getData', params).then(res => {
                 // initSwiper()
                 state.currLyric = state.lyricList[0]
+                lyricScrollDom.value.scrollTop = 0
             })
         }
         const onItemlistClick = (item, type) => {
@@ -275,6 +270,7 @@ export default {
         // }
         return {
             ...toRefs(state),
+            router,
             lyricScrollDom,
             onItemlistClick
         }

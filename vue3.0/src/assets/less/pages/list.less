@@ -123,21 +123,20 @@
                 margin-top: 10px;
                 line-height: 18px;
                 color: @c-333;
-                height: 55px;
-                min-height: 50px;
+                height: 39px;
+                min-height: 39px;
                 overflow: hidden;
-                width: calc(100% - 20px);
-                padding-right: 20px;
+                width: calc(100% - 25px);
+                padding-right: 25px;
                 position: relative;
+                transition: all 0.3s;
                 &.active {
                     height: auto;
-                    min-height: 55px;
-                    overflow: auto;
                 }
                 i {
                     position: absolute;
                     right: 0;
-                    top: 25px;
+                    top: 0;
                     cursor: pointer;
                     &::after {
                         color: @c-000;

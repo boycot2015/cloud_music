@@ -167,7 +167,6 @@ export default {
         }
         const onListClick = (item) => {
             // getData(item.type)
-            console.log(item.id, 'item.id')
             router.push({
                 path: '/songs/list',
                 query: {
