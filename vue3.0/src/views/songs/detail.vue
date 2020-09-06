@@ -225,6 +225,9 @@ export default {
             state.data.playLists = value[5]
             state.data.songs = value[6]
         })
+        watch(() => rootStore.playData.url, (value) => {
+            lyricScrollDom.value.scrollTop = 0
+        })
         watch(() => detailStore.currLyric, (value) => {
             state.currLyric = value
             state.lyricList.map((el, index) => {
@@ -232,6 +235,8 @@ export default {
                     if (index > 5 && index < state.lyricList.length - 5) {
                         const offsetHeight = lyricScrollDom.value.children[0].children[0].offsetHeight
                         animate(lyricScrollDom.value, offsetHeight * (index - 5), 'scrollTop', 1)
+                    } else {
+                        clearInterval(lyricScrollDom.value.timer)
                     }
                 }
             })

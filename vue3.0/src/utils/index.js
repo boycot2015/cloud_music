@@ -166,8 +166,8 @@ export const animate = (ele, target, attr, type) => {
         type && (ele[attr] = leader)
         // 4.清除定时器
         // console.log(target - leader, step, ele[attr])
-        // Math.abs(target - leader)
-        if (target === leader || target < leader) {
+        // Math.abs(target - leader) ||  target === leader
+        if (target === leader) {
             !type && (ele.style[attr] = target + 'px')
             type === 1 && (ele[attr] = target)
             clearInterval(ele.timer)
