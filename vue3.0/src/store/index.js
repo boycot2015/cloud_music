@@ -108,6 +108,7 @@ export default createStore({
             if (!state.playData.url) return
             state.playData.paused = !state.playData.paused
             audio.paused && state.playData.url ? audio.play() : audio.pause()
+            audio.volume = state.playData.volume || 0.2
             commit('setPlayData', { paused: state.playData.paused })
         },
         toggleAudioMouted ({ commit }, { audio, state }) {

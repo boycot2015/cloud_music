@@ -44,30 +44,32 @@
         top: !showBox ? 0: ''
     }"
     class="mini-music-box js-mini-music-box flexbox-v"
+    @click.prevent
     v-show="showMiniBox" ref="dragMiniBox">
         <div class="wrap flexbox-h just-b">
             <div class="left flex-2 flexbox-h just-b"
             @mouseout.stop.prevent="showPlayer = false"
-            @mouseover.stop.prevent="showPlayer = true">
+            @mouseover.stop.prevent="showPlayer = true"
+            >
                 <div class="img tl">
                     <img :src="playData.picUrl" alt="">
                 </div>
                 <div class="name tc">
-                    <p>{{playData.paused ? playData.name : currLyric.text }}</p>
+                    <div class="text" ref="textMoveDom">{{playData.paused ? playData.name : currLyric.text }}</div>
                     <span v-show="playData.paused" class="name tc">{{playData.singer}}</span>
                 </div>
                 <div class="play-btn js-play-btn flexbox-h just-a"
                 :class="{'active': showPlayer}">
                     <i class="icon-music-play-left"
-                    @click="playPrev"></i>
+                    @click.stop="playPrev"></i>
                     <i class="icon-play js-play"
                     :class="{
                         'icon-music-pause': playData.paused,
                         'icon-music-play': !playData.paused,
                         }"
-                        @click="toggleAudioPlay"></i>
+                        @click.stop="toggleAudioPlay"></i>
                     <i class="icon-music-play-right"
-                    @click="playNext"></i>
+                    @click.stop="playNext"></i>
                 </div>
                 <div class="more js-more text"
                 :class="{'active': showPlayer}">
@@ -80,13 +82,13 @@
             </div>
             <div class="right flex-1 flexbox-h just-b">
                 <span class="js-love-icon love-icon icon-music-love"></span>
-                <span class="volume-icon icon-music-volume js-min-music-volume"></span>
+                <span class="volume-icon icon-music-volume js-min-music-volume" @click="showVolume = !showVolume"></span>
                 <span class="list-icon icon-music-list js-list-icon" @click="showList = !showList"></span>
-                <div class="volume flex-2 flexbox-h just-b tc">
+                <div class="volume flex-2 flexbox-h just-b tc" v-show="showVolume" @click="onSetVolumeClick">
                     <!-- <i class="icon-music-volume js-music-volume flex-1"></i> -->
                     <div class="progress-bar flex-4">
-                        <span class="point"></span>
-                        <span class="line js-line"></span>
+                        <span class="point" ref="progressVolumeDom"></span>
+                        <span class="line js-line" :style="{width: audioVolumePos.w + 'px' || ''}"></span>
                     </div>
                     <!-- <i class="heart-icon icon-music-beckoning flex-1"></i> -->
                 </div>
@@ -98,7 +100,7 @@
         :class="{'actived': showList}">
             <ul class="music-list js-music-list">
                     <list
-                        @dblclick="onListItemdbClick(item)"
+                        @dblclick.stop="onListItemdbClick(item)"
                         @click="() => activeIndex = index"
                         v-for="(item, index) in playList.data"
                         :class="{
@@ -131,6 +133,7 @@ import {
     watch,
     reactive,
     onMounted,
+    onUpdated,
     toRefs
     // getCurrentInstance
 } from 'vue'
@@ -159,6 +162,7 @@ export default {
         const store = useStore()
         const storeState = store.state
         const router = useRouter()
+        const progressVolumeDom = ref(null)
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',
@@ -173,6 +177,24 @@ export default {
             playList: {
                 data: storeState.playList || []
             },
+            audioVolumePos: {
+                l: -4,
+                t: -6,
+                r: 84,
+                b: -4,
+                w: 20
+            },
+            boxPos: {
+                min: {
+                    left: 0,
+                    top: 0
+                },
+                max: {
+                    left: 0,
+                    top: 0
+                }
+            },
+            progressPsition: '',
             playIndex: storeState.playData.playIndex,
             activeIndex: 0,
             showMenu: true,
@@ -180,10 +202,14 @@ export default {
             showMiniBox: false,
             isExtend: false,
             showPlayer: false,
-            showList: false
+            showList: false,
+            isBoxMoved: false,
+            isMinBoxMoved: false,
+            showVolume: false
         })
         const dragBox = ref(null)
         const dragMiniBox = ref(null)
+        const textMoveDom = ref(null)
         let audio = null
         // const { ctx } = getCurrentInstance()
         watch(() => {
@@ -205,6 +231,14 @@ export default {
         })
         watch(() => storeState.detail.currLyric, (value) => {
             state.currLyric = value
+            textMoveDom.value.style.left = 0
+            let w = state.currLyric.text.length * 12
+            w = w < 100 ? 100 : w
+            textMoveDom.value.style.width = w + 'px'
+            setTimeout(() => {
+                clearInterval(textMoveDom.value._move)
+                textMove(textMoveDom.value)
+            }, 1000)
         })
         watch(() => storeState.playList, (value) => {
             // console.log(value, 'storeStatestoreStatestoreState')
@@ -216,21 +250,63 @@ export default {
         onMounted(() => {
             drag({
                 obj: [dragBox.value.children[0]],
-                target: [dragBox.value]
+                target: [dragBox.value],
+                cancelElem: ['.search-box'],
+                fn (pos) {
+                    // console.log(pos, 'pos')
+                    state.isBoxMoved = true
+                    state.boxPos.max = pos
+                }
             })
             drag({
-                obj: [dragMiniBox.value]
+                obj: [dragMiniBox.value],
+                cancelElem: ['.js-mini-music-list', '.volume'],
+                fn (pos) {
+                    // console.log(pos, 'pos')
+                    state.isMinBoxMoved = true
+                    state.boxPos.min = pos
+                },
+                end (pos) {
+                    // console.log(pos, 'pos1')
+                }
+            })
+            drag({
+                obj: [progressVolumeDom.value],
+                site: state.audioVolumePos,
+                fn (obj) {
+                    state.isMove = true
+                    setVolume(obj)
+                },
+                end (obj) {
+                    setTimeout(() => {
+                        state.isMove = false
+                    }, 300)
+                }
             })
             window.addEventListener('resize', (e) => {
                 drag({
                     obj: [dragBox.value.children[0]],
-                    target: [dragBox.value]
+                    target: [dragBox.value],
+                    cancelElem: ['.search-box']
                 })
                 drag({
-                    obj: [dragMiniBox.value]
+                    obj: [dragMiniBox.value],
+                    cancelElem: ['.js-mini-music-list', '.volume']
                 })
             })
             audio = document.getElementById('play-audio')
+            textMove(textMoveDom.value)
+        })
+        onUpdated(() => {
+            // 处理
+            if (state.isBoxMoved) {
+                dragBox.value.style.left = state.boxPos.max.left + 'px'
+                dragBox.value.style.top = state.boxPos.max.top + 'px'
+            }
+            if (state.isMinBoxMoved) {
+                dragMiniBox.value.style.left = state.boxPos.min.left + 'px'
+                dragMiniBox.value.style.top = state.boxPos.min.top + 'px'
+            }
         })
         const goDetail = (val) => {
             state.showMenu = false
@@ -295,6 +371,8 @@ export default {
         }
         const toggleAudioPlay = () => {
             if (!state.playData.url) return
+            textMoveDom.value.style.width = '100px'
+            textMoveDom.value.style.left = '0px'
             store.dispatch('toggleAudioPlay', { audio, state })
         }
         const toggleAudioMouted = () => {
@@ -316,17 +394,79 @@ export default {
             }
             store.dispatch('playNext', state)
         }
+        const textMove = (oCon) => {
+            if (oCon && oCon !== null) {
+                oCon._move = null
+                const step = -1
+                if (oCon.textContent.length <= 8) {
+                    clearInterval(oCon._move)
+                    return
+                } else {
+                    // oCon.textContent += '' + oCon.textContent
+                    autoRoll(oCon, step)
+                }
+                oCon._move = setInterval(() => {
+                    autoRoll(oCon, step)
+                }, 30)
+            }
+        }
+        const autoRoll = (oCon, step) => {
+            if (oCon.offsetLeft < -oCon.offsetWidth + 100) {
+                oCon.style.left = -oCon.offsetWidth + 100
+                clearInterval(oCon._move)
+            }
+            if (oCon.offsetLeft > 0) {
+                oCon.style.left = -oCon.offsetWidth / 2 + 'px'
+            }
+            oCon.style.left = oCon.offsetLeft + step + 'px'
+        }
+        const setVolume = (obj) => {
+            if (!progressVolumeDom.value && audio !== null) return
+            let volume = state.playData.volume
+            let left = volume * 100
+            if (obj) {
+                left = obj.left || obj.offsetX || 0
+                left = left > 8 ? left + 8 : left
+                if (obj.offsetX) {
+                    progressVolumeDom.value.style.left = left + 'px'
+                }
+                volume = Math.abs(left / progressVolumeDom.value.parentNode.offsetWidth).toFixed(1)
+                volume = volume > 1 ? 1 : volume
+            } else {
+                left = left > 8 ? left - 8 : left
+            }
+            if (left === 0) {
+                state.audioVolumePos.w = 0
+                progressVolumeDom.value.style.left = '-8px'
+                return
+            }
+            audio.muted = false
+            progressVolumeDom.value.style.left = left + 'px'
+            state.audioVolumePos.w = left
+            state.progressPsition = left > 8 ? left - 8 : left
+            audio.volume = volume
+            state.playData.volume = volume
+            // console.log(audio.volume, state.progressPsition, 'setVolume')
+            store.commit('setAudio', { volume })
+        }
+        const onSetVolumeClick = (e) => {
+            !state.isMove && setVolume(e)
+        }
         return {
             dragBox,
             dragMiniBox,
+            textMoveDom,
+            progressVolumeDom,
             goDetail,
             onExtend,
             onListItemdbClick,
+            onSetVolumeClick,
             toggleAudioPlay,
             toggleAudioMouted,
             playPrev,
             playNext,
-            ...computed(() => storeState).value,
+            textMove,
+            // ...computed(() => storeState).value,
             ...toRefs(state)
         }
     }

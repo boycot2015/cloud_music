@@ -17,7 +17,7 @@
                 <i v-for="(singer, cindex) in data.ar " :key="cindex" v-html="singer.name + (cindex < data.ar.length - 1 ? '/' : '')"></i>
             </span>
             <span class="collect line-one flex-2" v-if="isPlay">{{data.al.name}}</span>
-            <span class="icon-music-link" v-if="order && !isminiPlay"></span>
+            <!-- <span class="icon-music-link" v-if="order && !isminiPlay"></span> -->
             <span class="time {{order ? 'tl': 'tr'}} flex-1">{{data.dt}}</span>
         </template>
     </li>

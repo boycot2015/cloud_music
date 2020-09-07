@@ -538,6 +538,19 @@
             box-shadow: 0 0 5px @c-999;
         }
         .left {
+            &:hover {
+                >.name {
+                    display: none;
+                }
+                .play-btn {
+                    display: flex;
+                    opacity: 1;
+                }
+                .more {
+                    height: 24px;
+                    overflow: hidden;
+                }
+            }
             .img {
                 width: 42px;
                 height: 42px;
@@ -552,6 +565,11 @@
                 white-space: nowrap;
                 vertical-align: bottom;
                 line-height: 18px;
+                position: relative;
+                .text {
+                    position: relative;
+                    margin: 0 auto;
+                }
                 span {
                     color: @c-999;
                 }
@@ -611,7 +629,7 @@
             }
             .volume {
                 position: absolute;
-                display: none;
+                // display: none;
                 right: -2px;
                 top: -45px;
                 background-color: @white;
@@ -700,7 +718,7 @@
         }
     }
 }
-                    
+
 .list-header {
     padding: 0 20px;
     line-height: 30px;

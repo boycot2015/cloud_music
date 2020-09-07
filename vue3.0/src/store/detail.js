@@ -32,7 +32,10 @@ export default {
             })
             // 首次播放存第一行
             if (!currLyric && store.get('currLyric') === null) {
-                currLyric = state.playData.name
+                currLyric = {
+                    time: '00:01',
+                    text: (store.get('playData') !== null && store.get('playData').name) || ''
+                }
             }
             currLyric && (state.currLyric = currLyric)
             currLyric && store.set('currLyric', currLyric)

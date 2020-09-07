@@ -36,14 +36,14 @@
             <i class="type">标准</i>
             <i class="new">new</i>
             <i class="word">词</i>
-            <i class="icon js-play-list-btn icon-music-play-list" @click="showList = !showList"></i>
+            <i class="icon js-play-list-btn icon-music-play-list" @click.stop="showList = !showList"></i>
             <div class="play-list js-play-list" v-show="showList">
                 <div class="title flexbox-h just-c">
                     <div class="btn tc flex-1 flexbox-h just-c">
                         <span class="active js-list-btn list-btn">播放列表</span>
                         <span class="js-history-btn history-btn">历史记录</span>
                     </div>
-                    <i class="tr js-list-close icon-close icon-music-close"  @click="showList = false"></i>
+                    <i class="tr js-list-close icon-close icon-music-close" @click="showList = false"></i>
                 </div>
                 <div class="list-header flexbox-h just-b">
                     <div class="total tl">
@@ -210,6 +210,12 @@ export default {
             initPlayer(audio, setTimerStatus, setVolume)
             /* eslint-disable */
             // audio = new AudioPlayer({ ...state, el: audio })
+            document.addEventListener('click', (e) => {
+                const playListDom = document.querySelector('.js-footer-music-list')
+                if (!playListDom.contains(e.target)) {
+                    state.showList = false
+                }
+            })
         })
         const getAudioInfo = (_audio, call) => {
             var time = _audio.duration || 0

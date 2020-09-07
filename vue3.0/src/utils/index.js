@@ -24,12 +24,20 @@ export const drag = (options) => {
         var siteY = oEvent.clientY - target.offsetTop
         ev.stopPropagation()
         // 获取需要排除的元素
-        // var elemCancel = $(ev.target).closest(cancelElem)
-        // // 如果拖拽的是排除元素，函数返回
-        // if (elemCancel.length) {
-        //     return true
-        // }
-        if (obj.setCapture) { // 兼容IE低版本的阻止默认行为，并实现事件捕获
+        if (options.cancelElem) {
+            var elemCancel = []
+            options.cancelElem.map(el => {
+                const res = closest(ev.target, el)
+                if (res !== null) {
+                    elemCancel.push(res)
+                }
+            })
+            // 如果拖拽的是排除元素，函数返回
+            if (elemCancel.length) {
+                return true
+            }
+        }
+        if (target.setCapture) { // 兼容IE低版本的阻止默认行为，并实现事件捕获
             obj.onmousemove = move
             obj.onmouseup = up
             obj.setCapture()
@@ -65,17 +73,26 @@ export const drag = (options) => {
             var iLeft = oEvent.clientX - siteX
             var iTop = oEvent.clientY - siteY
             if (options.end) options.end({ left: iLeft, top: iTop })
-            if (obj.setCapture) { // 拖放结束后释放捕获
-                obj.releaseCapture()
-            }
             this.onmousemove = null
             this.onmouseup = null
             this.onclick = null
+            if (obj.setCapture) { // 拖放结束后释放捕获
+                obj.releaseCapture()
+            }
         }
         return this
     }
 }
-
+export const closest = (el, selector) => {
+    var matchesSelector = el.matches || el.webkitMatchesSelector || el.mozMatchesSelector || el.msMatchesSelector
+    while (el) {
+        if (matchesSelector.call(el, selector)) {
+            break
+        }
+        el = el.parentElement
+    }
+    return el
+}
 export const filterPlayCount = (num) => {
     num = num > 50000 ? parseInt(num / 10000) + '万' : num
     return num
