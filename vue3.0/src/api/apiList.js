@@ -6,6 +6,7 @@ import simi from './simi'
 import search from './search'
 import toplist from './toplist'
 import artist from './artist'
+import video from './video'
 export default {
     comment,
     song,
@@ -13,7 +14,8 @@ export default {
     simi,
     search,
     toplist,
-    artist
+    artist,
+    video
 }
 export {
     comment,
@@ -22,5 +24,6 @@ export {
     simi,
     search,
     toplist,
-    artist
+    artist,
+    video
 }

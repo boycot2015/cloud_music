@@ -72,10 +72,11 @@ import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 export default {
     setup (props, { emit }) {
+        const router = useRouter()
         const store = useStore()
         const state = reactive({
             activeFindex: '',
-            activeRoute: '/index',
+            activeRoute: router.currentRoute.value.path,
             activeClass: false,
             isStar: false,
             playData: {
@@ -89,7 +90,6 @@ export default {
         })
         const menu = store.state.menu
         /* eslint-disable */
-        const router = useRouter()
         const onStar = (e) => {
             state.isStar = !state.isStar
         }

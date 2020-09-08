@@ -118,7 +118,8 @@
         </div>
     </div>
     <!-- /src/source/前世今生-文武贝钢琴版.mp3 -->
-    <audio id="play-audio" controls="controls"></audio>
+    <!-- <audio id="play-audio" controls="controls"></audio> -->
+    <video id="play-audio" controls="controls"></video>
 </div>
 </template>
 

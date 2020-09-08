@@ -3,16 +3,24 @@ import router from '@/router'
 import home from './home'
 import list from './list'
 import detail from './detail'
+import videoStore from './video'
 import { song } from '@/api/apiList'
 // filterDruationTime
 import {
     store
     // db
 } from '@/utils'
+const getMenu = () => {
+    const routes = router.options.routes
+    routes.map(el => {
+        el.children && (el.children = el.children.filter(val => !val.meta.hideInMenu))
+    })
+    return routes.filter(_ => !_.meta.hideInMenu)
+}
 export default createStore({
     state: {
         metaTitle: '网易云音乐',
-        menu: router.options.routes.filter(_ => !_.meta.hideInMenu),
+        menu: getMenu(),
         playData: (store.get('playData') !== null && store.get('playData')) || {
             lyrc: '一诺千金到尽头',
             name: '菩提偈',
@@ -145,6 +153,7 @@ export default createStore({
     modules: {
         home,
         list,
-        detail
+        detail,
+        video: videoStore
     }
 })

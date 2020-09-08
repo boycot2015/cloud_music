@@ -44,7 +44,8 @@ const routes = [
                 component: () => import('../views/FM/index.vue'),
                 meta: {
                     icon: 'FM',
-                    title: '私人FM'
+                    title: '私人FM',
+                    hideInMenu: true
 
                 }
             },
@@ -55,13 +56,14 @@ const routes = [
                 component: () => import('../views/look/index.vue'),
                 meta: {
                     icon: 'replay',
-                    title: 'LOOK直播'
+                    title: 'LOOK直播',
+                    hideInMenu: true
 
                 }
             },
             {
                 id: 4,
-                name: 'video',
+                name: 'videos',
                 path: '/video/index',
                 component: () => import('../views/video/index.vue'),
                 meta: {
