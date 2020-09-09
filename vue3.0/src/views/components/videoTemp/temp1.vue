@@ -1,7 +1,7 @@
 <template>
     <div class="tab-content tab-cate-content">
         <div class="tags">
-            <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click="showAllCate = !showAllCate">
+            <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click.stop="showAllCate = !showAllCate">
                 <span class="text">{{activedCate.name || '全部视频'}}</span> <i class="icon-music-down"></i>
             </span>
             <p class="name">
@@ -51,19 +51,13 @@
                 </div>
             </div>
         </div>
-        <ul class="recommend-list clearfix">
-            <li class="grid-list-item top js-list-detail fl">
-                <div class="img flexbox-v just-c tc">
-                    <i class="icon icon-music-emoji"></i>
-                    <div class="top-text">{{tabData.dayData.name}}<i class="icon-music-right"></i></div>
-                </div>
-                <div class="name tl">{{tabData.dayData.copywriter}}</div>
-            </li>
+        <ul class="video-list clearfix">
             <grid-list
                 v-for="(item, index) in tabData.list.data"
-                :item="item"
+                :item="item.data"
                 :category="tabData.list.category"
                 :index="index"
+                :type="tabData.list.type"
                 @click="onListClick(item)"
                 :key="item.id"></grid-list>
         </ul>
@@ -98,7 +92,7 @@ export default {
             showAllCate: false,
             activedCate: {
                 id: router.currentRoute.value.query.id || '',
-                name: '全部视频'
+                name: router.currentRoute.value.query.name || '全部视频'
             },
             tabData: {
                 dayData: {
@@ -116,7 +110,7 @@ export default {
                 list: {
                     title: '推荐歌单',
                     category: 3,
-                    type: 1,
+                    type: 3,
                     data: []
                 }
             },
@@ -129,9 +123,15 @@ export default {
                 // 获取定义好的scroll盒子
                 // const el = scrollDom.value
                 const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
-                if (condition && router.currentRoute.value.query.tabName === 'cate') {
+                if (condition && router.currentRoute.value.query.id) {
                     state.offset++
                     store.dispatch('video/getListByCate', { offset: state.offset, limit: state.limit, id: state.activedCate.id })
+                }
+            })
+            document.addEventListener('click', (e) => {
+                const playListDom = document.querySelector('.mask-cate')
+                if (playListDom !== null && !playListDom.contains(e.target)) {
+                    state.showAllCate = false
                 }
             })
         })
@@ -148,7 +148,8 @@ export default {
                 state.tabData.list.data = [...state.tabData.list.data, ...value[3]]
                 return
             }
-            state.tabData.list.data = value[4]
+            state.tabData.list.data = value[3]
+            console.log(state.tabData.list.data)
         })
 
         // methods
@@ -162,12 +163,13 @@ export default {
             state.showAllCate = false
             state.offset = 1
             state.tabData.list.data = []
-            store.dispatch('video/getListByCate', { current: 1, id: (item && item.id) || '' }).then(res => {
+            store.dispatch('video/getListByCate', { offset: 1, id: (item && item.id) || '' }).then(res => {
                 router.push({
                     path: router.currentRoute.value.path,
                     query: {
                         ...router.currentRoute.value.query,
-                        id: state.activedCate.id
+                        id: state.activedCate.id,
+                        name: state.activedCate.name
                     }
                 })
             })

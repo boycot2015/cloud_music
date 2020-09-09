@@ -1,4 +1,4 @@
-import { home, artist, video } from '@/api/apiList'
+import { video, MV } from '@/api/apiList'
 import { filterPlayCount, store } from '@/utils'
 export default {
     namespaced: true,
@@ -11,7 +11,6 @@ export default {
             list: []
         },
         tab2Data: {
-            banner: [],
             personalized: [], // 推荐歌单列表
             privatecontent: [], // 独家放送列表
             topSong: [], // 新歌速递列表
@@ -25,30 +24,32 @@ export default {
             for (const key in data) {
                 state.tab1Data[key] = data[key]
             }
-            store.set('homeTab1Data', { ...data }, new Date().getTime() + 300 * 1000)
+            store.set('videoTab1Data', { ...data }, new Date().getTime() + 300 * 1000)
         },
         setTab2Data (state, data) {
             for (const key in data) {
                 state.tab2Data[key] = data[key]
             }
-            store.set('homeTab2Data', { ...data }, new Date().getTime() + 300 * 1000)
+            const localData = store.get('videoTab2Data')
+            store.set('videoTab2Data', { ...localData, ...data }, new Date().getTime() + 300 * 1000)
         },
         updateTab1Data (state, list) {
-            state.tab2Data.list = list
-            const localData = store.get('homeTab1Data')
-            store.set('homeTab1Data', { ...localData, list }, new Date().getTime() + 300 * 1000)
+            state.tab1Data.list = list
+            const localData = store.get('videoTab1Data')
+            store.set('videoTab1Data', { ...localData, list }, new Date().getTime() + 300 * 1000)
         }
     },
     actions: {
         async getTab1Data ({ commit }, params) {
-            const localData = store.get('homeTab1Data')
+            const localData = store.get('videoTab1Data')
             const data = {}
             if (localData !== null) {
                 commit('setTab1Data', localData)
                 return Promise.resolve({ code: 200, success: true })
             }
             const catlistRes = await video.groupList(params)
-            const recommendRes = await video.recommend(params)
+            const allVideosRes = await video.all(params)
+            const categoryRes = await video.category(params)
             if (catlistRes && catlistRes.code === 200) {
                 const subs = []
                 const categories = {
@@ -63,59 +64,90 @@ export default {
                 data.subs = subs
                 data.categories = categories
             }
-            if (recommendRes && recommendRes.code === 200) {
-                data.list = recommendRes.data
+            if (allVideosRes && allVideosRes.code === 200) {
+                allVideosRes.datas.map(el => {
+                    el.data.playTime = filterPlayCount(el.data.playTime)
+                    el.data.playCount = filterPlayCount(el.data.playCount)
+                })
+                data.list = allVideosRes.datas
+            }
+            if (categoryRes && categoryRes.code === 200) {
+                data.tags = categoryRes.data
             }
             commit('setTab1Data', data)
             return Promise.resolve({ code: 200, success: true })
         },
         async getTab2Data ({ commit }, params) {
-            const localData = store.get('homeTab2Data')
+            const localData = store.get('videoTab2Data')
             const data = {}
             if (localData !== null) {
                 commit('setTab2Data', localData)
                 return Promise.resolve({ code: 200, success: true })
             }
-            const bannerRes = await home.banner(params)
-            const personalizedRes = await home.personalized(params)
-            const privatecontentRes = await home.privatecontent(params)
-            const topSongRes = await home.topSong(params)
-            const mvRes = await home.mv(params)
-            const djprogramRes = await home.djprogram(params)
-            data.banner = bannerRes && bannerRes.banners
-            data.personalized = (personalizedRes && personalizedRes.result.slice(0, 9)) || []
-            data.personalized.map(el => {
-                el.playCount = filterPlayCount(el.playCount)
-            })
-            data.privatecontent = (privatecontentRes && privatecontentRes.result) || []
-            let res = (topSongRes && topSongRes.data) || []
-            res = topSongRes.data.slice(0, 10)
-            res = [{
-                ftype: 0,
-                list: res.slice(0, 5)
-            }, {
-                ftype: 0,
-                list: res.slice(5, 10)
-            }]
-            data.topSong = res
-            data.mv = (mvRes && mvRes.result.slice(0, 3)) || {}
-            data.djrecommend = (djprogramRes && djprogramRes.result.slice(0, 5)) || []
-            console.log(djprogramRes, 'value')
+            const firstRes = await MV.first(params)
+            data.personalized = (firstRes && firstRes.data.slice(0, 6)) || []
+            const hotMVRes = await MV.all(params)
+            const exclusiveRes = await MV.exclusive(params)
+            const topMVRes = await MV.all(params)
+            // const djprogramRes = await home.djprogram(params)
+            // data.personalized.map(el => {
+            //     el.playCount = filterPlayCount(el.playCount)
+            // })
+            data.topMV = (topMVRes && topMVRes.data) || []
+            data.exclusive = (exclusiveRes && exclusiveRes.data) || []
+            let res = (hotMVRes && hotMVRes.data) || []
+            console.log(hotMVRes, 'value')
+            res = hotMVRes.data.slice(0, 10)
+            data.hotMV = res
+            // data.mv = (mvRes && mvRes.result.slice(0, 3)) || {}
+            // data.djrecommend = (djprogramRes && djprogramRes.result.slice(0, 5)) || []
             commit('setTab2Data', data)
             return Promise.resolve({ code: 200, success: true })
         },
         // 根据分类标签获取列表数据
-        getSingerByParams ({ commit }, { offset = 1, limit = 39, ...ohters }) {
+        getVideoByParams ({ commit }, {
+            offset = 1,
+            limit = 39,
+            ctype = 1,
+            order = 1,
+            type = '全部',
+            ...ohters
+        }) {
             return new Promise((resolve, reject) => {
-                artist.list({
+                let api = 'first'
+                let apiStr = 'personalized'
+                console.log(ctype)
+                switch (ctype) {
+                case 1:
+                    api = 'first'
+                    apiStr = 'personalized'
+                    break
+                case 2:
+                    api = 'all'
+                    apiStr = 'hotMV'
+                    break
+                case 3:
+                    api = 'exclusive'
+                    apiStr = 'exclusive'
+                    break
+                case 5:
+                    api = 'top'
+                    apiStr = 'topMV'
+                    break
+                default:
+                    break
+                }
+                MV[api]({
                     limit,
                     offset,
+                    type,
+                    order,
                     ...ohters
                 }).then(res => {
                     const data = {}
                     if (res && res.code === 200) {
-                        data.topList = res.artists
-                        commit('setTab5Data', data)
+                        data[apiStr] = res.data
+                        commit('setTab2Data', data)
                         resolve({ code: 200, success: true })
                     }
                 }).catch(err => {
@@ -128,14 +160,15 @@ export default {
             return new Promise((resolve, reject) => {
                 let api = 'group'
                 if (!id) {
-                    api = 'recommend'
+                    api = 'all'
                 }
                 video[api]({ limit: 39, order: 'hot', id, offset }).then(res => {
                     if (res && res.code === 200) {
-                        res.playlists.map(el => {
-                            el.playCount = filterPlayCount(el.playCount)
+                        res.datas.map(el => {
+                            el.data.playTime = filterPlayCount(el.data.playTime)
+                            el.data.playCount = filterPlayCount(el.data.playCount)
                         })
-                        commit('updateTab1Data', res.playlists)
+                        commit('updateTab1Data', res.datas)
                         resolve(res)
                     }
                 }).catch(err => {

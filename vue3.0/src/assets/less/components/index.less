@@ -9,8 +9,10 @@
         margin-bottom: 30px;
         overflow: hidden;
         position: relative;
-        &:nth-child(5n) {
-            margin-right: 0;
+        &.type-1 {
+            &:nth-child(5n) {
+                margin-right: 0;
+            }
         }
         .order {
             line-height: 42px;
@@ -93,6 +95,9 @@
                     color: @white;
                 }
             }
+            .play-count {
+                margin-left: 5px;
+            }
         }
         .name {
             font-size: 12px;
@@ -161,6 +166,82 @@
                     font-family: 微软雅黑;
                     font-weight: 400;
                     margin-top: 10px;
+                }
+            }
+        }
+        // 视频列表
+        &.type-3 {
+            width: 244px;
+            height: 200px;
+            &:nth-child(3n) {
+                margin-right: 0;
+            }
+            .img {
+                height: 152px;
+                &:hover {
+                    .left {
+                        position: absolute;
+                        display: block;
+                        left: 50%;
+                        top: 50%;
+                    }
+                }
+            }
+            .text {
+                .name {
+                    margin-bottom: 5px;
+                }
+                .creator {
+                    color: @c-666;
+                }
+            }
+        }
+        &.type-4 {
+            width: 385px;
+            height: 132px;
+            margin-right: 0;
+            padding: 20px;
+            margin-bottom: 0;
+            border-right: 1px solid @c-e8;
+            border-bottom: 1px solid @c-e8;
+            box-sizing: border-box;
+            &:nth-child(2n) {
+                border-right: 0;
+            }
+            &:nth-child(9),
+            &:nth-child(10) {
+                border-bottom: 0;
+            }
+            .order {
+                line-height: 92px;
+                color: @c-666;
+                font-style: italic;
+                font-size: 18px;
+                position: relative;
+                &::after {
+                    content: '';
+                    position: absolute;
+                    bottom: 25px;
+                    width: 6px;
+                    height: 1px;
+                    background-color: @c-666;
+                    left: 50%;
+                    margin-left: -3px;
+                }
+            }
+            .img {
+                width: 160px;
+                height: 90px;
+                float: left;
+            }
+            .text {
+                padding-top: 10px;
+                max-width: 140px;
+                float: left;
+                margin-left: 10px;
+                .creator {
+                    margin-top: 5px;
+                    color: @c-666;
                 }
             }
         }

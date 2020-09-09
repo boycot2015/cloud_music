@@ -7,6 +7,8 @@ import search from './search'
 import toplist from './toplist'
 import artist from './artist'
 import video from './video'
+import MV from './MV'
+import user from './user'
 export default {
     comment,
     song,
@@ -15,7 +17,9 @@ export default {
     search,
     toplist,
     artist,
-    video
+    video,
+    user,
+    MV
 }
 export {
     comment,
@@ -25,5 +29,7 @@ export {
     search,
     toplist,
     artist,
-    video
+    video,
+    user,
+    MV
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="tab-content tab-cate-content">
         <div class="tags">
-            <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click="showAllCate = !showAllCate">
+            <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click.stop="showAllCate = !showAllCate">
                 <span class="text">{{activedCate || '全部歌单'}}</span> <i class="icon-music-down"></i>
             </span>
             <p class="name">
@@ -126,6 +126,12 @@ export default {
                 if (condition && router.currentRoute.value.query.tabName === 'cate') {
                     state.offset++
                     store.dispatch('home/getListByCate', { offset: state.offset, limit: state.limit, cat: state.activedCate })
+                }
+            })
+            document.addEventListener('click', (e) => {
+                const playListDom = document.querySelector('.mask-cate')
+                if (playListDom !== null && !playListDom.contains(e.target)) {
+                    state.showAllCate = false
                 }
             })
         })

@@ -4,6 +4,7 @@ import home from './home'
 import list from './list'
 import detail from './detail'
 import videoStore from './video'
+import user from './user'
 import { song } from '@/api/apiList'
 // filterDruationTime
 import {
@@ -50,7 +51,6 @@ export default createStore({
     mutations: {
         setTitle (state, title) {
             state.metaTitle = title
-            document.title = title
         },
         setPlayData (state, data) {
             for (const key in data) {
@@ -154,6 +154,7 @@ export default createStore({
         home,
         list,
         detail,
-        video: videoStore
+        video: videoStore,
+        user
     }
 })

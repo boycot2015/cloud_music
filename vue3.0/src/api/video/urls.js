@@ -1,5 +1,4 @@
 import baseUrl from '../baseUrl'
-// let loginUrl = 'http://192.168.1.216:8008'
 const prefix = '/video'
 export default {
     category: baseUrl + prefix + '/category/list', // 视频分类列表

@@ -34,6 +34,8 @@
                 v-for="(item, index) in obj.data"
                 :item="item"
                 :index="index"
+                :category="obj.category"
+                :type="obj.type"
                 @click="onListClick(item)"
                 :key="item.id"></grid-list>
             </ul>
@@ -87,8 +89,8 @@ export default {
                     data: []
                 }, {
                     title: '独家放送',
-                    category: 3,
-                    type: 1,
+                    category: 1,
+                    type: 5,
                     data: []
                 }, {
                     title: '最新音乐',
@@ -98,7 +100,7 @@ export default {
                 }, {
                     title: '推荐MV',
                     category: 3,
-                    type: 1,
+                    type: 5,
                     data: []
                 }, {
                     title: '主播电台',

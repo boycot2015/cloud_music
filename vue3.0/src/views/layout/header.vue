@@ -16,7 +16,7 @@
         <input type="text" v-model="searchForm.key" :placeholder="searchForm.placeholder">
         <div class="input-icon icon-music-search"></div>
     </div>
-    <div class="user-info flex-3 tc just-c flexbox-h">
+    <div class="user-info flex-3 tc just-c flexbox-h" @click="showLogin = true">
         <div class="avatar ">
             <img :src="headerData.avatar" alt="">
         </div>
@@ -24,6 +24,7 @@
             <span class="name">{{headerData.username}}</span>
             <i class="fa fa-caret-down"></i>
         </div>
+        <login-form v-if="showLogin" @on-close="onLoginFormClose"></login-form>
         <span class="text vip-text">{{headerData.vipTxt}}</span>
         <div class="text icon theme icon-music-clothes"></div>
         <div class="text icon message icon-music-msg"></div>
@@ -50,8 +51,12 @@ import {
 import {
     useRouter
 } from 'vue-router'
+import loginForm from '@/views/components/login'
 export default {
     name: 'musicHeader',
+    components: {
+        loginForm
+    },
     setup (props, { emit }) {
         const state = reactive({
             headerData: {
@@ -64,7 +69,8 @@ export default {
                 placeholder: '搜索音乐，视频，歌词，电台',
                 key: ''
             },
-            ismini: true
+            ismini: true,
+            showLogin: false
         })
         // const storeState = store.state
         const router = useRouter()
@@ -78,11 +84,16 @@ export default {
             state.ismini = !state.ismini
             emit('on-extend', !state.ismini)
         }
+        const onLoginFormClose = (val) => {
+            state.showLogin = false
+            console.log(state.showLogin)
+        }
         return {
             router,
             onBoxHide,
             onExtend,
             onMinifty,
+            onLoginFormClose,
             ...toRefs(state)
         }
     }

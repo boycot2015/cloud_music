@@ -3,7 +3,7 @@
  * 请求拦截、响应拦截、错误统一处理
  */
 import axios from 'axios'
-// import Cookies from 'js-cookie'
+import Cookies from 'js-cookie'
 // import store from '@/store'
 // import router from '@/router'
 const errorHandle = (status, response) => {
@@ -48,9 +48,19 @@ service.defaults.headers.put['Content-Type'] = 'application/json'
 
 service.interceptors.request.use(
     (config) => {
+        const token = Cookies.get('cookie')
+        // console.log(config, 'config')
         if ((config.method === 'post' || config.method === 'put') && config.headers['Content-Type'] === 'application/json') {
+            token && (config.data.cookie = token)
             // post、put 提交时，将对象转换为string, 为处理Java后台解析问题
             config.data = JSON.stringify(config.data)
+        }
+        if (token) {
+            if (config.params) {
+                config.params.cookie = token
+            } else {
+                config.params = { cookie: token }
+            }
         }
         // 登录流程控制中，根据本地是否存在token判断用户的登录情况
         // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token

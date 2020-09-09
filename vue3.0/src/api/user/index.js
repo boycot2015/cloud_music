@@ -1,73 +1,44 @@
 import axios from '@/api/axios'
 import urls from './urls'
 
-export const login = ({
-    userName,
-    password
-}) => {
-    const data = {
-        userName,
-        password
+export default {
+    cellphone (data) {
+        return axios.post(urls.cellphone, data)
+    },
+    login (data) {
+        return axios.post(urls.login, data)
+    },
+    status (data) {
+        return axios.post(urls.status, data)
+    },
+    refresh (data) {
+        return axios.post(urls.refresh, data)
+    },
+    profile (data) {
+        return axios.post(urls.profile, data)
+    },
+    captcha (data) {
+        return axios.post(urls.captcha, data)
+    },
+    verify (data) {
+        return axios.post(urls.verify, data)
+    },
+    register (data) {
+        return axios.post(urls.register, data)
+    },
+    check (data) {
+        return axios.post(urls.check, data)
+    },
+    rebind (data) {
+        return axios.post(urls.rebind, data)
+    },
+    logout (data) {
+        return axios.post(urls.logout, data)
+    },
+    subcount (data) {
+        return axios.post(urls.subcount, data)
+    },
+    update (data) {
+        return axios.post(urls.update, data)
     }
-    // return出去了一个promise
-    return axios.post(urls.login, {
-        data: data
-    })
-}
-
-export const getMenuByToken = ({ token, userId }) => {
-    return axios.get(urls.getMenuByToken, {
-        params: { token, userId, appCode: 'yzh-order-service' }
-    })
-}
-
-export const getUserInfo = (token) => {
-    return axios.get(urls.userInfo, {
-        params: token
-    })
-}
-
-export const logout = (token) => {
-    return urls.login
-}
-
-export const getUnreadCount = () => {
-    return axios.post(urls.UnreadCount)
-}
-
-export const getMessage = () => {
-    return axios.get({
-        url: 'message/init',
-        method: 'get'
-    })
-}
-
-export const getContentByMsgId = msgId => {
-    return axios.get({
-        url: 'message/content',
-        method: 'get',
-        params: {
-            msgId
-        }
-    })
-}
-
-export const hasRead = msgId => {
-    return axios.post({
-        url: 'message/has_read',
-        method: 'post',
-        data: {
-            msgId
-        }
-    })
-}
-
-export const removeReaded = msgId => {
-    return axios.post({
-        url: 'message/remove_readed',
-        method: 'post',
-        data: {
-            msgId
-        }
-    })
 }
