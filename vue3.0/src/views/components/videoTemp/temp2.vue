@@ -181,7 +181,7 @@ export default {
         const onListClick = (item) => {
             // getData(item.type)
             router.push({
-                path: '/songs/list',
+                path: '/video/detail',
                 query: {
                     id: item.id
                 }

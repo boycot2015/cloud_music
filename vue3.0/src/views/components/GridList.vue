@@ -22,15 +22,16 @@
         <div class="img" :class="`${item.ftype == 0 ? 'fl': ''}`">
             <span class="copy-writer" v-if="(item.type == 0 || category == 3) && item.copywriter">{{item.copywriter}}</span>
             <div class="right" v-if="item.playCount || item.playTime">
-                <span class="icon" :class="`icon-music-${item.type == 5 || type == 3? 'video':'erphone'}`"></span>
-                <span class="play-count">{{item.playCount || item.playTime}}</span>
+                <span class="icon" v-if="type !== 4" :class="`icon-music-${item.type == 5 || type == 3 ? 'video':'erphone'}`"></span>
+                <span v-else>热度:</span>
+                <span class="play-count">{{item.score || item.playCount || item.playTime}}</span>
             </div>
             <div class="left" v-if="item.type == 5 && category !== 3">
                 <span class="icon icon-music-video"></span>
             </div>
             <p class="desc line-one" v-if="item.rcmdtext">{{item.name}}</p>
             <img :src="item.img1v1Url || item.coverImgUrl || item.coverUrl || item.cover || item.sPicUrl || item.picUrl" alt="">
-            <p class="time" v-if="type === 2">{{ new Date().toLocaleDateString() }}</p>
+            <p class="time" v-if="type === 2">{{ new Date().toLocaleDateString().split('/').join('-') }}</p>
             <span class="creator" v-if="item.creator && type !== 3"><i class="icon-music-user"></i>{{item.creator.nickname}}</span>
         </div>
         <div class="text" :class="`${item.ftype == 0 ? 'fl': ''}`">

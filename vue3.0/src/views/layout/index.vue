@@ -17,7 +17,10 @@
         }"
         @on-extend="(val) => onExtend(val)"
         ></music-header>
-        <div class="center flexbox-h">
+            <div class="center flexbox-h"
+            :style="{
+                height: `calc(100% - ${showFooter ? 100 : 50}px)`
+            }">
                 <music-aside :class="{'isClose': !showMenu}" @hideMenu="goDetail"></music-aside>
             <div
             :style="{
@@ -33,7 +36,7 @@
                 </router-view>
             </div>
         </div>
-        <music-footer></music-footer>
+        <music-footer v-show="showFooter"></music-footer>
     </div>
     <div
     @dblclick="() => {
@@ -135,7 +138,7 @@ import {
     reactive,
     onMounted,
     onUpdated,
-    toRefs
+    toRefs, onBeforeMount
     // getCurrentInstance
 } from 'vue'
 import {
@@ -206,7 +209,8 @@ export default {
             showList: false,
             isBoxMoved: false,
             isMinBoxMoved: false,
-            showVolume: false
+            showVolume: false,
+            showFooter: true
         })
         const dragBox = ref(null)
         const dragMiniBox = ref(null)
@@ -225,6 +229,11 @@ export default {
                 store.commit('showMenu', false)
             } else {
                 store.commit('showMenu', true)
+            }
+            if (value.meta.hideFooter) {
+                state.showFooter = false
+            } else {
+                state.showFooter = true
             }
         })
         watch(() => storeState.showMenu, (value) => {
@@ -247,6 +256,10 @@ export default {
         })
         watch(() => storeState.playData.playIndex, (value) => {
             state.playIndex = value || 0
+        })
+        onBeforeMount(() => {
+            state.showMenu = !router.currentRoute.value.meta.hideMenu
+            state.showFooter = !router.currentRoute.value.meta.hideFooter
         })
         onMounted(() => {
             drag({

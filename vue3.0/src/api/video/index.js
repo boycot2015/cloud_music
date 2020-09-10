@@ -37,6 +37,11 @@ export default {
             params
         })
     },
+    comment (params) {
+        return axios.get(urls.comment, {
+            params
+        })
+    },
     info (params) {
         return axios.get(urls.info, {
             params

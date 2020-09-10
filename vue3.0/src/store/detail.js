@@ -1,31 +1,47 @@
-import { song, comment, simi } from '@/api/apiList'
-import { filterTime, store } from '@/utils'
+import { song, comment, simi, video } from '@/api/apiList'
+import { filterTime, store, filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
     state: {
-        lyricList: [],
-        data: {
-            total: 0,
-            playLists: [],
-            songs: [],
-            hotComments: [], // 精彩评论
-            comments: [] // 所有评论
+        songDetail: {
+            lyricList: [],
+            data: {
+                total: 0,
+                playLists: [],
+                songs: [],
+                hotComments: [], // 精彩评论
+                comments: [] // 所有评论
+            },
+            currLyric: {
+                time: '00:01',
+                text: (store.get('playData') !== null && store.get('playData').name) || '纯音乐，请欣赏~'
+            }
         },
-        currLyric: {
-            time: '00:01',
-            text: (store.get('playData') !== null && store.get('playData').name) || '纯音乐，请欣赏~'
+        videoDetail: {
+            total: 0,
+            countData: {},
+            playData: {},
+            hotComments: [], // 精彩评论
+            comments: [], // 所有评论
+            videos: []
         }
     },
     mutations: {
-        setData (state, data) {
+        setSongData (state, data) {
             for (const key in data) {
-                state[key] = data[key]
+                state.songDetail[key] = data[key]
             }
-            store.set('detailData', data)
+            store.set('songDetailData', data)
+        },
+        setVideoData (state, data) {
+            for (const key in data) {
+                state.videoDetail[key] = data[key]
+            }
+            store.set('videoDetailData', data)
         },
         setCurrentLyric (state, curStr) {
             let currLyric = ''
-            state.lyricList.map(el => {
+            state.songDetail.lyricList.map(el => {
                 if (el.time === curStr) {
                     currLyric = el
                 }
@@ -37,12 +53,12 @@ export default {
                     text: (store.get('playData') !== null && store.get('playData').name) || ''
                 }
             }
-            currLyric && (state.currLyric = currLyric)
+            currLyric && (state.songDetail.currLyric = currLyric)
             currLyric && store.set('currLyric', currLyric)
         }
     },
     actions: {
-        async getData ({ commit }, params) {
+        async getsongData ({ commit }, params) {
             const lyricRes = await song.lyric(params)
             // const playlistRes = await song.playlist(params)
             const state = {
@@ -88,8 +104,50 @@ export default {
             if (songRes && songRes.code === 200) {
                 state.data.songs = songRes.songs
             }
-            commit('setData', state)
+            commit('setSongData', state)
             commit('setCurrentLyric', state.data.playLists[0])
+            return Promise.resolve({ code: 200, success: true })
+        },
+        async getVideoData ({ commit }, params) {
+            const state = {
+                total: 0,
+                countData: {},
+                videos: [],
+                hotComments: [], // 精彩评论
+                comments: [], // 所有评论
+                playData: {}
+            }
+            // const localData = store.get('videoDetailData')
+            // if (localData !== null) {
+            //     commit('setVideoData', localData)
+            //     return Promise.resolve({ code: 200, success: true })
+            // }
+            const videoRes = await video.detail(params)
+            if (videoRes && videoRes.code === 200) {
+                state.playData = videoRes.data
+                state.playData.playCount = filterPlayCount(state.playData.playCount)
+                state.playData.playTime = filterPlayCount(state.playData.playTime)
+            }
+            const videoInfoRes = await video.info({ vid: params.id })
+            const videoCommentRes = await video.comment({ id: params.id })
+            const relatedRes = await video.related({ id: params.id })
+            const videoUrlRes = await video.url({ id: params.id })
+            if (videoInfoRes && videoInfoRes.code === 200) {
+                state.countData = videoInfoRes
+            }
+            if (videoCommentRes && videoCommentRes.code === 200) {
+                state.comments = videoCommentRes.comments
+                state.hotComments = videoCommentRes.hotComments
+                state.total = videoCommentRes.total
+            }
+            if (relatedRes && relatedRes.code === 200) {
+                state.videos = relatedRes.data
+            }
+            if (videoUrlRes && videoUrlRes.code === 200) {
+                state.playData = { ...state.playData, ...videoUrlRes.urls[0] }
+            }
+            console.log(state, 'state')
+            commit('setVideoData', state)
             return Promise.resolve({ code: 200, success: true })
         }
     }

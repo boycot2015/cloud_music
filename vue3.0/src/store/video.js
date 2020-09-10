@@ -85,7 +85,6 @@ export default {
                 return Promise.resolve({ code: 200, success: true })
             }
             const firstRes = await MV.first(params)
-            data.personalized = (firstRes && firstRes.data.slice(0, 6)) || []
             const hotMVRes = await MV.all(params)
             const exclusiveRes = await MV.exclusive(params)
             const topMVRes = await MV.all(params)
@@ -93,10 +92,22 @@ export default {
             // data.personalized.map(el => {
             //     el.playCount = filterPlayCount(el.playCount)
             // })
+            firstRes.data.map(el => {
+                el.playCount = filterPlayCount(el.playCount)
+            })
+            hotMVRes.data.map(el => {
+                el.playCount = filterPlayCount(el.playCount)
+            })
+            exclusiveRes.data.map(el => {
+                el.playCount = filterPlayCount(el.playCount)
+            })
+            topMVRes.data.map(el => {
+                el.playCount = filterPlayCount(el.playCount)
+            })
+            data.personalized = (firstRes && firstRes.data.slice(0, 6)) || []
             data.topMV = (topMVRes && topMVRes.data) || []
             data.exclusive = (exclusiveRes && exclusiveRes.data) || []
             let res = (hotMVRes && hotMVRes.data) || []
-            console.log(hotMVRes, 'value')
             res = hotMVRes.data.slice(0, 10)
             data.hotMV = res
             // data.mv = (mvRes && mvRes.result.slice(0, 3)) || {}

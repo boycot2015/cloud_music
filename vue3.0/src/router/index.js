@@ -237,6 +237,76 @@ const routes = [
                 rightIcon: 'beckoning'
             }
         ]
+    },
+    {
+        name: 'list',
+        path: '/songs/list',
+        component: Layout,
+        meta: {
+            icon: 'right',
+            hideInMenu: true,
+            title: '歌单详情列表'
+
+        },
+        children: [
+            {
+                id: 1,
+                name: 'list',
+                path: '/songs/list',
+                component: () => import('../views/songs/list.vue'),
+                meta: {
+                    icon: 'right',
+                    title: '歌单详情列表'
+
+                },
+                rightIcon: 'beckoning'
+            }
+        ]
+    },
+    {
+        name: 'videoDetail',
+        path: '/video/detail',
+        component: Layout,
+        meta: {
+            icon: '',
+            title: '视频详情',
+            hideMenu: true,
+            hideInMenu: true
+
+        },
+        children: [
+            {
+                id: 1,
+                name: 'videoDetail',
+                path: '/video/detail',
+                component: () => import('../views/video/detail.vue'),
+                meta: {
+                    icon: 'right',
+                    hideFooter: true,
+                    title: '视频详情'
+
+                },
+                rightIcon: 'beckoning'
+            }
+        ]
+    },
+    {
+        path: '/error',
+        name: 'error',
+        component: Layout,
+        meta: {
+            title: 'error',
+            hideInMenu: true
+        },
+        children: [{
+            path: '/error',
+            name: 'error',
+            compontent: () => import('../views/error.vue'),
+            meta: {
+                title: 'error',
+                hideInMenu: true
+            }
+        }]
     }
 ]
 
@@ -246,6 +316,10 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     document.title = '网抑云音乐-' + to.meta.title
+    // if (to.matched.length === 0) {
+    //     console.log(to.matched.length)
+    //     next({ path: '/error' })
+    // }
     next()
 })
 

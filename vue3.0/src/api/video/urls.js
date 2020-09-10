@@ -8,6 +8,7 @@ export default {
     recommend: baseUrl + prefix + '/timeline/recommend', // 获取推荐视频
     related: baseUrl + '/related/allvideo', // 获取相关视频
     detail: baseUrl + prefix + '/detail', // 获取视频详情
+    comment: baseUrl + '/comment/video', // 获取视频评论
     info: baseUrl + prefix + '/detail/info', // 获取视频点赞转发评论数数据
     url: baseUrl + prefix + '/url' // 获取视频播放地址
 }

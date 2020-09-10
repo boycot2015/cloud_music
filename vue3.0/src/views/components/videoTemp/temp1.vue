@@ -58,7 +58,7 @@
                 :category="tabData.list.category"
                 :index="index"
                 :type="tabData.list.type"
-                @click="onListClick(item)"
+                @click="onListClick(item.data)"
                 :key="item.id"></grid-list>
         </ul>
     </div>
@@ -149,7 +149,7 @@ export default {
                 return
             }
             state.tabData.list.data = value[3]
-            console.log(state.tabData.list.data)
+            // console.log(state.tabData.list.data)
         })
 
         // methods
@@ -176,10 +176,11 @@ export default {
         }
         const onListClick = (item) => {
             // getData(item.type)
+            // console.log(item.vid, 'item')
             router.push({
-                path: '/songs/list',
+                path: '/video/detail',
                 query: {
-                    id: item.id
+                    id: item.vid
                 }
             })
         }
