@@ -149,6 +149,60 @@
                 }
             }
         }
+        &.daily {
+            min-height: auto;
+            text-align: center;
+            margin-bottom: 0;
+            .img {
+                width: auto;
+                height: 120px;
+            }
+            .date {
+                width: 120px;
+                height: 120px;
+                border: 1px solid @c-e8;
+                // height: 120px;
+                .week {
+                    font-family: '微软雅黑';
+                    margin: 10px 0;
+                    color: @c-666;
+                    font-size: 14px;
+                }
+                .date-text {
+                    font-family: '微软雅黑';
+                    font-size: 68px;
+                    color: @primary;
+                    line-height: 68px;
+                    font-weight: 400;
+                }
+            }
+            .txt {
+                padding: 15px 0;
+                text-align: left;
+                margin-left: 30px;
+                .name {
+                    font-family: 微软雅黑;
+                    font-size: 22px;
+                    color: @c-333;
+                    margin-bottom: 20px;
+                }
+                .desc {
+                    font-size: 12px;
+                    color: @c-666;
+                }
+            }
+            .operation {
+                margin-bottom: 0;
+                margin-top: 20px;
+                padding: 10px;
+                border: 1px solid @c-e8;
+                border-radius: 3px 3px 0 0;
+                border-bottom: 0;
+                .play-btn:last-child {
+                    margin-right: 0;
+                }
+            }
+        }
     }
     .music-list-item {
         padding: 0;
@@ -186,6 +240,12 @@
         font-family: '微软雅黑';
         font-size: 12px;
         padding-left: 0;
+    }
+    .list-form {
+        margin: 0 20px 20px;
+        border: 1px solid @c-e8;
+        border-radius: 0 0 3px 3px;
+        border-top: 0;
     }
     .list-header {
         padding: 0;

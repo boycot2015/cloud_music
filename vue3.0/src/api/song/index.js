@@ -41,5 +41,11 @@ export default {
         return axios.get(urls.lyric, {
             params
         })
+    },
+    resource (params) {
+        return axios.get(urls.resource, { params })
+    },
+    recommend (params) {
+        return axios.get(urls.recommend, { params })
     }
 }

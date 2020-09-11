@@ -6,8 +6,10 @@
             <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'标准音质':'极高音质'}}</span>
             <span v-if="playData.type" class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
             {{playData.title}}
-            <span class="singer" v-if="playData.creator">{{playData.creator.nickname}}</span></h3>
+            <span class="singer" v-if="playData.creator">{{playData.creator.nickname}}</span>
+        </h3>
         <div class="cover">
+            <video id="play-video" autoplay :src="playData.url" controls="controls"></video>
             <div class="img">
                 <img :src="playData.picUrl" alt="">
             </div>
@@ -56,15 +58,15 @@
         </div>
         <div class="same-content">
             <div class="same-music-list grid-list" v-if="videos && videos.length">
-                <h2 class="title">相似歌曲</h2>
+                <h2 class="title">相关推荐</h2>
                 <div v-for="item in videos" @click="onItemlistClick(item, 2)" :key="item.id" class="grid-list-item ftype-0" data-id="{{item.id}}" data-url="{{item.mp3Url}}" data-type="{{item.type}}">
                     <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}" data-type="{{item.type}}" data-url="{{item.mp3Url}}">
                         <div class="img fl">
-                            <span class="icon icon-music-pause"></span>
+                            <span class="icon icon-music-video"></span>
                             <img :src="item.coverUrl" alt="">
                         </div>
                         <div class="text fl" :title="item.title">
-                            <p class="name line-one">{{item.title}}</p>
+                            <p class="name line-two">{{item.title}}</p>
                             <span v-for="(singer, index) in item.creator" :key="singer.id" class="singer" v-html="singer.userName + (index < item.creator.length - 1 ? '/': '')">
                             </span>
                         </div>
@@ -133,9 +135,6 @@ export default {
             state.videos = value[4]
             state.countData = value[5]
         })
-        watch(() => rootStore.playData.url, (value) => {
-            lyricScrollDom.value.scrollTop = 0
-        })
         onMounted(() => {
             getData({
                 id: router.currentRoute.value.query.id
@@ -149,17 +148,15 @@ export default {
         }
         const onItemlistClick = (item, type) => {
             const route = {
-                path: '/songs/detail',
+                path: '/video/detail',
                 query: {
-                    id: item.id
+                    id: item.vid
                 }
             }
-            if (type === 1) {
-                route.path = '/songs/list'
-            }
             router.push(route)
-            getData(item)
-            store.dispatch('setPlayData', item)
+            getData({
+                id: router.currentRoute.value.query.id
+            })
         }
         // const initSwiper = () => {
         //     /* eslint-disable */

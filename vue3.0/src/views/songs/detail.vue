@@ -28,14 +28,7 @@
                     <span class="al-name line-one flex-1" title="{{playData.singer}}">歌手：<i>{{playData.singer}}</i></span>
                     <span class="al-name line-one flex-1" title="{{playData.alName}}">来源：<i>{{playData.alName}}</i></span>
                 </div>
-                <i class="icon-music-minify icon-minify"
-                @click="
-                router.push({
-                    path: '/songs/list',
-                    query: {
-                        id: playData.playListId
-                    }
-                })"></i>
+                <i class="icon-music-minify icon-minify" @click="onTurnBack"></i>
             </div>
             <div class="wrap" ref="lyricScrollDom">
                 <div class="lyric-text">
@@ -212,10 +205,21 @@ export default {
         //     /* eslint-disable */
         //     new Swiper('.lyric-swiper-container', state.swiperOption)
         // }
+        const onTurnBack = () => {
+            const route = {
+                path: '/songs/list',
+                query: {
+                    id: state.playData.playListId
+                }
+            }
+            state.playData.playListId + '' === '0' && (route.query.isDaily = true)
+            router.push(route)
+        }
         return {
             ...toRefs(state),
             router,
             lyricScrollDom,
+            onTurnBack,
             onItemlistClick
         }
     }

@@ -8,5 +8,7 @@ export default {
     detail: baseUrl + '/song/detail', // 所有歌曲详情
     topPlaylist: baseUrl + '/top/playlist', // 歌单 ( 网友精选碟 )
     playUrl: baseUrl + '/song/url', // 获取音乐 url
-    lyric: baseUrl + '/lyric' // 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
+    lyric: baseUrl + '/lyric', // 调用此接口 , 传入音乐 id 可获得对应音乐的歌词 ( 不需要登录 )
+    resource: baseUrl + '/recommend/resource', // 获取每日推荐歌单
+    recommend: baseUrl + '/recommend/songs' // 获取每日推荐歌曲
 }

@@ -22,7 +22,9 @@
                 <span class="fr more">更多<i class="icon-music-right"></i></span>
             </div>
             <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
-                <li class="grid-list-item date js-list-detail fl" v-if="findex === 0">
+                <li class="grid-list-item date js-list-detail fl"
+                @click="onListClick({ id: 0 }, true)"
+                v-if="findex === 0">
                     <div class="img">
                         <span class="tip copy-writer">{{tabData.dayData.copywriter}}</span>
                         <p class="week">{{tabData.dayData.weeks[new Date().getDay()]}}</p>
@@ -167,12 +169,13 @@ export default {
                 initSwiper()
             })
         }
-        const onListClick = (item) => {
+        const onListClick = (item, isDaily) => {
             // getData(item.type)
             router.push({
                 path: '/songs/list',
                 query: {
-                    id: item.id
+                    id: item.id,
+                    isDaily
                 }
             })
         }
