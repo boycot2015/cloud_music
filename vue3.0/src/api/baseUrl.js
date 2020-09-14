@@ -11,7 +11,8 @@ const env = process.env.NODE_ENV === 'development'
 switch (env) {
 case 'development':
     // baseUrl = 'http://192.168.1.216:2003/api' // 测试环境url
-    baseUrl = 'http://music.boycot.top:3000'
+    // baseUrl = 'http://music.boycot.top:3000'
+    baseUrl = '/api'
     break
 case 'production':
     baseUrl = 'http://music.boycot.top:3000'

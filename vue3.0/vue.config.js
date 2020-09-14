@@ -6,5 +6,16 @@ module.exports = {
                 prependData: '@import "@/assets/less/base/variables.less";'
             }
         }
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://music.boycot.top:3000',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': ''
+                }
+            }
+        }
     }
 }

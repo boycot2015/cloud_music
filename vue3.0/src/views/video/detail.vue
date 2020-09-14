@@ -3,7 +3,7 @@
     <div class="left flex-3 flexbox-v just-c" >
         <h3 class="title flexbox-h">
             <span class="back-btn icon-music-left" @click="router.back(-1)"></span>
-            <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'标准音质':'极高音质'}}</span>
+            <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'极高音质':'标准音质'}}</span>
             <span v-if="playData.type" class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
             {{playData.title}}
             <span class="singer" v-if="playData.creator">{{playData.creator.nickname}}</span>
@@ -16,7 +16,7 @@
         </div>
         <div class="operation flexbox-h">
             <div class="play-btn collect">
-                <i class="icon-music-collect"></i>
+                <i class="icon-music-star"></i>
                 <span>点赞({{playData.praisedCount}})</span>
             </div>
             <div class="play-btn collect">
@@ -62,7 +62,12 @@
                 <div v-for="item in videos" @click="onItemlistClick(item, 2)" :key="item.id" class="grid-list-item ftype-0" data-id="{{item.id}}" data-url="{{item.mp3Url}}" data-type="{{item.type}}">
                     <div class="same-play-list-item grid-list-item js-list-detail ftype-0" data-id="{{item.id}}" data-type="{{item.type}}" data-url="{{item.mp3Url}}">
                         <div class="img fl">
-                            <span class="icon icon-music-video"></span>
+                            <!-- <span class="icon icon-music-video"></span> -->
+                            <div class="right" v-if="item.playCount || item.playTime">
+                                <span class="icon-video" v-if="type !== 4" :class="`icon-music-video`"></span>
+                                <span v-else>热度:</span>
+                                <span class="play-count">{{item.score || item.playCount || item.playTime}}</span>
+                            </div>
                             <img :src="item.coverUrl" alt="">
                         </div>
                         <div class="text fl" :title="item.title">
