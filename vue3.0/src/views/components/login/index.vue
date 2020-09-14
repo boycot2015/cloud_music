@@ -1,5 +1,5 @@
 <template>
-    <div class="login-form flexbox-v align-c" @dblclick.stop>
+    <div class="login-form flexbox-v align-c" @click.stop @dblclick.stop>
         <i class="icon-music-close btn-close" @click.stop="onClose"></i>
         <div class="logo">
             <img src="" alt="">
@@ -47,12 +47,13 @@
         width: 300px;
         min-height: 400px;
         padding: 30px;
-        box-shadow: 0 10px 10px @c-ccc;
+        box-shadow: 0 0px 5px @c-ccc;
         background: @white;
         position: absolute;
-        top: -12px;
+        top: 40px;
         left: -120px;
         z-index: 10000;
+        border-radius: 4px;
         .wrap {
             border: 1px solid @c-e8;
             border-radius: 3px;

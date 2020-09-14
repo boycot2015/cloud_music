@@ -17,7 +17,7 @@ export default {
             text: (store.get('playData') !== null && store.get('playData').name) || '纯音乐，请欣赏~'
         },
         cookie: Cookies.get('cookie') || '',
-        userInfo: {
+        userInfo: (store.get('userInfo') !== null && store.get('userInfo')) || {
             account: {},
             profile: {},
             bindings: {}

@@ -134,7 +134,7 @@ export default createStore({
                         id: state.playList.data[state.playIndex].id
                     }
                 })
-                dispatch('detail/getData', state.playList.data[state.playIndex])
+                dispatch('detail/getsongData', state.playList.data[state.playIndex])
             }
         },
         playNext ({ commit, dispatch }, state) {
@@ -146,7 +146,7 @@ export default createStore({
                         id: state.playList.data[state.playIndex].id
                     }
                 })
-                dispatch('detail/getData', state.playList.data[state.playIndex])
+                dispatch('detail/getsongData', state.playList.data[state.playIndex])
             }
         }
     },

@@ -174,7 +174,7 @@ export default {
                 singer: '刘惜君',
                 ...computed(() => storeState.playData)
             },
-            currLyric: storeState.detail.currLyric || {
+            currLyric: storeState.detail.songDetail.currLyric || {
                 time: '00:01',
                 text: '纯音乐，请欣赏~'
             },
@@ -239,7 +239,7 @@ export default {
         watch(() => storeState.showMenu, (value) => {
             state.showMenu = value
         })
-        watch(() => storeState.detail.currLyric, (value) => {
+        watch(() => storeState.detail.songDetail.currLyric, (value) => {
             state.currLyric = value
             textMoveDom.value.style.left = 0
             let w = state.currLyric.text.length * 12
