@@ -142,12 +142,16 @@ export default {
             }
             if (relatedRes && relatedRes.code === 200) {
                 state.videos = relatedRes.data
+                state.videos.map(el => {
+                    el.playCount = filterPlayCount(el.playCount)
+                    el.playTime = filterPlayCount(el.playTime)
+                })
             }
             if (videoUrlRes && videoUrlRes.code === 200) {
                 videoUrlRes = videoUrlRes.urls ? videoUrlRes.urls[0] : videoUrlRes.data
                 state.playData = { ...state.playData, ...videoUrlRes }
             }
-            console.log(state, 'state')
+            // console.log(state, 'state')
             commit('setVideoData', state)
             return Promise.resolve({ code: 200, success: true })
         }

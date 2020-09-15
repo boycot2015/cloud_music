@@ -5,7 +5,7 @@
             <span class="back-btn icon-music-left" @click="router.back(-1)"></span>
             <span class="level red bd-red pad2 font12">{{playData.level === 'exhigh' ?'极高音质':'标准音质'}}</span>
             <span v-if="playData.type" class="type red bd-red pad2 font12">{{playData.type.toUpperCase()}}</span>
-            {{playData.title}}
+            {{playData.title || playData.name}}
             <span class="singer" v-if="playData.creator">{{playData.creator.nickname}}</span>
         </h3>
         <div class="cover">
@@ -17,11 +17,11 @@
         <div class="operation flexbox-h">
             <div class="play-btn collect">
                 <i class="icon-music-star"></i>
-                <span>点赞({{playData.praisedCount}})</span>
+                <span>点赞({{playData.praisedCount || countData.commentCount}})</span>
             </div>
             <div class="play-btn collect">
                 <i class="icon-music-collect"></i>
-                <span>收藏({{playData.subscribeCount}})</span>
+                <span>收藏({{playData.subscribeCount || countData.likedCount}})</span>
             </div>
             <div class="play-btn share">
                 <i class="icon-music-share"></i>
@@ -39,9 +39,16 @@
             <div class="title">MV介绍</div>
             <div class="time-times flexbox-h just-b">
                 <span class="time">发布时间: {{new Date(playData.publishTime).toLocaleDateString().split('/').join('-')}}</span>
-                <span class="times">播放次数: {{playData.playTime}}</span>
+                <span class="times" v-if="playData.playTime">播放次数: {{playData.playTime}}</span>
             </div>
-            <div class="info" v-if="playData.description !== null">
+            <div class="info"
+            :class="{
+                'more': (playData.description  && playData.description.length > 100) ||
+                (playData.desc && playData.desc.length > 100)
+                }"
+            v-if="(playData.description && playData.description !== null) ||
+           playData.desc &&playData.desc !== null"
+            >
                 简介：{{playData.description || playData.desc}}
             </div>
             <div class="tags clearfix">
@@ -64,16 +71,15 @@
                         <div class="img fl">
                             <!-- <span class="icon icon-music-video"></span> -->
                             <div class="right" v-if="item.playCount || item.playTime">
-                                <span class="icon-video" v-if="type !== 4" :class="`icon-music-video`"></span>
-                                <span v-else>热度:</span>
+                                <span class="icon-video" :class="`icon-music-video`"></span>
                                 <span class="play-count">{{item.score || item.playCount || item.playTime}}</span>
                             </div>
                             <img :src="item.coverUrl" alt="">
                         </div>
                         <div class="text fl" :title="item.title">
                             <p class="name line-two">{{item.title}}</p>
-                            <span v-for="(singer, index) in item.creator" :key="singer.id" class="singer" v-html="singer.userName + (index < item.creator.length - 1 ? '/': '')">
-                            </span>
+                            <p v-for="(singer, index) in item.creator" :key="singer.id" class="singer line-one" v-html="singer.userName + (index < item.creator.length - 1 ? '/': '')">
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -156,7 +162,7 @@ export default {
             const route = {
                 path: '/video/detail',
                 query: {
-                    id: item.vid
+                    id: item.id || item.vid || item.mvid
                 }
             }
             router.push(route)

@@ -407,6 +407,11 @@
             font-family: 宋体;
             line-height: 20px;
             margin-bottom: 20px;
+            &.more {
+                max-height: 200px;
+                overflow: hidden;
+                overflow-y: auto;
+            }
         }
         .time-times {
             line-height: 32px;
@@ -430,7 +435,7 @@
                 height: 70px;
             }
             .text {
-                .name {
+                .name,.singer {
                     max-width: 140px;
                 }
             }
