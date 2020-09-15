@@ -1,4 +1,4 @@
-import { song, comment, simi, video } from '@/api/apiList'
+import { song, comment, simi, video, MV } from '@/api/apiList'
 import { filterTime, store, filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
@@ -122,16 +122,16 @@ export default {
             //     commit('setVideoData', localData)
             //     return Promise.resolve({ code: 200, success: true })
             // }
-            const videoRes = await video.detail(params)
+            const videoRes = params.type === 'mv' ? await MV.detail({ mvid: params.id }) : await video.detail(params)
+            const videoInfoRes = params.type === 'mv' ? await MV.info({ mvid: params.id }) : await video.info({ vid: params.id })
+            const videoCommentRes = await video.comment({ id: params.id })
+            const relatedRes = await video.related({ id: params.id })
+            let videoUrlRes = params.type === 'mv' ? await MV.url({ id: params.id }) : await video.url({ id: params.id })
             if (videoRes && videoRes.code === 200) {
                 state.playData = videoRes.data
                 state.playData.playCount = filterPlayCount(state.playData.playCount)
                 state.playData.playTime = filterPlayCount(state.playData.playTime)
             }
-            const videoInfoRes = await video.info({ vid: params.id })
-            const videoCommentRes = await video.comment({ id: params.id })
-            const relatedRes = await video.related({ id: params.id })
-            const videoUrlRes = await video.url({ id: params.id })
             if (videoInfoRes && videoInfoRes.code === 200) {
                 state.countData = videoInfoRes
             }
@@ -144,7 +144,8 @@ export default {
                 state.videos = relatedRes.data
             }
             if (videoUrlRes && videoUrlRes.code === 200) {
-                state.playData = { ...state.playData, ...videoUrlRes.urls[0] }
+                videoUrlRes = videoUrlRes.urls ? videoUrlRes.urls[0] : videoUrlRes.data
+                state.playData = { ...state.playData, ...videoUrlRes }
             }
             console.log(state, 'state')
             commit('setVideoData', state)

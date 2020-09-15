@@ -183,7 +183,8 @@ export default {
             router.push({
                 path: '/video/detail',
                 query: {
-                    id: item.id
+                    id: item.id,
+                    type: 'mv'
                 }
             })
         }

@@ -42,7 +42,7 @@
                 <span class="times">播放次数: {{playData.playTime}}</span>
             </div>
             <div class="info" v-if="playData.description !== null">
-                简介：{{playData.description}}
+                简介：{{playData.description || playData.desc}}
             </div>
             <div class="tags clearfix">
                 <p class="name fl">标签：</p>
@@ -142,7 +142,8 @@ export default {
         })
         onMounted(() => {
             getData({
-                id: router.currentRoute.value.query.id
+                id: router.currentRoute.value.query.id,
+                type: router.currentRoute.value.query.type || 'video'
             })
             store.commit('showMenu', false)
         })

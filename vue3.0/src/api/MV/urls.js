@@ -7,6 +7,6 @@ export default {
     detail: baseUrl + prefix + '/detail', // 获取mv详情
     personalized: baseUrl + '/personalized/mv', // 获取推荐 mv
     top: baseUrl + '/top/mv', // 获取 mv 排行
-    info: baseUrl + '/detail/info', // 获取 mv 点赞转发评论数数据
+    info: baseUrl + prefix + '/detail/info', // 获取 mv 点赞转发评论数数据
     url: baseUrl + prefix + '/url' // 获取mv播放地址
 }
