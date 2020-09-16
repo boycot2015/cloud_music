@@ -11,6 +11,7 @@ const errorHandle = (status, response) => {
     // 403 token过期
     switch (status) {
     case 401:
+    case 301:
     case 403:
         console.log('身份认证失败，请重新登录！')
         break
@@ -98,14 +99,9 @@ service.interceptors.response.use(
         // 请求成功
         // console.log('请求成功', response.data)
         if (response.status === 200) {
-            // 是否为首次登录进入系统
-            // if (response.headers.menulist && response.headers.menulist.length) {
-            //     if (store.state.user.menuList && store.state.user.menuList.length) {
-            //         store.dispatch('user/setMenuList', response.headers)
-            //     } else {
-            //         return Promise.resolve(response)
-            //     }
-            // }
+            if (response.data.code === 301) {
+                errorHandle(response.data.code)
+            }
             return Promise.resolve(response.data)
         } else {
             return Promise.reject(response.data)

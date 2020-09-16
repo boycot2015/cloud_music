@@ -16,16 +16,18 @@
         <input type="text" v-model="searchForm.key" :placeholder="searchForm.placeholder">
         <div class="input-icon icon-music-search"></div>
     </div>
-    <div class="user-info flex-3 tc just-c flexbox-h" @click="showLogin = !showLogin">
-        <div class="avatar ">
-            <img :src="headerData.avatar" alt="">
+    <div class="user-info flex-3 tc just-c flexbox-h">
+        <div class="wrap flexbox-h flex-1" @click.stop="showLogin = !showLogin">
+            <div class="avatar ">
+                <img :src="headerData.avatar" alt="">
+            </div>
+            <div class="text name">
+                <span class="name">{{headerData.username}}</span>
+                <i class="icon-music-drop-down"></i>
+            </div>
+            <login-form class="login-box" @mousedown.stop ref="loginForm" v-if="showLogin && !hasLogin" @on-success="onLogin" @on-close="onLoginFormClose"></login-form>
+            <user-info ref="userDialog" class="user-box" @mousedown.stop v-if="showLogin && hasLogin" @on-logout="onLogOut"></user-info>
         </div>
-        <div class="text name">
-            <span class="name">{{headerData.username}}</span>
-            <i class="fa fa-caret-down"></i>
-        </div>
-        <login-form ref="loginForm" v-if="showLogin && !headerData.account.id" @on-close="onLoginFormClose"></login-form>
-        <user-info ref="userDialog" v-if="showLogin && headerData.account.id"></user-info>
         <span class="text vip-text">{{headerData.vipTxt}}</span>
         <div class="text icon theme icon-music-clothes"></div>
         <div class="text icon message icon-music-msg"></div>
@@ -68,14 +70,15 @@ export default {
         const loginForm = ref(null)
         const userDialog = ref(null)
         const store = useStore()
+        const router = useRouter()
         const userInfo = store.state.user.userInfo
         const { profile = {}, account = {} } = userInfo
         const state = reactive({
             headerData: {
                 title: '网抑云音乐',
                 account,
-                avatar: profile.avatarUrl || require('@/assets/images/avatar.jpg'),
-                username: profile.nickname || '大唐江流儿',
+                avatar: profile.avatarUrl || '',
+                username: profile.nickname || '未登录',
                 vipTxt: '开通VIP',
                 profile
             },
@@ -84,28 +87,30 @@ export default {
                 key: ''
             },
             ismini: true,
-            showLogin: false
+            showLogin: false,
+            hasLogin: store.state.user.cookie || false
         })
         onMounted(() => {
-            // document.addEventListener('click', (e) => {
-            //     console.log(loginForm.value, userDialog.value)
-            //     if (loginForm.value !== null && !loginForm.value.contains(e.target)) {
-            //         state.showList = false
-            //     }
-            //     if (userDialog.value !== null && !userDialog.value.contains(e.target)) {
-            //         state.showList = false
-            //     }
-            // })
+            document.addEventListener('click', (e) => {
+                if (loginForm.value !== null && !loginForm.value.$el.contains(e.target)) {
+                    state.showLogin = false
+                }
+                if (userDialog.value !== null && !userDialog.value.$el.contains(e.target)) {
+                    state.showLogin = false
+                }
+            })
         })
-        watch(() => userInfo.account, (value) => {
-            state.headerData.account = value
+        watch(() => store.state.user.userInfo, (value) => {
+            value && state.userInfo && (state.userInfo = value)
         })
-        watch(() => userInfo.profile, (value) => {
-            state.headerData.avatar = value.avatarUrl
-            state.headerData.username = value.nickname
-            state.headerData.profile = value
+        watch(() => store.state.user.userInfo.profile, (value) => {
+            if (value) {
+                state.headerData.avatar = value.avatarUrl
+                state.headerData.username = value.nickname
+                state.headerData.profile = value
+                state.hasLogin = true
+            }
         })
-        const router = useRouter()
         const onMinifty = () => {
             emit('on-minify', true)
         }
@@ -118,7 +123,16 @@ export default {
         }
         const onLoginFormClose = (val) => {
             state.showLogin = false
-            console.log(state.showLogin)
+        }
+        const onLogin = (val) => {
+            state.hasLogin = true
+            state.showLogin = false
+        }
+        const onLogOut = (val) => {
+            state.hasLogin = false
+            state.showLogin = false
+            state.headerData.username = '未登录'
+            state.headerData.avatar = ''
         }
         return {
             router,
@@ -128,11 +142,32 @@ export default {
             onExtend,
             onMinifty,
             onLoginFormClose,
+            onLogin,
+            onLogOut,
             ...toRefs(state)
         }
     }
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+.user-box,.login-box {
+    position: absolute;
+    top: 36px;
+    left: -80px;
+    z-index: 10000;
+    box-shadow: 0 0px 5px @c-ccc;
+    border-radius: 4px;
+    &::after {
+        content: '';
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        height: 0;
+        margin-left: -10px;
+        border-width: 10px;
+        border-style: solid;
+        border-color: transparent transparent @white transparent;
+    }
+}
 </style>

@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 // import Home from '../views/Home.vue'
+// import store from '@/store'
 import Layout from '../views/layout/index.vue'
-
+import { store } from '@/utils'
+import Cookies from 'js-cookie'
 const routes = [
     // {
     //     path: '/',
@@ -57,6 +59,7 @@ const routes = [
                 meta: {
                     icon: 'replay',
                     title: 'LOOK直播',
+                    login: true,
                     hideInMenu: true
 
                 }
@@ -68,6 +71,7 @@ const routes = [
                 component: () => import('../views/video/index.vue'),
                 meta: {
                     icon: 'video',
+                    login: true,
                     title: '视频'
 
                 }
@@ -79,6 +83,7 @@ const routes = [
                 component: () => import('../views/friend/index.vue'),
                 meta: {
                     icon: 'friend',
+                    login: true,
                     title: '朋友'
 
                 }
@@ -104,6 +109,7 @@ const routes = [
                 component: () => import('../views//myMusic/index.vue'),
                 meta: {
                     title: '本地音乐',
+                    login: true,
                     icon: 'my-music'
 
                 }
@@ -115,6 +121,7 @@ const routes = [
                 component: () => import('../views/myMusic/download.vue'),
                 meta: {
                     icon: 'download',
+                    login: true,
                     title: '下载管理'
 
                 }
@@ -126,6 +133,7 @@ const routes = [
                 component: () => import('../views/myMusic/cloud.vue'),
                 meta: {
                     icon: 'cloud',
+                    login: true,
                     title: '我的音乐云盘'
 
                 }
@@ -137,6 +145,7 @@ const routes = [
                 component: () => import('../views/myMusic/dj.vue'),
                 meta: {
                     icon: 'radio',
+                    login: true,
                     title: '我的电台'
 
                 }
@@ -148,6 +157,7 @@ const routes = [
                 component: () => import('../views/myMusic/collect.vue'),
                 meta: {
                     title: '我的收藏',
+                    login: true,
                     icon: 'star-user'
 
                 }
@@ -171,6 +181,7 @@ const routes = [
                 component: () => import('../views/songs/index.vue'),
                 meta: {
                     icon: 'love',
+                    login: true,
                     title: '我喜欢的音乐'
 
                 },
@@ -183,6 +194,7 @@ const routes = [
         component: Layout,
         meta: {
             title: '收藏的歌单',
+            login: true,
             icon: 'right'
 
         }
@@ -205,6 +217,7 @@ const routes = [
                 component: () => import('../views/songs/list.vue'),
                 meta: {
                     icon: 'right',
+                    login: true,
                     title: '歌单详情列表'
 
                 },
@@ -256,6 +269,7 @@ const routes = [
                 component: () => import('../views/songs/list.vue'),
                 meta: {
                     icon: 'right',
+                    login: true, // 是否需要登录 true 需要，false 不需要，默认不需要
                     title: '歌单详情列表'
 
                 },
@@ -301,9 +315,9 @@ const routes = [
         children: [{
             path: '/error',
             name: 'error',
-            compontent: () => import('../views/error.vue'),
+            component: () => import('../views/error.vue'),
             meta: {
-                title: 'error',
+                title: '网页不存在！',
                 hideInMenu: true
             }
         }]
@@ -316,10 +330,19 @@ const router = createRouter({
 })
 router.beforeEach((to, from, next) => {
     document.title = '网抑云音乐-' + to.meta.title
-    // if (to.matched.length === 0) {
-    //     console.log(to.matched.length)
-    //     next({ path: '/error' })
-    // }
+    const isLogin = store.get('userInfo') && Cookies.get('cookie')
+    if (to.matched.length === 0) { // 匹配不到页面跳转错误页面
+        next({ path: '/error' })
+        return
+    }
+    if (!isLogin && to.meta.login && to.path !== '/error') { // 跳转登录页面
+        if (to.path === '/songs/list' && !to.query.isDaily) {
+            next()
+            return
+        }
+        next({ path: '/error', query: { isLogin: true } })
+        return
+    }
     next()
 })
 

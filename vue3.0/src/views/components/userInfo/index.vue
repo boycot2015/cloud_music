@@ -9,8 +9,8 @@
                 </div>
                 <div class="username">{{userinfo.profile.nickname}}</div>
             </div>
-            <div class="flex-1 tr">
-                <button class="sign-btn">签到</button>
+            <div class="flex-2 tr" v-if="userinfo">
+                <button class="sign-btn" :disabled="userinfo.isSign" :class="{'signed': userinfo.isSign}" @click="onSign">{{userinfo.isSign ? '已签到':'签到'}}</button>
             </div>
         </div>
         <div class="user-dialog-item flexbox-h  border-b">
@@ -33,7 +33,7 @@
                 <span class="txt">会员中心</span>
             </div>
             <div class="flex-1 tr">
-                <span class="txt">未订购</span>
+                <span class="txt txt-right">未订购</span>
                 <i class="icon-music-right icon"></i>
             </div>
         </div>
@@ -43,7 +43,7 @@
                 <span class="txt">等级</span>
             </div>
             <div class="flex-1 tr">
-                <span class="txt">Lv.9</span>
+                <span class="txt txt-right">Lv.9</span>
                 <i class="icon-music-right icon"></i>
             </div>
         </div>
@@ -85,7 +85,7 @@
             </div>
         </div>
         <div class="user-dialog-item flexbox-h align-c">
-            <div class="logout-btn">
+            <div class="logout-btn flex-1 tl" @click="onLogout">
                 <i class="icon-music-user icon flex-1"></i>
                 <span class="txt">退出登录</span>
             </div>
@@ -95,16 +95,12 @@
 <style lang="less" scoped>
 .container .music-box
 .header .user-dialog {
-    width: 300px;
+    width: 260px;
     min-height: 340px;
-    box-shadow: 0 0px 5px @c-ccc;
     background: @white;
-    position: absolute;
-    top: 40px;
     padding: 10px 0 0;
-    left: -120px;
     z-index: 10000;
-    border-radius: 4px;
+    overflow: hidden;
     .btn-close {
         position: absolute;
         right: 20px;
@@ -120,7 +116,7 @@
     &-item {
         line-height: 22px;
         width: 100%;
-        padding: 8px 10px;
+        padding: 8px 10px 8px 15px;
         cursor: pointer;
         box-sizing: border-box;
         &:hover {
@@ -128,6 +124,7 @@
         }
         &:first-child,
         &:nth-child(2) {
+            padding-left: 10px;
             &:hover {
             background-color: transparent;
         }
@@ -147,20 +144,27 @@
             color: @c-333;
         }
         .sign-btn {
-            padding: 2px 10px;
+            padding: 5px 10px;
             color: @c-666;
             border: 1px solid @c-ccc;
             background-color: @white;
             cursor: pointer;
+            font-size: 12px;
             border-radius: 4px;
             &.signed{
                 color: @c-999;
                 border: 1px solid @c-e8;
             }
         }
+        .logout-btn {
+            padding: 10px 0;
+        }
         .txt {
-            color: @c-666;
+            color: @c-333;
             margin: 0 10px;
+            &-right {
+                color: @c-999;
+            }
         }
         .num {
             font-size: 14px;
@@ -205,10 +209,11 @@
 import {
     // ref,
     // computed,
-    // watch,
+    watch,
     reactive,
     toRefs,
-    computed
+    computed,
+    onBeforeMount
     // getCurrentInstance
 } from 'vue'
 import {
@@ -313,32 +318,51 @@ export default {
     name: 'userinfoDialog',
     setup (props, { emit }) {
         const store = useStore()
+        const userInfo = store.state.user.userInfo
         const state = reactive({
             userinfo: {
                 account: {},
                 isSigned: false,
                 profile: {},
                 bindings: {},
+                isSign: userInfo.isSign || false,
                 ...computed(() => store.state.user.userInfo)
             }
         })
         const router = useRouter()
+        watch(() => store.state.user.userInfo.isSign, (value) => {
+            value && state.userInfo && (state.userInfo.isSign = value)
+        })
         const onClose = () => {
             emit('on-close', true)
-        }
-        const onSubmit = () => {
-            store.dispatch('user/loginByPhone', state.form).then(res => {
-                emit('on-close', true)
-                emit('on-success', true)
-            })
         }
         const toStore = () => {
             window.open('https://music.163.com/store/product')
         }
+        const onLogout = () => {
+            store.dispatch('user/logout').then(res => {
+                emit('on-logout', true)
+            })
+        }
+        onBeforeMount(() => {
+            getData()
+        })
+        const getData = () => {
+            // console.log(userInfo, 'userInfo.account.id')
+            if (store.state.user.cookie && userInfo.profile.userId) {
+                store.dispatch('user/getUserInfo', { uid: userInfo.profile.userId }).then(res => {})
+            }
+        }
+        const onSign = () => {
+            store.dispatch('user/sign').then(res => {
+                emit('on-sign', true)
+            })
+        }
         return {
             router,
             onClose,
-            onSubmit,
+            onLogout,
+            onSign,
             toStore,
             ...toRefs(state)
         }

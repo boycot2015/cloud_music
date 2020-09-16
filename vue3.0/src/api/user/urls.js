@@ -12,5 +12,7 @@ export default {
     rebind: baseUrl + '/rebind', // 调用此接口 ,可更换绑定手机(流程:先发送验证码到原手机号码,再发送验证码到新手机号码然后再调用此接口)
     logout: baseUrl + '/logout', // 调用此接口 , 可退出登录
     subcount: baseUrl + '/user/subcount', // 登陆后调用此接口 , 可以获取用户信息
-    update: baseUrl + '/user/update' // 登陆后调用此接口 , 传入相关信息,可以更新用户信息
+    update: baseUrl + '/user/update', // 登陆后调用此接口 , 传入相关信息,可以更新用户信息
+    dailySignin: baseUrl + '/daily_signin', // 签到
+    detail: baseUrl + '/user/detail' // 获取用户详情
 }

@@ -1,18 +1,18 @@
 <template>
     <div class="login-form flexbox-v align-c" @click.stop @dblclick.stop>
-        <i class="icon-music-close btn-close" @click.stop="onClose"></i>
+        <i class="icon-music-close btn-close" v-if="showClose" @click.stop="onClose"></i>
         <div class="logo">
-            <img src="" alt="">
+            <img src="@/assets/images/platform.png" alt="">
         </div>
         <div class="wrap">
-            <div class="login-form-item flexbox-h">
+            <div class="login-form-item flexbox-h" :class="{'err': errorMsg && !form.phone}">
                 <label for="phone" class="phone">
                     <i class="icon-music-phone"></i>
                     <span>+86</span>
                 </label>
                 <input type="text" maxlength="11" v-model="form.phone" id="phone" class="phone flex-3" placeholder="请输入手机号">
             </div>
-            <div class="login-form-item flexbox-h align-c">
+            <div class="login-form-item flexbox-h align-c" :class="{'err': errorMsg && !form.password}">
                 <label for="password" class="password">
                     <i class="icon-music-eyes"></i>
                 </label>
@@ -23,6 +23,7 @@
         <div class="login-form-item flexbox-h align-c">
             <input id="remember" type="checkbox" v-model="form.remember">
             <label for="remember">自动登录</label>
+            <span class="err-txt flex-2 tr">{{errorMsg}}</span>
         </div>
         <div class="login-form-item tc">
             <input type="button" @click="onSubmit" value="登录">
@@ -33,8 +34,7 @@
         <div class="login-form-item tc flexbox-h align-c">
             <input id="proxy" type="checkbox" v-model="form.aggress">
             <label for="proxy">
-                同意
-                <router-link to="/register">《服务条款》</router-link>
+                同意<router-link to="/register">《服务条款》</router-link>
                 <router-link to="/register">《隐私政策》</router-link>
                 <router-link to="/register">《儿童隐私政策》</router-link>
             </label>
@@ -44,16 +44,10 @@
 <style lang="less" scoped>
 .login {
     &-form {
-        width: 300px;
+        width: 282px;
         min-height: 400px;
-        padding: 30px;
-        box-shadow: 0 0px 5px @c-ccc;
+        padding: 20px;
         background: @white;
-        position: absolute;
-        top: 40px;
-        left: -120px;
-        z-index: 10000;
-        border-radius: 4px;
         .wrap {
             border: 1px solid @c-e8;
             border-radius: 3px;
@@ -84,7 +78,7 @@
         .logo {
             width: 200px;
             height: 100px;
-            background: @c-ccc;
+            // background: @c-ccc;
             margin: 30px auto;
         }
         .btn-close {
@@ -119,8 +113,15 @@
                 cursor: pointer;
                 background: @primary;
             }
+            &.err {
+                border: 1px solid red;
+            }
+            .err-txt {
+                color: red;
+            }
             label {
                 color: @c-999;
+                text-align: left;
                 font-size: 12px;
             }
             .reset {
@@ -150,21 +151,66 @@ import {
 } from 'vue-router'
 export default {
     name: 'login',
+    props: {
+        showClose: {
+            type: Boolean,
+            default: true
+        }
+    },
     setup (props, { emit }) {
         const store = useStore()
         const state = reactive({
             form: {
-                aggress: false
-            }
+                aggress: true,
+                phone: '',
+                password: '',
+                remember: false,
+                showClose: props.showClose
+            },
+            errorMsg: ''
         })
         const router = useRouter()
         const onClose = () => {
             emit('on-close', true)
         }
         const onSubmit = () => {
-            store.dispatch('user/loginByPhone', state.form).then(res => {
-                emit('on-close', true)
-                emit('on-success', true)
+            vaildator(state.form).then(res => {
+                if (res.success) {
+                    store.dispatch('user/loginByPhone', state.form).then(res => {
+                        emit('on-close', true)
+                        emit('on-success', true)
+                        if (router.currentRoute.value.path === '/error') {
+                            router.push('/')
+                        }
+                    }).catch(res => {
+                        state.errorMsg = res.message
+                    })
+                }
+            }).catch(res => {
+                console.log(res)
+            })
+        }
+        const vaildator = (form) => {
+            return new Promise((resolve, reject) => {
+                state.errorMsg = ''
+                console.log(form, 'form')
+                if (!form.aggress) {
+                    state.errorMsg = '请先同意相关协议！'
+                    reject(state.errorMsg)
+                    return
+                }
+                if (!/^1[3|5|7|8|9][0-9]{9}/.test(form.phone)) {
+                    state.errorMsg = '请输入正确的手机号'
+                    reject(state.errorMsg)
+                    return
+                }
+                if (!form.password || form.password.length < 6) {
+                    state.errorMsg = '请输入至少6位数的密码'
+                    reject(state.errorMsg)
+                    return
+                }
+                state.errorMsg = ''
+                resolve({ code: 200, success: true })
             })
         }
         return {

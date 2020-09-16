@@ -2,15 +2,15 @@
   <div class="aside js-aside">
         <div class="aside-list js-aside-template">
             <div
-            v-for="($value, findex) in menu"
+            v-for="($value) in menu"
             :key="$value.name"
             :class="{'unfold': $value.meta.unfold}"
             class="aside-item">
                 <div
                 class="title flexbox-h just-b js-toggle-class"
                 :class="
-                (activeClass && findex === activeFindex || $value.meta.unfold) && 'active '"
-                @click="() => {activeClass = !activeClass; activeFindex = findex}"
+                (activeClass && $value.path === activeFindex || $value.meta.unfold) && 'active '"
+                @click="() => {activeClass = !activeClass; activeFindex = $value.path}"
                 data-path="{{$value.path}}">
                     <p class="name">{{$value.meta.title}}</p>
                     <span class="icon" v-if="$value.children && $value.children.length" :class="`icon-music-${$value.meta.icon}`"></span>
@@ -18,7 +18,7 @@
                 <ul
                 class="list"
                 v-if="$value.children && $value.children.length"
-                :class="{'active': activeClass && findex === activeFindex || $value.meta.unfold}">
+                :class="{'active': activeClass && $value.path === activeFindex || $value.meta.unfold}">
                     <li
                     v-for="(item) in $value.children"
                     :key="item.name"
@@ -75,7 +75,7 @@ export default {
         const router = useRouter()
         const store = useStore()
         const state = reactive({
-            activeFindex: '',
+            activeFindex: router.currentRoute.value.path,
             activeRoute: router.currentRoute.value.path,
             activeClass: false,
             isStar: false,
@@ -87,6 +87,10 @@ export default {
             for (const key in value) {
                 state.playData[key] = value[key]
             }
+        })
+        watch(() => router.currentRoute.value.path, (value) => {
+            state.activeFindex = value
+            state.activeRoute = value
         })
         const menu = store.state.menu
         /* eslint-disable */

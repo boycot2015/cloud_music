@@ -40,5 +40,11 @@ export default {
     },
     update (data) {
         return axios.post(urls.update, data)
+    },
+    dailySignin (data) {
+        return axios.post(urls.dailySignin, data)
+    },
+    detail (data) {
+        return axios.post(urls.detail, data)
     }
 }

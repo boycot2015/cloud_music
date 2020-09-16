@@ -30,14 +30,14 @@ export default {
                         state.tracks = []
                     }
                     playlist.tracks = state.tracks
-                    playlist.tracks.map(el => {
-                        el.dt = filterDruationTime(el.dt)
-                    })
                     playlist.playCount = filterPlayCount(playlist.playCount)
                 } else {
                     state.tracks = playlist.dailySongs
                     playlist.tracks = playlist.dailySongs
                 }
+                playlist.tracks.map(el => {
+                    el.dt = filterDruationTime(el.dt)
+                })
                 state.playlistData = playlist
                 // console.log(state.playlistData, 'state.playlistData')
                 return Promise.resolve({ code: 200, success: true })
