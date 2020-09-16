@@ -4,7 +4,7 @@
         <div class="swiper-wrapper">
             <div v-for="item in tabData.banner" :key="item.id" class="swiper-slide">
                 <img :src="item.pic || item.imageUrl" alt="">
-                <div class="title" :style="{backgrundColor: item.typeColor}">{{item.typeTitle}}</div>
+                <div class="title" :class="{'blue': item.titleColor === 'blue'}">{{item.typeTitle}}</div>
             </div>
         </div>
         <!-- 如果需要分页器 -->
