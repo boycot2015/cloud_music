@@ -2,14 +2,14 @@
     <li class="music-list-item flexbox-h jsut-b" :class="{'grid': type === 2}" data-id="{{data.id}}">
         <div class="order tr" v-if="order">
             <span class="num" v-if="type === 1" v-html="(index + 1) < 10 ? '0' + (index + 1) : (index + 1)"></span>
-            <span class="num" v-else-if="type === 2" v-html="(count - index) < 10 ? '0' + (count - index) : (count - index)"></span>
+            <span class="num" v-else-if="type === 3" v-html="(count - index) < 10 ? '0' + (count - index) : (count - index)"></span>
             <span class="num" v-else :class="{'red': index < 3}" v-html="index + 1"></span>
         </div>
         <div class="operation tc flex-1" v-if="operation">
             <span class="icon-music-love"></span>
             <span class="icon-music-download"></span>
         </div>
-        <div class="img tc" v-if="type === 2">
+        <div class="img tc" v-if="type === 3">
             <img :src="data.coverUrl" alt="">
             <i class="icon-music-pause"></i>
         </div>

@@ -14,7 +14,7 @@ export default {
             params.type = parseInt(params.type)
             if (params.isDaily) {
                 playlistRes = await song.recommend(params)
-            } else if (params.type === 2) {
+            } else if (params.type === 3) {
                 playlistRes = await dj.djprogramList({ ...params, rid: params.id })
                 djDetailRes = await dj.djDetail({ ...params, rid: params.id })
             } else {
@@ -36,7 +36,7 @@ export default {
                     }
                     playlist.tracks = state.tracks
                     playlist.playCount = filterPlayCount(playlist.playCount)
-                } else if (params.type === 2) {
+                } else if (params.type === 3) {
                     playlist.tracks = playlistRes.programs
                     playlist.more = playlistRes.more
                     playlist.count = playlistRes.count

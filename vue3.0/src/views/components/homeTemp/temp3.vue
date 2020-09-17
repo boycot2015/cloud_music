@@ -205,7 +205,7 @@ export default {
                 path: '/songs/list',
                 query: {
                     id: item.id,
-                    type: 2
+                    type: 3
                 }
             })
         }
@@ -225,7 +225,7 @@ export default {
                     path: '/songs/list',
                     query: {
                         id: item.targetId,
-                        type: 2
+                        type: 3
                     }
                 })
             } else if (item.url !== null) {
