@@ -11,16 +11,16 @@
                     </div>
                     <div class="txt fl">
                         <p class="name">每日歌曲推荐</p>
-                        <span class="desc">根据你的口味生成,每日6:00更新</span>
+                        <span class="desc">根据你的音乐口味生成,每日6:00更新</span>
                     </div>
                 </template>
-                <img v-else :src="coverDetail.coverImgUrl" alt="">
+                <img v-else :src="coverDetail.coverImgUrl || coverDetail.picUrl" alt="">
             </div>
             <div class="text">
                 <div class="top clearfix" v-if="!isDaily">
-                    <span class="type fl">歌单</span>
+                    <span class="type fl" :class="{'full': type === 2}">{{type === 2? '电台':'歌单'}}</span>
                     <p class="name fl">{{coverDetail.name}}</p>
-                    <div class="count fr flexbox-h just-b">
+                    <div class="count fr flexbox-h just-b" v-if="!type">
                         <div class="play-count tr">
                             <p class="name">歌曲数</p>
                             <span class="num">{{coverDetail.trackCount}}</span>
@@ -45,15 +45,19 @@
                         <i class="icon-plus icon-music-plus"></i>
                     </div>
                     <template v-if="!isDaily">
-                        <div class="play-btn collect">
+                        <div class="play-btn collect" v-if="!type">
                             <i class="icon-music-collect"></i>
                             <span>收藏({{coverDetail.subscribedCount}})</span>
+                        </div>
+                        <div class="play-btn collect" v-if="type == 2">
+                            <i class="icon-music-collect"></i>
+                            <span>订阅({{coverDetail.subCount}})</span>
                         </div>
                         <div class="play-btn share">
                             <i class="icon-music-share"></i>
                             <span>分享({{coverDetail.shareCount}})</span>
                         </div>
-                        <div class="play-btn download">
+                        <div class="play-btn download" v-if="!type">
                             <i class="icon-music-download"></i>
                             <span>下载全部</span>
                         </div>
@@ -87,24 +91,30 @@
         </div>
         <div class="list-form">
             <div class="list-header flexbox-h just-b" v-if="!isDaily">
-                <div class="order tl">
-                    <span class="num"></span>
-                </div>
-                <div class="opera flex-1">
-                    操作
-                </div>
-                <div class="opera flex-4">
-                    音乐标题
-                </div>
-                <div class="opera flex-2">
-                    歌手
-                </div>
-                <div class="opera flex-2">
-                    专辑
-                </div>
-                <div class="opera flex-1">
-                    时长
-                </div>
+                <template v-if="!type">
+                    <div class="order tl">
+                        <span class="num"></span>
+                    </div>
+                    <div class="opera flex-1">
+                        操作
+                    </div>
+                    <div class="opera flex-4">
+                        音乐标题
+                    </div>
+                    <div class="opera flex-2">
+                        歌手
+                    </div>
+                    <div class="opera flex-2">
+                        专辑
+                    </div>
+                    <div class="opera flex-1">
+                        时长
+                    </div>
+                </template>
+                <template class="dj-header" v-else>
+                    <div class="flex-1 title tl bdr0">共{{coverDetail.count}}期</div>
+                    <div class="flex-1 title tr pdr10">排序<i class="icon-music-sort"></i></div>
+                </template>
             </div>
             <div class="wrap">
                 <ul class="music-list js-footer-music-list song-list">
@@ -118,7 +128,10 @@
                         'pause': playIndex === index && playData.playListId === id && playData.paused
                         }"
                     :data="item"
+                    :type="type"
+                    :operation="!type"
                     :index="index"
+                    :count="coverDetail.count"
                     :key="index"></list>
                 </ul>
             </div>
@@ -165,13 +178,14 @@ export default {
             },
             id: router.currentRoute.value.query.id,
             isDaily: router.currentRoute.value.query.isDaily,
+            type: +router.currentRoute.value.query.type,
             activeIndex: '',
             showMore: false
         })
         // const { ctx } = getCurrentInstance()
         onMounted(() => {
             // console.log(router, 'playlistRes')
-            getData({ id: state.id, isDaily: state.isDaily })
+            getData({ id: state.id, isDaily: state.isDaily, type: state.type })
         })
         watch(() => [
             listStore.playlistData,
@@ -179,6 +193,7 @@ export default {
             store.state.playData.playIndex
         ], (value) => {
             state.coverDetail = value[0]
+            value[0].dj && (state.coverDetail.creator = value[0].dj)
             state.playUrl = value[1]
             state.playIndex = value[2]
             if (state.id === state.playData.playListId) {

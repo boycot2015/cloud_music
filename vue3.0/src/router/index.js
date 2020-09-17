@@ -305,6 +305,30 @@ const routes = [
         ]
     },
     {
+        name: 'commonPage',
+        path: '/common/page',
+        component: Layout,
+        meta: {
+            icon: '',
+            title: '更多列表',
+            hideInMenu: true
+
+        },
+        children: [
+            {
+                id: 1,
+                name: 'commonPage',
+                path: '/common/page',
+                component: () => import('../views/list-page.vue'),
+                meta: {
+                    icon: 'right',
+                    title: '更多列表'
+                },
+                rightIcon: 'beckoning'
+            }
+        ]
+    },
+    {
         path: '/error',
         name: 'error',
         component: Layout,

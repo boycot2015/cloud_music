@@ -1,4 +1,4 @@
-import { home, song, toplist, artist } from '@/api/apiList'
+import { home, song, toplist, artist, dj } from '@/api/apiList'
 import { filterPlayCount, store } from '@/utils'
 export default {
     namespaced: true,
@@ -6,11 +6,12 @@ export default {
         tab1Data: {
             banner: [],
             personalized: [], // 推荐歌单列表
-            privatecontent: [], // 独家放送列表
+            privatecontent: [], // 独家放送入口列表
             topSong: [], // 新歌速递列表
             mv: [], // 推荐 mv
             djprogram: [], // 最热主播榜
-            djrecommend: [] // 最热主播榜
+            djrecommend: [], // 最热主播榜
+            privatecontentList: store.get('homeTab1Data') !== null ? store.get('homeTab1Data').privatecontentList : [] // 独家放送列表
         },
         tab2Data: {
             all: {},
@@ -87,6 +88,7 @@ export default {
             const bannerRes = await home.banner(params)
             const personalizedRes = await home.personalized(params)
             const privatecontentRes = await home.privatecontent(params)
+            const privatecontentListRes = await home.privatecontentList(params)
             const topSongRes = await home.topSong(params)
             const mvRes = await home.mv(params)
             const djprogramRes = await home.djprogram(params)
@@ -96,6 +98,7 @@ export default {
                 el.playCount = filterPlayCount(el.playCount)
             })
             data.privatecontent = (privatecontentRes && privatecontentRes.result) || []
+            data.privatecontentList = (privatecontentListRes && privatecontentListRes.result) || []
             let res = (topSongRes && topSongRes.data) || []
             res = topSongRes.data.slice(0, 10)
             res = [{
@@ -149,19 +152,19 @@ export default {
                 commit('setTab3Data', localData)
                 return Promise.resolve({ code: 200, success: true })
             }
-            const bannerRes = await home.djBanner(params)
-            const djCatelistRes = await home.djCatelist(params)
-            const djPaygiftRes = await home.djPaygift(params)
-            const djrecommendRes = await home.djrecommend(params)
-            const djRapRes = await home.hotRadio({ cateId: 2001 })
-            const dj3DRes = await home.hotRadio({ cateId: 10002 })
+            const bannerRes = await dj.djBanner(params)
+            const djCatelistRes = await dj.djCatelist(params)
+            const djPaygiftRes = await dj.djPaygift(params)
+            const djrecommendRes = await dj.djrecommend(params)
+            const djRapRes = await dj.hotRadio({ cateId: 2001 })
+            const dj3DRes = await dj.hotRadio({ cateId: 10002 })
             data.banner = bannerRes && bannerRes.data
-            data.djrecommend = (djrecommendRes && djrecommendRes.djRadios.slice(0, 5)) || []
-            data.djRap = (djRapRes && djRapRes.djRadios.slice(0, 5)) || []
-            data.dj3D = (dj3DRes && dj3DRes.djRadios.slice(0, 5)) || []
+            data.djrecommend = (djrecommendRes && djrecommendRes.djRadios) || []
+            data.djRap = (djRapRes && djRapRes.djRadios) || []
+            data.dj3D = (dj3DRes && dj3DRes.djRadios) || []
             data.categories = djCatelistRes.categories
             data.djCatelist = djCatelistRes.djCatelist
-            data.djPaygift = djPaygiftRes.data.list.slice(0, 4)
+            data.djPaygift = djPaygiftRes.data.list
             console.log(dj3DRes, djRapRes, 'value')
             commit('setTab3Data', data)
             return Promise.resolve({ code: 200, success: true })

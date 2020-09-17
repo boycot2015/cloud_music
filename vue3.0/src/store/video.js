@@ -12,11 +12,14 @@ export default {
         },
         tab2Data: {
             personalized: [], // 推荐歌单列表
-            privatecontent: [], // 独家放送列表
-            topSong: [], // 新歌速递列表
-            mv: [], // 推荐 mv
-            djprogram: [], // 最热主播榜
-            djrecommend: [] // 最热主播榜
+            // privatecontent: [], // 独家放送列表
+            // topSong: [], // 新歌速递列表
+            // mv: [], // 推荐 mv
+            // djprogram: [], // 最热主播榜
+            // djrecommend: [] // 最热主播榜
+            hotMV: [],
+            exclusive: [],
+            topMV: []
         }
     },
     mutations: {

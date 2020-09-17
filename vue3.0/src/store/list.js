@@ -1,4 +1,4 @@
-import { song } from '@/api/apiList'
+import { song, dj } from '@/api/apiList'
 import { filterDruationTime, filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
@@ -10,15 +10,20 @@ export default {
     mutations: {
         async getData (state, params) {
             let playlistRes = ''
+            let djDetailRes = ''
+            params.type = parseInt(params.type)
             if (params.isDaily) {
                 playlistRes = await song.recommend(params)
+            } else if (params.type === 2) {
+                playlistRes = await dj.djprogramList({ ...params, rid: params.id })
+                djDetailRes = await dj.djDetail({ ...params, rid: params.id })
             } else {
                 playlistRes = await song.playlist(params)
             }
             if (playlistRes && playlistRes.code === 200) {
                 let ids = []
-                const playlist = playlistRes.playlist || playlistRes.data
-                if (!params.isDaily) {
+                const playlist = playlistRes.playlist || playlistRes.data || djDetailRes.djRadio
+                if (!params.isDaily && !params.type) {
                     playlist.trackIds.forEach(function (item) {
                         ids.push(item.id)
                     })
@@ -31,12 +36,18 @@ export default {
                     }
                     playlist.tracks = state.tracks
                     playlist.playCount = filterPlayCount(playlist.playCount)
+                } else if (params.type === 2) {
+                    playlist.tracks = playlistRes.programs
+                    playlist.more = playlistRes.more
+                    playlist.count = playlistRes.count
+                    console.log(playlist, 'playlistRes')
                 } else {
                     state.tracks = playlist.dailySongs
                     playlist.tracks = playlist.dailySongs
                 }
                 playlist.tracks.map(el => {
-                    el.dt = filterDruationTime(el.dt)
+                    el.dt && (el.dt = filterDruationTime(el.dt))
+                    el.duration && (el.dt = filterDruationTime(el.duration))
                 })
                 state.playlistData = playlist
                 // console.log(state.playlistData, 'state.playlistData')

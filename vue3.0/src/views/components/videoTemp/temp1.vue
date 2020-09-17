@@ -154,7 +154,9 @@ export default {
 
         // methods
         const getData = async (type) => {
-            store.dispatch('video/getTab1Data', type).then(res => {})
+            store.dispatch('video/getTab1Data', type).then(res => {
+                store.dispatch('video/getListByCate', { offset: 1, id: state.activedCate.id || '' })
+            })
         }
         // 点击分类标签获取对应数据
         const onCateTagClick = (item) => {

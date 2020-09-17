@@ -9,6 +9,7 @@ import artist from './artist'
 import video from './video'
 import MV from './MV'
 import user from './user'
+import dj from './dj'
 export default {
     comment,
     song,
@@ -19,7 +20,8 @@ export default {
     artist,
     video,
     user,
-    MV
+    MV,
+    dj
 }
 export {
     comment,
@@ -31,5 +33,6 @@ export {
     artist,
     video,
     user,
-    MV
+    MV,
+    dj
 }

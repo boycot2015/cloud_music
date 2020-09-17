@@ -17,7 +17,7 @@
                         </div>
                     </div>
                 </div>
-                <span class="flex-1 tr more">更多<i class="icon-music-right"></i></span>
+                <span class="flex-1 tr more" @click="onMoreClick(obj)">更多<i class="icon-music-right"></i></span>
             </div>
             <ul class="grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
                 <grid-list
@@ -73,6 +73,10 @@ export default {
                     title: '最新MV',
                     category: 1,
                     type: 3,
+                    path: '/common/page',
+                    query: {
+                        tabName: 'personalized'
+                    },
                     data: [],
                     form: {
                         area: {
@@ -106,16 +110,28 @@ export default {
                     title: '热播MV',
                     category: 2,
                     type: 3,
+                    path: '/common/page',
+                    query: {
+                        tabName: 'hotMV'
+                    },
                     data: []
                 }, {
                     title: '网易出品',
                     category: 4,
                     type: 3,
+                    path: '/common/page',
+                    query: {
+                        tabName: 'exclusive'
+                    },
                     data: []
                 }, {
                     title: 'MV排行榜',
                     category: 5,
                     type: 4,
+                    path: '/common/page',
+                    query: {
+                        tabName: 'topMV'
+                    },
                     data: [],
                     form: {
                         area: {
@@ -214,10 +230,29 @@ export default {
             store.dispatch('video/getVideoByParams', data).then(res => {
             })
         }
+        const onMoreClick = (obj) => {
+            const route = {
+                path: '',
+                query: {
+                    tabName: ''
+                }
+            }
+            if (obj.path) {
+                route.path = obj.path
+            } else {
+                route.path = router.currentRoute.value.path
+            }
+            route.query = obj.query
+            route.query.title = obj.title
+            route.query.type = obj.type
+            route.query.category = obj.category
+            router.push(route)
+        }
         return {
             ...toRefs(state),
             onListClick,
-            onCateTagClick
+            onCateTagClick,
+            onMoreClick
         }
     }
 }

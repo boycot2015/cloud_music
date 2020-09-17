@@ -20,7 +20,7 @@
 import {
     // ref,
     // computed,
-    // watch,
+    watch,
     reactive,
     toRefs
     // getCurrentInstance,
@@ -77,6 +77,9 @@ export default {
             ]
         })
         // 点击tab切换数据
+        watch(() => router.currentRoute.value.query.tabName, (value) => {
+            state.activeTab = value
+        })
         const onTabClick = (item) => {
             state.activeTab = item.type
             router.push({

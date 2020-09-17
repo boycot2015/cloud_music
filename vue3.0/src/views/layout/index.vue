@@ -28,7 +28,7 @@
                 flex: isExtend ? 'none': '',
                 margin: isExtend ? '0 auto': ''
             }"
-            class="main flex-1 flexbox-v">
+            class="main flex-1 flexbox-v" ref="mainDom">
                 <router-view v-slot="{ Component }">
                     <transition name="slide-fade" mode="out-in">
                         <component :is="Component" />
@@ -167,6 +167,7 @@ export default {
         const storeState = store.state
         const router = useRouter()
         const progressVolumeDom = ref(null)
+        const mainDom = ref(null)
         const state = reactive({
             playData: {
                 lyrc: '一诺千金到尽头',
@@ -218,9 +219,11 @@ export default {
         let audio = null
         // const { ctx } = getCurrentInstance()
         watch(() => {
-            return router.currentRoute.value.meta.title
-        }, (value) => {
-            store.commit('setTitle', value)
+            return router.currentRoute.value
+        }, (value, old) => {
+            if (value.path !== old.path) {
+                mainDom.value.scrollTo(0, 0)
+            }
         })
         watch(() => {
             return router.currentRoute.value
@@ -471,6 +474,7 @@ export default {
             dragMiniBox,
             textMoveDom,
             progressVolumeDom,
+            mainDom,
             goDetail,
             onExtend,
             onListItemdbClick,

@@ -76,23 +76,24 @@ export default createStore({
         setPlayData ({ commit }, data) {
             return new Promise((resolve, reject) => {
                 song.playUrl({ id: data.id }).then(urlData => {
+                    console.log(data, 'data')
                     const playData = store.get('playData') !== null ? store.get('playData') : {}
                     data.al = data.al || data.album
                     data.ar = data.ar || data.artists
                     playData.name = data.name || (data.al && data.al.name) || ''
+                    playData.picUrl = (data.al && data.al.picUrl) || ''
                     playData.singer = ''
-                    data.ar.map(el => {
+                    data.ar && data.ar.map(el => {
                         playData.singer += el.name + '/'
                     })
                     playData.singer = playData.singer.slice(0, -1)
-                    playData.picUrl = data.al.picUrl
                     playData.playIndex = data.playIndex
                     data.playListId && (playData.playListId = data.playListId)
                     if (urlData.code === 200) {
                         urlData = urlData.data[0]
                         playData.endStr = data.dt
                         playData.duration = urlData.size
-                        playData.alName = data.al.name
+                        playData.alName = playData.name
                         playData.paused = false
                         for (const key in urlData) {
                             playData[key] = urlData[key]

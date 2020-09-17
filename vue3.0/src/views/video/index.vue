@@ -60,7 +60,8 @@ export default {
             router.push({
                 path: '/video/index',
                 query: {
-                    tabName: state.activeTab
+                    // tabName: state.activeTab,
+                    ...router.currentRoute.value.query
                 }
             })
             // getData(item.type)

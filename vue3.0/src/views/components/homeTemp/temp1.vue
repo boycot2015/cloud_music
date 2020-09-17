@@ -4,8 +4,8 @@
             <div class="swiper-wrapper">
                 <div
                 v-for="item in tabData.banner"
-                :key="item.id"
-                class="swiper-slide">
+                :key="item.targetId"
+                class="swiper-slide" @click="onBannerClick(item)">
                     <img :src="item.imageUrl" alt="">
                     <div class="title" :class="{'blue': item.titleColor === 'blue'}">{{item.typeTitle}}</div>
                 </div>
@@ -19,7 +19,7 @@
         <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
             <div class="title clearfix">
                 <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
-                <span class="fr more">更多<i class="icon-music-right"></i></span>
+                <span class="fr more" @click="showMoreClick(obj)">更多<i class="icon-music-right"></i></span>
             </div>
             <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
                 <li class="grid-list-item date js-list-detail fl"
@@ -88,26 +88,43 @@ export default {
                     title: '推荐歌单',
                     category: 3,
                     type: 1,
+                    query: {
+                        tabName: 'cate'
+                    },
                     data: []
                 }, {
                     title: '独家放送',
                     category: 1,
                     type: 5,
+                    path: '/common/page',
+                    query: {
+                        tabName: 'private'
+                    },
                     data: []
                 }, {
                     title: '最新音乐',
                     category: 3,
                     type: 1,
+                    query: {
+                        tabName: 'cate'
+                    },
                     data: []
                 }, {
                     title: '推荐MV',
                     category: 3,
                     type: 5,
+                    path: '/video/index',
+                    query: {
+                        tabName: 'MV'
+                    },
                     data: []
                 }, {
                     title: '主播电台',
                     category: 3,
                     type: 1,
+                    query: {
+                        tabName: 'dj'
+                    },
                     data: []
                 }]
             },
@@ -183,9 +200,46 @@ export default {
             /* eslint-disable */
             new Swiper('.swiper-container', state.swiperOption)
         }
+        const onBannerClick = (item) => {
+            if (item.targetType === 1) {
+                store.dispatch('setPlayData', { id: item.targetId }).then(res => {
+                    let audio = document.getElementById('play-audio')
+                    audio.play()
+                })
+            } else if (item.targetType === 10) {
+                router.push({
+                    path: '/songs/list',
+                    query: {
+                        id: item.targetId
+                    }
+                })
+            } else if (item.url !== null) {
+                window.open(item.url)
+            }
+        }
+        const showMoreClick = (obj) => {
+            let route = {
+                    path: '',
+                    query: {
+                        tabName: ''
+                    }
+                }
+            if (obj.path) {
+                route.path = obj.path
+            } else {
+                route.path = router.currentRoute.value.path
+            }
+            route.query = obj.query
+            route.query.title = obj.title
+            route.query.type = obj.type
+            route.query.category = obj.category
+            router.push(route)
+        }
         return {
             ...toRefs(state),
-            onListClick
+            onListClick,
+            onBannerClick,
+            showMoreClick
         }
     }
 }

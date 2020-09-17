@@ -10,6 +10,9 @@ export default {
     privatecontent (params) {
         return axios.get(urls.privatecontent, { params })
     },
+    privatecontentList (params) {
+        return axios.get(urls.privatecontentList, { params })
+    },
     topSong (params) {
         return axios.get(urls.topSong, { params })
     },
