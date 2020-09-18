@@ -17,13 +17,24 @@
             <span class="name line-one">{{data.name}}</span>
             <span class="source line-one">{{data.al && data.al.name}}</span>
         </div>
+        <div class="play-info flex-1 line-one">
+            <span class="source line-one">播放: </span>
+            <span class="source line-one">{{data.listenerCount}}</span>
+        </div>
+        <div class="star-info flex-1 line-one">
+            <span class="source line-one">赞: </span>
+            <span class="source line-one">{{data.likedCount}}</span>
+        </div>
+        <div class="play-info flex-1 line-one">
+            <span class="source line-one">{{data.createTime}}</span>
+        </div>
         <template v-if="!isminiPlay">
             <span class="singer line-one flex-2" v-if="data.ar">
                 <i v-for="(singer, cindex) in data.ar " :key="cindex" v-html="singer.name + (cindex < data.ar.length - 1 ? '/' : '')"></i>
             </span>
             <span class="collect line-one flex-2" v-if="isPlay && data.al">{{data.al.name}}</span>
             <!-- <span class="icon-music-link" v-if="order && !isminiPlay"></span> -->
-            <span class="time {{order ? 'tl': 'tr'}} flex-1">{{data.dt}}</span>
+            <span class="time flex-1 tc">{{data.dt}}</span>
         </template>
     </li>
 </template>

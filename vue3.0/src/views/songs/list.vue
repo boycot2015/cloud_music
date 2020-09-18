@@ -67,7 +67,7 @@
                         <span>收藏全部</span>
                     </div>
                 </div>
-                <div class="tags flexbox-h" v-if="!isDaily">
+                <div class="tags flexbox-h" v-if="!isDaily && !type">
                     <p class="name">标签：</p>
                     <template v-if="coverDetail.tags && coverDetail.tags.length">
                         <span
@@ -83,9 +83,11 @@
                     'line-two': !showMore,
                     'active': showMore
                     }"
-                    v-if="coverDetail.description && coverDetail.description !== null">
-                    <p>{{coverDetail.description}}</p>
-                    <i class="icon-music-down js-more" :class="{'active': showMore}" @click="showMore = !showMore" v-if="coverDetail.description.length > 80"></i>
+                    v-if="(coverDetail.description && coverDetail.description !== null) ||
+                    (coverDetail.desc && coverDetail.desc !== null)">
+                    <p>{{coverDetail.description || coverDetail.desc}}</p>
+                    <i class="icon-music-down js-more" :class="{'active': showMore}" @click="showMore = !showMore"
+                    v-if="(coverDetail.description && coverDetail.description.length > 80) || (coverDetail.desc && coverDetail.desc.length > 80)"></i>
                 </div>
             </div>
         </div>

@@ -48,6 +48,7 @@ export default {
                 playlist.tracks.map(el => {
                     el.dt && (el.dt = filterDruationTime(el.dt))
                     el.duration && (el.dt = filterDruationTime(el.duration))
+                    el.createTime && (el.createTime = new Date(el.createTime).toLocaleDateString())
                 })
                 state.playlistData = playlist
                 // console.log(state.playlistData, 'state.playlistData')
