@@ -3,6 +3,9 @@
     margin: 0 20px;
     padding: 10px 0;
     width: calc(100% - 40px);
+    &-container {
+        min-height: 480px;
+    }
     .tab-list {
         width: 100%;
         margin-bottom: 20px;
@@ -244,6 +247,8 @@
             }
         }
         .recommend-list {
+            position: relative;
+            min-height: 400px;
             .grid-list-item {
                 width: 135px;
                 height: 180px;
@@ -464,6 +469,8 @@
     }
     .recommend {
         .recommend-list {
+            position: relative;
+            min-height: 180px;
             .grid-list {
                 &-item {
                     &.date {
@@ -503,6 +510,7 @@
             color: @c-333;
         }
         .main {
+            min-height: 300px;
             &-item {
                 width: 245px;
                 border: 1px solid @c-e8;

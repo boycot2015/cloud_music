@@ -9,11 +9,13 @@
             class="tab-list-item js-tab-item"
             data-type="home">{{item.name}}</div>
         </div>
-        <home-temp-tab1 v-if="activeTab === tabMenu[0].type"></home-temp-tab1>
-        <home-temp-tab2 v-show="activeTab === tabMenu[1].type"></home-temp-tab2>
-        <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
-        <home-temp-tab4 v-if="activeTab === tabMenu[3].type"></home-temp-tab4>
-        <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5>
+        <div class="music-home-container">
+            <home-temp-tab1 v-if="activeTab === tabMenu[0].type"></home-temp-tab1>
+            <home-temp-tab2 v-show="activeTab === tabMenu[1].type"></home-temp-tab2>
+            <home-temp-tab3 v-if="activeTab === tabMenu[2].type"></home-temp-tab3>
+            <home-temp-tab4 v-if="activeTab === tabMenu[3].type"></home-temp-tab4>
+            <home-temp-tab5 v-show="activeTab === tabMenu[4].type"></home-temp-tab5>
+        </div>
     </div>
 </template>
 <script>

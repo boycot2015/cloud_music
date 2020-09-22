@@ -15,7 +15,7 @@
                 </div>
             </div>
         </div>
-        <ul class="recommend-list clearfix">
+        <ul class="recommend-list clearfix" v-loading="loading">
             <li class="grid-list-item top js-list-detail fl" v-if="showBegining">
                 <div class="img tc">
                     <!-- <img src="" alt=""> -->
@@ -64,6 +64,7 @@ export default {
         const tabData = store.state.home.tab5Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             tabData: {
                 dayData: {
                     name: '歌手榜',
@@ -138,6 +139,7 @@ export default {
                 const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
                 if (condition && router.currentRoute.value.query.tabName === 'singer') {
                     state.offset++
+                    state.loading = true
                     getData({ ...sortData(), offset: state.offset, limit: state.limit })
                 }
             })
@@ -156,6 +158,7 @@ export default {
         // methods
         const getData = async (data) => {
             store.dispatch('home/getTab5Data', { ...data, limit: state.showBegining ? 39 : 40 }).then(res => {
+                state.loading = false
             })
         }
         const setBegining = async (data) => {
@@ -182,6 +185,7 @@ export default {
             formItem.value = item.code !== undefined ? item.code : item
             state.offset = 1
             state.tabData.list.data = []
+            state.loading = true
             const data = sortData()
             router.push({
                 path: router.currentRoute.value.path,
@@ -194,6 +198,9 @@ export default {
             data.limit = state.limit
             // console.log(state.limit, 'data.limit')
             store.dispatch('home/getSingerByParams', data).then(res => {
+                setTimeout(() => {
+                    state.loading = false
+                }, 200)
             })
         }
         const onListClick = (item) => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-content tab-home-content">
+    <div class="tab-content tab-home-content" v-loading="loading">
         <div class="swiper-container">
             <div class="swiper-wrapper">
                 <div
@@ -76,6 +76,7 @@ export default {
         const tabData = store.state.home.tab1Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             tabData: {
                 dayData: {
                     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -184,6 +185,7 @@ export default {
         const getData = async () => {
             store.dispatch('home/getTab1Data').then(res => {
                 initSwiper()
+                state.loading = false
             })
         }
         const onListClick = (item, isDaily) => {

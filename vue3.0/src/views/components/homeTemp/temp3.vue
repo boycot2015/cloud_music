@@ -1,5 +1,5 @@
 <template>
-<div class="tab-content tab-home-content">
+<div class="tab-content tab-home-content" v-loading="loading">
     <div class="swiper-container dj-swiper">
         <div class="swiper-wrapper">
             <div
@@ -34,14 +34,16 @@
         <div class="button-prev icon-music-left"></div>
         <div class="button-next icon-music-right"></div>
     </div>
-    <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
-        <div class="title clearfix">
-            <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
-            <span class="fr more" v-if="obj.hasMore" @click="onMoreClick(obj)">更多<i class="icon-music-right"></i></span>
+    <div class="list-container">
+        <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
+            <div class="title clearfix">
+                <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
+                <span class="fr more" v-if="obj.hasMore" @click="onMoreClick(obj)">更多<i class="icon-music-right"></i></span>
+            </div>
+            <ul class="recommend-list grid-list clearfix" v-loading="loading" :style="{'marginBottom': findex === 2 ? '40px': ''}">
+                <grid-list v-for="(item, index) in obj.data" :item="item" :type="obj.type" :index="index" @click="onListClick(item)" :key="item.id"></grid-list>
+            </ul>
         </div>
-        <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
-            <grid-list v-for="(item, index) in obj.data" :item="item" :type="obj.type" :index="index" @click="onListClick(item)" :key="item.id"></grid-list>
-        </ul>
     </div>
 </div>
 </template>
@@ -82,6 +84,7 @@ export default {
         const tabData = store.state.home.tab3Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             tabData: {
                 list: [{
                     title: '付费精品',
@@ -196,6 +199,9 @@ export default {
         const getData = async () => {
             store.dispatch('home/getTab3Data').then(res => {
                 initSwiper()
+                setTimeout(() => {
+                    state.loading = false
+                }, 400)
             })
         }
         const onListClick = (item) => {

@@ -2,7 +2,7 @@
     <div class="top-list">
         <template v-for="item in tabData.list">
             <div class="title" :key="item.title">{{item.title}}</div>
-            <div class="main clearfix" :key="item.title" >
+            <div class="main clearfix" :key="item.title" v-loading="loading1">
                 <template v-if="item.type === 0">
                     <div class="main-item fl" v-for="plist in item.data" :key="plist.id">
                         <h3 class="top"
@@ -72,6 +72,7 @@ export default {
         const tabData = store.state.home.tab4Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             tabData: {
                 list: [{
                     title: '官方榜',
@@ -130,6 +131,7 @@ export default {
         // methods
         const getData = async () => {
             store.dispatch('home/getTab4Data').then(res => {
+                state.loading = false
             })
         }
         const onListClick = (item) => {
