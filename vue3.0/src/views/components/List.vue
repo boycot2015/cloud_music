@@ -17,16 +17,16 @@
             <span class="name line-one">{{data.name}}</span>
             <span class="source line-one">{{data.al && data.al.name}}</span>
         </div>
-        <div class="play-info flex-1 line-one">
+        <div class="play-info flex-2 tl line-one" v-if="data.listenerCount >= 0">
             <span class="source line-one">播放: </span>
             <span class="source line-one">{{data.listenerCount}}</span>
         </div>
-        <div class="star-info flex-1 line-one">
+        <div class="star-info flex-2 tl line-one" v-if="data.likedCount >= 0">
             <span class="source line-one">赞: </span>
             <span class="source line-one">{{data.likedCount}}</span>
         </div>
-        <div class="play-info flex-1 line-one">
-            <span class="source line-one">{{data.createTime}}</span>
+        <div class="play-info flex-2 tl line-one" v-if="data.createTime">
+            <span class="source line-one">{{data.createTime.replace(/\//g,'-')}}</span>
         </div>
         <template v-if="!isminiPlay">
             <span class="singer line-one flex-2" v-if="data.ar">

@@ -1,3 +1,4 @@
+var ManifestPlugin = require('webpack-manifest-plugin');
 module.exports = {
     css: {
         sourceMap: true,
@@ -16,6 +17,16 @@ module.exports = {
                     '^/api': ''
                 }
             }
+        }
+    },
+    configureWebpack: (config) => {
+        return {
+            plugins: [
+                new ManifestPlugin({
+                    fileName: 'p-' + new Date().getFullYear() + (new Date().getMonth() + 1) + new Date().getDate()+'-zch.json'
+                    // publicPath: ''
+                })
+            ]
         }
     }
 }
