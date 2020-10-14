@@ -1,9 +1,9 @@
 <template>
     <li class="music-list-item flexbox-h jsut-b" :class="{'grid': type === 2}" data-id="{{data.id}}">
-        <div class="order tr" v-if="order">
-            <span class="num" v-if="type === 1" v-html="(index + 1) < 10 ? '0' + (index + 1) : (index + 1)"></span>
-            <span class="num" v-else-if="type === 3" v-html="(count - index) < 10 ? '0' + (count - index) : (count - index)"></span>
-            <span class="num" v-else :class="{'red': index < 3}" v-html="index + 1"></span>
+        <div class="order tc" v-if="order">
+            <span class="num" style="padding-right: 0;" v-if="type === 1" v-html="(index + 1) < 10 ? '0' + (index + 1) : (index + 1)"></span>
+            <span class="num" style="padding-right: 0;" v-else-if="type === 3" v-html="(count - index) < 10 ? '0' + (count - index) : (count - index)"></span>
+            <span class="num" style="padding-right: 0;" v-else :class="{'red': index < 3}" v-html="index + 1"></span>
         </div>
         <div class="operation tc flex-1" v-if="operation">
             <span class="icon-music-love"></span>
@@ -34,7 +34,7 @@
             </span>
             <span class="collect line-one flex-2" v-if="isPlay && data.al">{{data.al.name}}</span>
             <!-- <span class="icon-music-link" v-if="order && !isminiPlay"></span> -->
-            <span class="time flex-1 tc">{{data.dt}}</span>
+            <span class="time flex-1 tl">{{data.dt}}</span>
         </template>
     </li>
 </template>
