@@ -19,7 +19,7 @@ export const loading = {
             loadingMask.appendChild(loadingText)
             el.appendChild(loadingMask)
         } else if (!binding.value && el.querySelector('.loading-dialog') !== null) {
-            el.removeChild(loadingMask)
+            el.removeChild(el.querySelector('.loading-dialog'))
         }
     }
 }
