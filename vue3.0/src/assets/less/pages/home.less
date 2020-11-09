@@ -292,20 +292,25 @@
         // background-color: @c-e8;
         height: 200px;
         padding: 0 0 25px;
+        overflow: hidden;
+        border-radius: 5px;
         &:hover {
             .button-next,
             .button-prev {
                 display: block;
             }
         }
+        img {
+            margin: 0 auto;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 5px;
+        }
         .img {
             height: 100%;
             position: relative;
-            img {
-                margin: 0 auto;
-                display: block;
-                height: 100%;
-            }
+            overflow: hidden;
+            border-radius: 5px;
         }
         .title {
             position: absolute;
@@ -329,6 +334,8 @@
             z-index: 99;
             opacity: 1;
             right: -100px;
+            overflow: hidden;
+            border-radius: 5px;
         }
         .swiper-slide-next,
         .swiper-slide-prev {

@@ -10,7 +10,7 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://music.boycot.top:3000',
+                target: 'http://music.api.boycot.top',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''

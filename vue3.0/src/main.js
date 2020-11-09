@@ -14,4 +14,4 @@ VueInstance.use(api)
     .use(router)
     .mount('#app')
 
-console.log(VueInstance)
+// console.log(VueInstance)
