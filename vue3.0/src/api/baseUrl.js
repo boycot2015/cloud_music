@@ -15,7 +15,7 @@ case 'development':
     baseUrl = '/api'
     break
 case 'production':
-    baseUrl = '/api'
+    baseUrl = 'http://music.api.boycot.top'
     break
 }
 export default baseUrl
