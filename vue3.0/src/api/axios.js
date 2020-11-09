@@ -50,17 +50,16 @@ service.defaults.headers.put['Content-Type'] = 'application/json'
 service.interceptors.request.use(
     (config) => {
         const token = Cookies.get('cookie')
-        console.log(config, 'config')
         if ((config.method === 'post' || config.method === 'put') && config.headers['Content-Type'] === 'application/json') {
             token && (config.data.cookie = token)
             // post、put 提交时，将对象转换为string, 为处理Java后台解析问题
             config.data = JSON.stringify(config.data)
         }
-        if (token && !config.params.keywords) {
+        if (token) {
             if (config.params) {
-                config.params.cookie = token
-            } else {
-                config.params = { cookie: token }
+                if (!config.params.keywords) {
+                    config.params.cookie = token
+                }
             }
         }
         // 登录流程控制中，根据本地是否存在token判断用户的登录情况
