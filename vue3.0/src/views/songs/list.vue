@@ -182,12 +182,17 @@ export default {
             isDaily: router.currentRoute.value.query.isDaily,
             type: +router.currentRoute.value.query.type,
             activeIndex: '',
-            showMore: false
+            showMore: false,
+            keywords: router.currentRoute.value.query.keywords
         })
         // const { ctx } = getCurrentInstance()
         onMounted(() => {
             // console.log(router, 'playlistRes')
-            getData({ id: state.id, isDaily: state.isDaily, type: state.type })
+            let params = { id: state.id, isDaily: state.isDaily, type: state.type }
+            if (state.keywords) {
+                params = { keywords: state.keywords }
+            }
+            getData(params)
         })
         watch(() => [
             listStore.playlistData,

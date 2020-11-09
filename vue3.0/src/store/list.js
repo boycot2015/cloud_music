@@ -1,4 +1,4 @@
-import { song, dj } from '@/api/apiList'
+import { song, dj, search } from '@/api/apiList'
 import { filterDruationTime, filterPlayCount } from '@/utils'
 export default {
     namespaced: true,
@@ -11,19 +11,21 @@ export default {
         async getData (state, params) {
             let playlistRes = ''
             let djDetailRes = ''
-            params.type = parseInt(params.type)
+            params.type && (params.type = parseInt(params.type))
             if (params.isDaily) {
                 playlistRes = await song.recommend(params)
             } else if (params.type === 3) {
                 playlistRes = await dj.djprogramList({ ...params, rid: params.id })
                 djDetailRes = await dj.djDetail({ ...params, rid: params.id })
+            } else if (params.keywords) {
+                playlistRes = await search.search(params)
             } else {
                 playlistRes = await song.playlist(params)
             }
             if (playlistRes && playlistRes.code === 200) {
                 let ids = []
-                const playlist = playlistRes.playlist || playlistRes.data || djDetailRes.djRadio
-                if (!params.isDaily && !params.type) {
+                const playlist = playlistRes.playlist || playlistRes.data || djDetailRes.djRadio || playlistRes.result
+                if (!params.isDaily && !params.type && !params.keywords) {
                     playlist.trackIds.forEach(function (item) {
                         ids.push(item.id)
                     })
@@ -40,7 +42,12 @@ export default {
                     playlist.tracks = playlistRes.programs
                     playlist.more = playlistRes.more
                     playlist.count = playlistRes.count
-                    console.log(playlist, 'playlistRes')
+                    // console.log(playlist, 'playlistRes')
+                } else if (params.keywords) {
+                    playlist.tracks = playlistRes.result.songs
+                    playlist.more = playlistRes.more
+                    playlist.count = playlistRes.count
+                    // console.log(playlist, 'playlistRes')
                 } else {
                     state.tracks = playlist.dailySongs
                     playlist.tracks = playlist.dailySongs

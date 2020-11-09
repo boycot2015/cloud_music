@@ -13,8 +13,8 @@
         <div class="forward-btn" @click="router.forward()">&gt;</div>
     </div>
     <div class="search-box flexbox-h">
-        <input type="text" v-model="searchForm.key" :placeholder="searchForm.placeholder">
-        <div class="input-icon icon-music-search"></div>
+        <input type="text" v-model="searchForm.key" @keyup="onSearch" :placeholder="searchForm.placeholder">
+        <div class="input-icon icon-music-search" ></div>
     </div>
     <div class="user-info flex-3 tc just-c flexbox-h">
         <div class="wrap flexbox-h flex-1" @click.stop="showLogin = !showLogin">
@@ -134,6 +134,17 @@ export default {
             state.headerData.username = '未登录'
             state.headerData.avatar = ''
         }
+        const onSearch = (e) => {
+            console.log(e, state.searchForm.key, 'state.searchForm.key')
+            if (e.keyCode === 13 && state.searchForm.key) {
+                router.push({
+                    path: '/songs/list',
+                    query: {
+                        keywords: state.searchForm.key
+                    }
+                })
+            }
+        }
         return {
             router,
             loginForm,
@@ -144,6 +155,7 @@ export default {
             onLoginFormClose,
             onLogin,
             onLogOut,
+            onSearch,
             ...toRefs(state)
         }
     }
