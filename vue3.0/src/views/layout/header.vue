@@ -84,7 +84,7 @@ export default {
             },
             searchForm: {
                 placeholder: '搜索音乐，视频，歌词，电台',
-                key: ''
+                key: router.currentRoute.value.query.keywords || ''
             },
             ismini: true,
             showLogin: false,
@@ -135,7 +135,7 @@ export default {
             state.headerData.avatar = ''
         }
         const onSearch = (e) => {
-            console.log(e, state.searchForm.key, 'state.searchForm.key')
+            // console.log(e, state.searchForm.key, 'state.searchForm.key')
             if (e.keyCode === 13 && state.searchForm.key) {
                 router.push({
                     path: '/songs/list',

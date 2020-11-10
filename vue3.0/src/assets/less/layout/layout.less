@@ -28,7 +28,7 @@
             margin: 0 14px;
             position: relative;
             background-color: @c-ddd;
-            border-radius: 5px;
+            border-radius: @border-radius;
             .line {
                 position: absolute;
                 left: 0;
@@ -36,7 +36,7 @@
                 width: 0%;
                 height: 100%;
                 z-index: 9;
-                border-radius: 5px;
+                border-radius: @border-radius;
                 background-color: @footer-theme;
             }
             .point {
@@ -76,7 +76,7 @@
             margin: 0 8px;
             position: relative;
             background-color: @c-ddd;
-            border-radius: 5px;
+            border-radius: @border-radius;
             .line {
                 width: 20%;
             }
@@ -105,6 +105,8 @@
         height: 700px;
         box-shadow: 0 0 20px @c-333;
         // border: 1px solid @primary;
+        border-radius: @border-radius;
+        overflow: hidden;
         background-color: #F5F5F7;
         .header {
             height: 50px;

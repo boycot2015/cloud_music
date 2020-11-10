@@ -50,7 +50,7 @@
         }
         .btn-cate {
             padding: 5px 10px;
-            border-radius: 5px;
+            border-radius: @border-radius;
             cursor: pointer;
             border: 1px solid @c-ccc;
             i {
@@ -293,7 +293,7 @@
         height: 200px;
         padding: 0 0 25px;
         overflow: hidden;
-        border-radius: 5px;
+        border-radius: @border-radius;
         &:hover {
             .button-next,
             .button-prev {
@@ -304,13 +304,13 @@
             margin: 0 auto;
             height: 100%;
             overflow: hidden;
-            border-radius: 5px;
+            border-radius: @border-radius;
         }
         .img {
             height: 100%;
             position: relative;
             overflow: hidden;
-            border-radius: 5px;
+            border-radius: @border-radius;
         }
         .title {
             position: absolute;
@@ -335,7 +335,7 @@
             opacity: 1;
             right: -100px;
             overflow: hidden;
-            border-radius: 5px;
+            border-radius: @border-radius;
         }
         .swiper-slide-next,
         .swiper-slide-prev {
@@ -400,7 +400,7 @@
                 left: auto;
                 right: auto;
                 padding: 5px 0;
-                border-radius: 5px;
+                border-radius: @border-radius;
                 &:hover {
                     background-color: @c-e8;
                     cursor: pointer;
@@ -519,6 +519,8 @@
         .main {
             min-height: 300px;
             &-item {
+                border-radius: @border-radius;
+                overflow: hidden;
                 width: 245px;
                 border: 1px solid @c-e8;
                 margin-right: 15px;

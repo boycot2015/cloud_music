@@ -1,6 +1,7 @@
 <template>
   <div class="song-detail-list">
         <div
+        v-if="!router.currentRoute.value.query.keywords"
         class="cover"
         :class="{'daily': isDaily, 'flexbox-h': !isDaily}">
                 <div class="img" :class="{'clearfix': isDaily}">
@@ -90,6 +91,9 @@
                     v-if="(coverDetail.description && coverDetail.description.length > 80) || (coverDetail.desc && coverDetail.desc.length > 80)"></i>
                 </div>
             </div>
+        </div>
+        <div class="search-cover" v-else>
+            <h3>找到{{coverDetail.songCount}}个结果</h3>
         </div>
         <div class="list-form">
             <div class="list-header flexbox-h just-b" v-if="!isDaily">
@@ -183,6 +187,8 @@ export default {
             type: +router.currentRoute.value.query.type,
             activeIndex: '',
             showMore: false,
+            limit: 30,
+            offset: 1,
             keywords: router.currentRoute.value.query.keywords
         })
         // const { ctx } = getCurrentInstance()
@@ -190,9 +196,19 @@ export default {
             // console.log(router, 'playlistRes')
             let params = { id: state.id, isDaily: state.isDaily, type: state.type }
             if (state.keywords) {
-                params = { keywords: state.keywords }
+                params = { keywords: state.keywords, limit: state.limit, offset: state.offset, type: 1018 }
             }
             getData(params)
+            document.querySelector('.music-box .main').addEventListener('scroll', function (e) {
+                // 获取定义好的scroll盒子
+                // const el = scrollDom.value
+                const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
+                if (condition && router.currentRoute.value.query.keywords && state.coverDetail.more) {
+                    state.offset++
+                    state.loading = true
+                    getData({ keywords: state.keywords, offset: state.offset, limit: state.limit, type: 1 })
+                }
+            })
         })
         watch(() => [
             listStore.playlistData,
@@ -200,6 +216,7 @@ export default {
             store.state.playData.playIndex
         ], (value) => {
             state.coverDetail = value[0]
+            console.log(state.coverDetail, 'state.coverDetail')
             value[0].dj && (state.coverDetail.creator = value[0].dj)
             state.playUrl = value[1]
             state.playIndex = value[2]
@@ -207,10 +224,19 @@ export default {
                 state.activeIndex = state.playIndex
             }
         })
-
+        watch(() => router.currentRoute.value.query.keywords, (keywords) => {
+            getData({ keywords, limit: 30, offset: 1, type: 1018 })
+        })
+        watch(() => listStore.tracks, (value) => {
+            if (state.offset !== 1) {
+                state.coverDetail.tracks = [...state.coverDetail.tracks, ...value]
+                return
+            }
+            state.coverDetail.tracks = value
+        })
         // methods
         const getData = async (params) => {
-            await store.commit('list/getData', params)
+            await store.dispatch('list/getData', params)
         }
         const onListItemdbClick = (item) => {
             state.coverDetail.tracks.map((el, index) => {
