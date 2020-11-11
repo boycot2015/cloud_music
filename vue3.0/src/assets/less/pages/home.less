@@ -6,22 +6,6 @@
     &-container {
         min-height: 480px;
     }
-    .tab-list {
-        width: 100%;
-        margin-bottom: 20px;
-        border-bottom: 1px solid @c-ddd;
-        &-item {
-            padding: 0 10px;
-            margin: 0 20px;
-            line-height: 30px;
-            font-size: 14px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            &.active {
-                border-bottom: 2px solid @primary;
-            }
-        }
-    }
     .tab-content {
         // display: none;
         // width: 752px;
@@ -614,6 +598,23 @@
                     background-color: @c-e8;
                 }
             }
+        }
+    }
+}
+
+.tab-list {
+    width: 100%;
+    margin-bottom: 20px;
+    border-bottom: 1px solid @c-ddd;
+    &-item {
+        padding: 0 10px;
+        margin: 0 20px;
+        line-height: 30px;
+        font-size: 14px;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        &.active {
+            border-bottom: 2px solid @primary;
         }
     }
 }

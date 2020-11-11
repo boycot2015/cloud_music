@@ -1,9 +1,9 @@
 <template>
     <div class="top-list">
-        <template v-for="item in tabData.list">
-            <div class="title" :key="item.title">{{item.title}}</div>
-            <div class="main clearfix" :key="item.title" v-loading="loading">
-                <template v-if="item.type === 0">
+        <template v-for="item in tabData.list" :key="item.title">
+            <div class="title">{{item.title}}</div>
+            <div class="main clearfix" v-loading="loading">
+                <template v-if="item.type === 0" >
                     <div class="main-item fl" v-for="plist in item.data" :key="plist.id">
                         <h3 class="top"
                         :class="'color-' + plist.ToplistType">

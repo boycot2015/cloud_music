@@ -93,11 +93,23 @@
             </div>
         </div>
         <div class="search-cover" v-else>
-            <h3>找到{{coverDetail.songCount}}个结果</h3>
+            <h3 class="title">找到{{coverDetail.count}}{{unit}}{{activeTab}}</h3>
+            <div class="tab-list flexbox-h just-c">
+                <div
+                v-for="item in searchData"
+                :key="item.title"
+                :class="{'active': item.title === activeTab}"
+                @click="onTabClick(item)"
+                class="tab-list-item js-tab-item"
+                data-type="home">{{item.title}}</div>
+            </div>
         </div>
-        <div class="list-form">
+        <div
+        class="list-form"
+        v-if="type !== 1004 && type !== 1014"
+        v-loading="loading">
             <div class="list-header flexbox-h just-b" v-if="!isDaily">
-                <template v-if="!type">
+                <template v-if="!router.currentRoute.value.query.type">
                     <div class="order tl">
                         <span class="num"></span>
                     </div>
@@ -142,6 +154,12 @@
                 </ul>
             </div>
         </div>
+        <video-temp-tab1
+        style="margin-left: 20px;"
+        :show-cate="false"
+        :data="coverDetail.tracks"
+        v-if="type===1004 || type===1014"
+        ></video-temp-tab1>
     </div>
 </template>
 
@@ -161,15 +179,18 @@ import { useRouter } from 'vue-router'
 // import { Swiper, SwiperSlide, directive } from 'vue-awesome-swiper'
 import 'swiper/swiper-bundle.min.css'
 import List from '@/views/components/List'
+import videoTempTab1 from '@/views/components/videoTemp/temp1'
 export default {
     components: {
-        List
+        List,
+        videoTempTab1
     },
     setup () {
         const store = useStore()
         const listStore = store.state.list
         const router = useRouter()
         const state = reactive({
+            loading: true,
             dayData: {
                 weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
                 day: new Date().getDate(),
@@ -182,14 +203,17 @@ export default {
             playData: {
                 ...computed(() => store.state.playData)
             },
+            searchData: [],
             id: router.currentRoute.value.query.id,
             isDaily: router.currentRoute.value.query.isDaily,
-            type: +router.currentRoute.value.query.type,
+            type: (router.currentRoute.value.query.type && +router.currentRoute.value.query.type) || 1,
             activeIndex: '',
             showMore: false,
             limit: 30,
             offset: 1,
-            keywords: router.currentRoute.value.query.keywords
+            activeTab: '单曲',
+            keywords: router.currentRoute.value.query.keywords,
+            unit: '首'
         })
         // const { ctx } = getCurrentInstance()
         onMounted(() => {
@@ -203,10 +227,9 @@ export default {
                 // 获取定义好的scroll盒子
                 // const el = scrollDom.value
                 const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
-                if (condition && router.currentRoute.value.query.keywords && state.coverDetail.more) {
+                if (condition && !state.loading && router.currentRoute.value.query.keywords && state.coverDetail.more) {
                     state.offset++
-                    state.loading = true
-                    getData({ keywords: state.keywords, offset: state.offset, limit: state.limit, type: 1 })
+                    getData({ keywords: state.keywords, offset: state.offset, limit: state.limit, type: state.type })
                 }
             })
         })
@@ -216,7 +239,7 @@ export default {
             store.state.playData.playIndex
         ], (value) => {
             state.coverDetail = value[0]
-            console.log(state.coverDetail, 'state.coverDetail')
+            // console.log(state.coverDetail, 'state.coverDetail')
             value[0].dj && (state.coverDetail.creator = value[0].dj)
             state.playUrl = value[1]
             state.playIndex = value[2]
@@ -228,15 +251,23 @@ export default {
             getData({ keywords, limit: 30, offset: 1, type: 1018 })
         })
         watch(() => listStore.tracks, (value) => {
-            if (state.offset !== 1) {
+            if (state.offset > 1) {
                 state.coverDetail.tracks = [...state.coverDetail.tracks, ...value]
                 return
             }
+            state.coverDetail.tracks = []
             state.coverDetail.tracks = value
         })
+        watch(() => listStore.searchData, (value) => {
+            state.searchData = value
+        })
+
         // methods
         const getData = async (params) => {
-            await store.dispatch('list/getData', params)
+            state.loading = true
+            await store.dispatch('list/getData', params).then(() => {
+                state.loading = false
+            })
         }
         const onListItemdbClick = (item) => {
             state.coverDetail.tracks.map((el, index) => {
@@ -258,9 +289,61 @@ export default {
             state.playIndex = 0
             onListItemdbClick(item)
         }
+        const onTabClick = (item) => {
+            state.activeTab = item.title
+            let type = item.title
+            const unitArr = ['首', '个', '位']
+            switch (item.title) {
+            case '单曲':
+                type = 1
+                state.unit = unitArr[0]
+                break
+            case '主题':
+            case '专辑':
+                type = 10
+                state.unit = unitArr[1]
+                break
+            case '歌手':
+                type = 100
+                state.unit = unitArr[2]
+                break
+            case '歌单':
+                type = 1000
+                state.unit = unitArr[0]
+                break
+            case '用户':
+                type = 1002
+                state.unit = unitArr[2]
+                break
+            case '歌词':
+                type = 1006
+                state.unit = unitArr[1]
+                break
+            case '电台':
+                type = 1009
+                state.unit = unitArr[1]
+                break
+            case '视频':
+                type = 1014
+                state.unit = unitArr[1]
+                break
+            case 'Mlog':
+                type = 1004
+                state.unit = unitArr[1]
+                break
+            default:
+                type = 1
+                state.unit = unitArr[0]
+                break
+            }
+            state.type = type
+            state.offset = 1
+            getData({ keywords: state.keywords, offset: state.offset, limit: state.limit, type })
+        }
         return {
             ...toRefs(state),
             onListItemdbClick,
+            onTabClick,
             playAll,
             router
         }

@@ -1,6 +1,6 @@
 <template>
     <div class="tab-content tab-cate-content">
-        <div class="tags">
+        <div class="tags" v-if="showCate" >
             <span class="btn-cate js-toggle-cate" :class="{'active': showAllCate}" @click.stop="showAllCate = !showAllCate">
                 <span class="text">{{activedCate.name || '全部视频'}}</span> <i class="icon-music-down"></i>
             </span>
@@ -54,11 +54,11 @@
         <ul class="video-list clearfix">
             <grid-list
                 v-for="(item, index) in tabData.list.data"
-                :item="item.data"
+                :item="item.data || item"
                 :category="tabData.list.category"
                 :index="index"
                 :type="tabData.list.type"
-                @click="onListClick(item.data)"
+                @click="onListClick(item.data || item)"
                 :key="item.id"></grid-list>
         </ul>
     </div>
@@ -79,12 +79,22 @@ import { useRouter } from 'vue-router'
 import GridList from '@/views/components/GridList'
 export default {
     name: 'videoTemp1',
+    props: {
+        showCate: {
+            type: Boolean,
+            default: true
+        },
+        data: {
+            type: Array,
+            default: () => []
+        }
+    },
     components: {
         // Swiper,
         // SwiperSlide,
         GridList
     },
-    setup () {
+    setup (props) {
         const store = useStore()
         const tabData = store.state.video.tab1Data
         const router = useRouter()
@@ -145,15 +155,25 @@ export default {
             state.tabData.tags = value[1]
             state.tabData.subs = value[2]
             if (state.offset !== 1) {
+                if (props.data) {
+                    state.tabData.list.data = [...state.tabData.list.data, ...props.data]
+                    return
+                }
                 state.tabData.list.data = [...state.tabData.list.data, ...value[3]]
                 return
             }
             state.tabData.list.data = value[3]
             // console.log(state.tabData.list.data)
         })
-
+        watch(() => props.data, (value) => {
+            state.tabData.list.data = props.data
+        })
         // methods
         const getData = async (type) => {
+            if (props.data.length) {
+                state.tabData.list.data = props.data
+                return
+            }
             store.dispatch('video/getTab1Data', type).then(res => {
                 store.dispatch('video/getListByCate', { offset: 1, id: state.activedCate.id || '' })
             })

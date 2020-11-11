@@ -342,7 +342,7 @@
             .aside-list {
                 overflow: hidden;
                 overflow-y: auto;
-                height: calc(100% - 56px);
+                height: calc(100% - 75px);
                 background-color: #F5F5F7;
             }
             .music-info {
@@ -360,6 +360,8 @@
                     width: 100%;
                     // pointer-events: none;
                     .icon::after {
+                        border-radius: @border-radius;
+                        overflow: hidden;
                         color: @c-ccc;
                         // line-height: 56px;
                         padding: 3px 4px;
@@ -367,7 +369,7 @@
                         left: 8px;
                         top: 7px;
                         box-sizing: border-box;
-                        font-size: 32px;
+                        font-size: 52px;
                         background-color: rgba(0, 0, 0, 0.3);
                     }
                 }
@@ -377,9 +379,10 @@
                     }
                 }
                 .img {
-                    width: 40px;
-                    height: 40px;
+                    width: 60px;
+                    height: 60px;
                     // border: 1px solid @c-e8;
+                    border-radius: @border-radius;
                     overflow: hidden;
                     margin-right: 10px;
                     img {

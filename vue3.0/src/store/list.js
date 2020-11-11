@@ -6,73 +6,9 @@ export default {
         playlistData: {},
         tracks: [],
         playUrl: '',
-        searchType: {
-            data: [],
-            title: ''
-        }
+        searchData: []
     },
     mutations: {
-        async getData (state, params) {
-            let playlistRes = ''
-            let djDetailRes = ''
-            params.type && (params.type = parseInt(params.type))
-            if (params.isDaily) {
-                playlistRes = await song.recommend(params)
-            } else if (params.type === 3) {
-                playlistRes = await dj.djprogramList({ ...params, rid: params.id })
-                djDetailRes = await dj.djDetail({ ...params, rid: params.id })
-            } else if (params.keywords) {
-                playlistRes = await search.search(params)
-            } else {
-                playlistRes = await song.playlist(params)
-            }
-            if (playlistRes && playlistRes.code === 200) {
-                let ids = []
-                const playlist = playlistRes.playlist || playlistRes.data || djDetailRes.djRadio || {}
-                if (!params.isDaily && !params.type && !params.keywords) {
-                    playlist.trackIds.forEach(function (item) {
-                        ids.push(item.id)
-                    })
-                    ids = ids.join(',')
-                    const detailRes = await song.detail({ ids })
-                    if (detailRes && detailRes.code === 200) {
-                        state.tracks = detailRes.songs
-                    } else {
-                        state.tracks = []
-                    }
-                    playlist.tracks = state.tracks
-                    playlist.playCount = filterPlayCount(playlist.playCount)
-                } else if (params.type === 3) {
-                    playlist.tracks = playlistRes.programs
-                    playlist.more = playlistRes.more
-                    playlist.count = playlistRes.count
-                } else if (params.keywords) {
-                    if (params.type === 1018) {
-                        state.searchType = playlistRes.result
-                        console.log(state.searchType, 'playlistRes')
-                        this.getData({ ...params, type: 1 })
-                        return Promise.resolve({ code: 200, success: true })
-                    }
-                    playlist.tracks = playlistRes.result.songs
-                    playlist.more = playlistRes.result.more
-                    playlist.songCount = playlistRes.result.songCount
-                    // console.log(playlist, 'playlistRes')
-                } else {
-                    state.tracks = playlist.dailySongs
-                    playlist.tracks = playlist.dailySongs
-                }
-                playlist.tracks && playlist.tracks.map(el => {
-                    el.dt && (el.dt = filterDruationTime(el.dt))
-                    el.duration && (el.dt = filterDruationTime(el.duration))
-                    el.createTime && (el.createTime = new Date(el.createTime).toLocaleDateString())
-                })
-                state.playlistData = playlist
-                // console.log(state.playlistData, 'state.playlistData')
-                return Promise.resolve({ code: 200, success: true })
-            } else {
-                return Promise.reject(playlistRes)
-            }
-        },
         async getTracksByIds (state, ids) {
             const detailRes = await song.detail({ ids })
             if (detailRes && detailRes.code === 200) {
@@ -88,11 +24,11 @@ export default {
         async getUsers (state, params) {
 
         },
-        setData (state, { playlist, searchType }) {
+        setData (state, { playlist, searchData }) {
             playlist && (state.playlistData = playlist)
             playlist && (state.tracks = playlist.tracks)
-            searchType && (state.searchType = searchType)
-            console.log(state, 'state')
+            searchData && (state.searchData = searchData)
+            // console.log(state, 'state')
         }
     },
     actions: {
@@ -113,7 +49,7 @@ export default {
             if (playlistRes && playlistRes.code === 200) {
                 let ids = []
                 const playlist = playlistRes.playlist || playlistRes.data || djDetailRes.djRadio || {}
-                if (!params.isDaily && !params.type && !params.keywords) {
+                if (!params.isDaily && params.type === 1 && !params.keywords) {
                     playlist.trackIds.forEach(function (item) {
                         ids.push(item.id)
                     })
@@ -133,17 +69,44 @@ export default {
                     playlist.count = playlistRes.count
                 } else if (params.keywords) {
                     if (params.type === 1018) {
-                        commit('setData', { searchType: playlistRes.result })
+                        const arr = []
+                        const order = playlistRes.result.order
+                        order.map(key => {
+                            const obj = {}
+                            const moreText = playlistRes.result[key].moreText
+                            obj.data = playlistRes.result[key]
+                            if (moreText) {
+                                if (moreText.includes('个')) {
+                                    obj.title = moreText.split('个')[1]
+                                    obj.count = moreText.split('个')[0].slice(4)
+                                } else if (moreText.includes('首')) {
+                                    obj.title = moreText.split('首')[1]
+                                    obj.count = moreText.split('首')[0].slice(4)
+                                }
+                                arr.push(obj)
+                            }
+                            commit('setData', { searchData: arr })
+                            return Promise.resolve({ code: 200, success: true })
+                        })
+                        // console.log(arr, 'arr')
                         dispatch('getData', { ...params, type: 1 })
                         return Promise.resolve({ code: 200, success: true })
                     }
-                    playlist.tracks = playlistRes.result.songs
-                    playlist.more = playlistRes.result.hasMore
-                    playlist.songCount = playlistRes.result.songCount
-                    // console.log(playlist, 'playlistRes')
+                    const result = playlistRes.result
+                    playlist.tracks = result.songs ||
+                        result.playlists || result.mvs ||
+                        result.videos || result.albums ||
+                        result.userprofiles || result.artists || []
+
+                    playlist.count = result.songCount ||
+                        result.playlistCount || result.mvCount ||
+                        result.videoCount || result.albumCount ||
+                        result.userprofileCount || result.artistCount || 0
+                    playlist.more = result.hasMore
                 } else {
                     playlist.tracks = playlist.dailySongs
                 }
+                // console.log(playlistRes, 'playlistRes')
                 playlist.tracks && playlist.tracks.map(el => {
                     el.dt && (el.dt = filterDruationTime(el.dt))
                     el.duration && (el.dt = filterDruationTime(el.duration))
