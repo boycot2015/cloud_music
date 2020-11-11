@@ -147,7 +147,7 @@
                         }"
                     :data="item"
                     :type="type"
-                    :operation="!type"
+                    :operation="type"
                     :index="index"
                     :count="coverDetail.count"
                     :key="index"></list>
