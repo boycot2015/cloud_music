@@ -329,6 +329,24 @@ const routes = [
         ]
     },
     {
+        path: '/upgrade',
+        name: 'upgrade',
+        component: Layout,
+        meta: {
+            title: '更新日志',
+            hideInMenu: true
+        },
+        children: [{
+            path: '/upgrade',
+            name: 'upgrade',
+            component: () => import('../views/upgrade.vue'),
+            meta: {
+                title: '更新日志',
+                hideInMenu: true
+            }
+        }]
+    },
+    {
         path: '/error',
         name: 'error',
         component: Layout,
