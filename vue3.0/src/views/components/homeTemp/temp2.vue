@@ -50,14 +50,14 @@
                 </div>
             </div>
         </div>
-        <ul class="recommend-list clearfix">
-            <li class="grid-list-item top js-list-detail fl">
+        <ul class="recommend-list clearfix" v-loading="loading">
+            <!-- <li class="grid-list-item top js-list-detail fl">
                 <div class="img flexbox-v just-c tc">
                     <i class="icon icon-music-emoji"></i>
                     <div class="top-text">{{tabData.dayData.name}}<i class="icon-music-right"></i></div>
                 </div>
                 <div class="name tl">{{tabData.dayData.copywriter}}</div>
-            </li>
+            </li> -->
             <grid-list
                 v-for="(item, index) in tabData.list.data"
                 :item="item"
@@ -94,6 +94,7 @@ export default {
         const tabData = store.state.home.tab2Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             showAllCate: false,
             activedCate: router.currentRoute.value.query.cate || '全部歌单',
             tabData: {
@@ -125,6 +126,7 @@ export default {
                 const condition = this.scrollHeight - this.scrollTop <= this.clientHeight
                 if (condition && router.currentRoute.value.query.tabName === 'cate') {
                     state.offset++
+                    state.loading = true
                     store.dispatch('home/getListByCate', { offset: state.offset, limit: state.limit, cat: state.activedCate })
                 }
             })
@@ -155,8 +157,10 @@ export default {
 
         // methods
         const getData = async (type) => {
+            state.loading = true
             store.dispatch('home/getTab2Data', type).then(res => {
                 store.dispatch('home/getListByCate', { current: 1, cat: state.activedCate || '' })
+                state.loading = false
             })
         }
         // 点击分类标签获取对应数据
@@ -166,6 +170,7 @@ export default {
             state.showAllCate = false
             state.offset = 1
             state.tabData.list.data = []
+            state.loading = true
             store.dispatch('home/getListByCate', { current: 1, cat: (item && item.name) || '全部歌单' }).then(res => {
                 router.push({
                     path: router.currentRoute.value.path,
@@ -174,6 +179,7 @@ export default {
                         cate: state.activedCate
                     }
                 })
+                state.loading = true
             })
         }
         const onListClick = (item) => {

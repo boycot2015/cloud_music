@@ -14,5 +14,7 @@ export default {
     subcount: baseUrl + '/user/subcount', // 登陆后调用此接口 , 可以获取用户信息
     update: baseUrl + '/user/update', // 登陆后调用此接口 , 传入相关信息,可以更新用户信息
     dailySignin: baseUrl + '/daily_signin', // 签到
-    detail: baseUrl + '/user/detail' // 获取用户详情
+    detail: baseUrl + '/user/detail', // 获取用户详情
+
+    likelist: baseUrl + '/likelist' // 获取喜欢的歌曲列表ids
 }

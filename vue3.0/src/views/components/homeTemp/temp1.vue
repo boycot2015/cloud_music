@@ -1,5 +1,5 @@
 <template>
-    <div class="tab-content tab-home-content" v-loading="loading">
+    <div class="tab-content tab-home-content">
         <div class="swiper-container">
             <div class="swiper-wrapper">
                 <div
@@ -21,7 +21,7 @@
                 <h3 class="name fl">{{obj.title || '推荐歌单'}}</h3>
                 <span class="fr more" @click="showMoreClick(obj)">更多<i class="icon-music-right"></i></span>
             </div>
-            <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
+            <ul class="recommend-list grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}" v-loading="obj.loading">
                 <li class="grid-list-item date js-list-detail fl"
                 @click="onListClick({ id: 0 }, true)"
                 v-if="findex === 0">
@@ -76,7 +76,6 @@ export default {
         const tabData = store.state.home.tab1Data
         const router = useRouter()
         const state = reactive({
-            loading: true,
             tabData: {
                 dayData: {
                     weeks: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
@@ -86,6 +85,7 @@ export default {
                 },
                 // ...computed(() => store.state.home).value,
                 list: [{
+                    loading: true,
                     title: '推荐歌单',
                     category: 3,
                     type: 1,
@@ -94,6 +94,7 @@ export default {
                     },
                     data: []
                 }, {
+                    loading: true,
                     title: '独家放送',
                     category: 1,
                     type: 5,
@@ -103,6 +104,7 @@ export default {
                     },
                     data: []
                 }, {
+                    loading: true,
                     title: '最新音乐',
                     category: 3,
                     type: 1,
@@ -111,6 +113,7 @@ export default {
                     },
                     data: []
                 }, {
+                    loading: true,
                     title: '推荐MV',
                     category: 3,
                     type: 5,
@@ -120,6 +123,7 @@ export default {
                     },
                     data: []
                 }, {
+                    loading: true,
                     title: '主播电台',
                     category: 3,
                     type: 1,
@@ -185,7 +189,9 @@ export default {
         const getData = async () => {
             store.dispatch('home/getTab1Data').then(res => {
                 initSwiper()
-                state.loading = false
+                state.tabData.list.map(el => {
+                    el.loading = false
+                })
             })
         }
         const onListClick = (item, isDaily) => {

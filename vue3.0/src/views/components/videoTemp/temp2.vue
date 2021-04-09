@@ -1,6 +1,6 @@
 <template>
     <div class="tab-content tab-cate-content tab-singer-content">
-        <div class="recommend" v-for="(obj, findex) in tabData.list" :key="obj.title">
+        <div class="recommend" v-for="(obj) in tabData.list" :key="obj.title">
             <div class="title flexbox-h algin-c">
                 <h3 class="name " style="margin-right: 20px;">{{obj.title || '推荐歌单'}}</h3>
                 <div class="tags flex-4" style="margin-bottom: 0;">
@@ -19,7 +19,7 @@
                 </div>
                 <span class="flex-1 tr more" @click="onMoreClick(obj)">更多<i class="icon-music-right"></i></span>
             </div>
-            <ul class="grid-list clearfix" :style="{'marginBottom': findex === 2 ? '40px': ''}">
+            <ul class="grid-list clearfix" :style="{...obj.styles}" v-loading="obj.loading">
                 <grid-list
                 v-for="(item, index) in obj.data"
                 :item="item"
@@ -70,6 +70,7 @@ export default {
                 },
                 // ...computed(() => store.state.home).value,
                 list: [{
+                    loading: true,
                     title: '最新MV',
                     category: 1,
                     type: 3,
@@ -105,8 +106,12 @@ export default {
                         order: {
                             value: '最热'
                         }
+                    },
+                    styles: {
+                        minHeight: '460px'
                     }
                 }, {
+                    loading: true,
                     title: '热播MV',
                     category: 2,
                     type: 3,
@@ -114,8 +119,11 @@ export default {
                     query: {
                         tabName: 'hotMV'
                     },
-                    data: []
+                    data: [],
+                    styles: {
+                    }
                 }, {
+                    loading: true,
                     title: '网易出品',
                     category: 4,
                     type: 3,
@@ -123,8 +131,12 @@ export default {
                     query: {
                         tabName: 'exclusive'
                     },
-                    data: []
+                    data: [],
+                    styles: {
+                        marginBottom: '20px'
+                    }
                 }, {
+                    loading: true,
                     title: 'MV排行榜',
                     category: 5,
                     type: 4,
@@ -160,6 +172,9 @@ export default {
                         order: {
                             value: '最热'
                         }
+                    },
+                    styles: {
+                        minHeight: '660px'
                     }
                 }]
             },
@@ -191,7 +206,12 @@ export default {
         })
         // methods
         const getData = async () => {
+            state.loading = true
             store.dispatch('video/getTab2Data').then(res => {
+                // state.loading = false
+                state.tabData.list.map(el => {
+                    el.loading = false
+                })
             })
         }
         const onListClick = (item) => {
@@ -216,7 +236,7 @@ export default {
             // console.log(item, formItem, key, 'item, formItem, key')
             formItem.value = item.code !== undefined ? item.code : item
             state.offset = 1
-            state.tabData.list.data = []
+            obj.data = []
             const data = sortData(obj)
             router.push({
                 path: router.currentRoute.value.path,
@@ -227,7 +247,9 @@ export default {
             })
             data.limit = state.limit
             data.ctype = obj.category
+            obj.loading = true
             store.dispatch('video/getVideoByParams', data).then(res => {
+                obj.loading = false
             })
         }
         const onMoreClick = (obj) => {

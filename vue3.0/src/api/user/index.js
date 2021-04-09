@@ -46,5 +46,10 @@ export default {
     },
     detail (data) {
         return axios.post(urls.detail, data)
+    },
+    likelist (params) {
+        return axios.get(urls.likelist, {
+            params
+        })
     }
 }

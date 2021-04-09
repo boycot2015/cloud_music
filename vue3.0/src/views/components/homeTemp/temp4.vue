@@ -1,44 +1,42 @@
 <template>
     <div class="top-list">
-        <template v-for="item in tabData.list" :key="item.title">
-            <div class="title">{{item.title}}</div>
-            <div class="main clearfix" v-loading="loading">
-                <template v-if="item.type === 0" >
-                    <div class="main-item fl" v-for="plist in item.data" :key="plist.id">
-                        <h3 class="top"
-                        :class="'color-' + plist.ToplistType">
-                            <p class="name">{{plist.name}}</p>
-                            <span class="time">{{(plist.updateTime && new Date(plist.updateTime).toLocaleString()) || plist.updateFrequency}}</span>
-                            <span class="icon icon-music-pause"></span>
-                        </h3>
-                        <ul class="music-list">
-                            <play-list
-                            class="list-item"
-                            :data="list"
-                            :index="index"
-                            :type="2"
-                            :operation="false"
-                            isminiPlay
-                            v-for="(list, index) in plist.tracks"
-                            :key="list.id">
-                            </play-list>
-                        </ul>
-                        <div class="bottom tr">
-                            <span class="all" @click="onListClick(plist)">查看全部&nbsp;></span>
-                        </div>
+        <div v-for="item in tabData.list" :key="item.title">
+            <div class="title" style="font-size: 20px;">{{item.title}}</div>
+            <div v-if="item.type === 0" class="main clearfix" v-loading="item.loading">
+                <div class="main-item fl" v-for="plist in item.data" :key="plist.id">
+                    <h3 class="top"
+                    :class="'color-' + plist.ToplistType">
+                        <p class="name">{{plist.name}}</p>
+                        <span class="time">{{(plist.updateTime && new Date(plist.updateTime).toLocaleString()) || plist.updateFrequency}}</span>
+                        <span class="icon icon-music-pause"></span>
+                    </h3>
+                    <ul class="music-list">
+                        <play-list
+                        class="list-item"
+                        :data="list"
+                        :index="index"
+                        :type="2"
+                        :operation="false"
+                        isminiPlay
+                        v-for="(list, index) in plist.tracks"
+                        :key="list.id">
+                        </play-list>
+                    </ul>
+                    <div class="bottom tr">
+                        <span class="all" @click="onListClick(plist)">查看全部&nbsp;></span>
                     </div>
-                </template>
-                <template v-else>
-                    <grid-list
-                    v-for="(val, index) in item.data"
-                    :item="val"
-                    :type="item.type"
-                    :index="index"
-                    @click="onListClick(val)"
-                    :key="val.id"></grid-list>
-                </template>
+                </div>
             </div>
-        </template>
+            <ul class="music-list" v-else v-loading="item.loading">
+                <grid-list
+                v-for="(val, index) in item.data"
+                :item="val"
+                :type="item.type"
+                :index="index"
+                @click="onListClick(val)"
+                :key="val.id"></grid-list>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -75,10 +73,12 @@ export default {
             loading: true,
             tabData: {
                 list: [{
+                    loading: true,
                     title: '官方榜',
                     type: 0,
                     data: []
                 }, {
+                    loading: true,
                     title: '全球榜',
                     type: 1,
                     data: []
@@ -131,7 +131,9 @@ export default {
         // methods
         const getData = async () => {
             store.dispatch('home/getTab4Data').then(res => {
-                state.loading = false
+                state.tabData.list.map(el => {
+                    el.loading = false
+                })
             })
         }
         const onListClick = (item) => {

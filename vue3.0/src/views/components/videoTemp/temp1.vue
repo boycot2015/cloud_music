@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        <ul class="video-list clearfix">
+        <ul class="video-list clearfix" v-loading="loading">
             <grid-list
                 v-for="(item, index) in tabData.list.data"
                 :item="item.data || item"
@@ -99,6 +99,7 @@ export default {
         const tabData = store.state.video.tab1Data
         const router = useRouter()
         const state = reactive({
+            loading: true,
             showAllCate: false,
             activedCate: {
                 id: router.currentRoute.value.query.id || '',
@@ -174,8 +175,10 @@ export default {
                 state.tabData.list.data = props.data
                 return
             }
+            state.loading = true
             store.dispatch('video/getTab1Data', type).then(res => {
                 store.dispatch('video/getListByCate', { offset: 1, id: state.activedCate.id || '' })
+                state.loading = false
             })
         }
         // 点击分类标签获取对应数据
@@ -185,6 +188,7 @@ export default {
             state.showAllCate = false
             state.offset = 1
             state.tabData.list.data = []
+            state.loading = true
             store.dispatch('video/getListByCate', { offset: 1, id: (item && item.id) || '' }).then(res => {
                 router.push({
                     path: router.currentRoute.value.path,
@@ -194,11 +198,13 @@ export default {
                         name: state.activedCate.name
                     }
                 })
+                state.loading = false
             })
         }
         const onListClick = (item) => {
             // getData(item.type)
             // console.log(item.vid, 'item')
+            state.loading = true
             router.push({
                 path: '/video/detail',
                 query: {
