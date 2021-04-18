@@ -209,6 +209,7 @@
 import {
     // ref,
     // computed,
+    inject,
     watch,
     reactive,
     toRefs,
@@ -353,9 +354,22 @@ export default {
                 store.dispatch('user/getUserInfo', { uid: userInfo.profile.userId }).then(res => {})
             }
         }
+        const MessageBox = inject('messageBox')
+
         const onSign = () => {
             store.dispatch('user/sign').then(res => {
                 emit('on-sign', true)
+                this.$vlayer.message({ content: 'success closed', icon: 'success' })
+            }).catch(() => {
+                const $el = MessageBox({
+                    content: '签到失败，重复签到',
+                    shadeClose: false,
+                    xclose: false,
+                    btns: [
+                        // { text: '取消', click: () => { $el.close() } },
+                        { text: '确认', class: 'btn-primary', click: () => { $el.close() } }
+                    ]
+                })
             })
         }
         return {

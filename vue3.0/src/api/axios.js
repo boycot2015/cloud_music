@@ -35,7 +35,7 @@ const errorHandle = (status, response) => {
 
 // 创建axios实例
 var service = axios.create({
-    timeout: 10000
+    timeout: 60000
 })
 
 // 设置 post、put 默认 Content-Type
@@ -56,11 +56,15 @@ service.interceptors.request.use(
             config.data = JSON.stringify(config.data)
         }
         if (token) {
-            if (config.params) {
-                if (!config.params.keywords) {
-                    config.params.cookie = token
-                }
+            config.params = {
+                ...config.params,
+                cookie: token
             }
+            // if (config.params) {
+            //     config.params.cookie = token
+            //     // if (!config.params.keywords) {
+            //     // }
+            // }
         }
         // 登录流程控制中，根据本地是否存在token判断用户的登录情况
         // 但是即使token存在，也有可能token是过期的，所以在每次的请求头中携带token

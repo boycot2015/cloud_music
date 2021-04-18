@@ -111,7 +111,7 @@ export default {
         sign ({ commit }, params) {
             return new Promise((resolve, reject) => {
                 user.dailySignin().then(res => {
-                    if (res.code === 200) {
+                    if (res && res.code === 200) {
                         commit('setSign', true)
                         resolve(res)
                     } else {

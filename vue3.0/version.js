@@ -62,7 +62,7 @@ if (versionStr.indexOf(commitCurr) !== -1) {
             temObj.email = email[name.length - i - 1]
             temObj.message = message[name.length - i - 1]
         }
-        console.log(versions, 'versions')
+        // console.log(versions, 'versions')
         versionArr.unshift(temObj)
     })
     versionArr.map((el, i) => {

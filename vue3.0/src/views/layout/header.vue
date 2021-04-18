@@ -29,7 +29,7 @@
             <user-info ref="userDialog" class="user-box" @mousedown.stop v-if="showLogin && hasLogin" @on-logout="onLogOut"></user-info>
         </div>
         <span class="text vip-text">{{headerData.vipTxt}}</span>
-        <div class="text icon theme icon-music-clothes"></div>
+        <div @click="showDialog" class="text icon theme icon-music-clothes"></div>
         <div class="text icon message icon-music-msg"></div>
         <div class="text icon setting icon-music-setting"></div>
     </div>
@@ -49,7 +49,8 @@ import {
     watch,
     reactive,
     toRefs,
-    onMounted
+    onMounted,
+    inject
     // getCurrentInstance
 } from 'vue'
 import {
@@ -145,6 +146,17 @@ export default {
                 })
             }
         }
+        const MessageBox = inject('messageBox')
+        const showDialog = () => {
+            const $el = MessageBox({
+                content: '<div>这里是内容信息！</div>',
+                shadeClose: false,
+                btns: [
+                    { text: '取消', click: () => { $el.close() } },
+                    { text: '确认', class: 'btn-primary', click: () => { $el.close() } }
+                ]
+            })
+        }
         return {
             router,
             loginForm,
@@ -156,6 +168,7 @@ export default {
             onLogin,
             onLogOut,
             onSearch,
+            showDialog,
             ...toRefs(state)
         }
     }

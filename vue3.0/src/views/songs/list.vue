@@ -37,7 +37,7 @@
                         <img :src="coverDetail.creator.avatarUrl" alt="">
                     </div>
                     <div class="username fl">{{coverDetail.creator.nickname}}</div>
-                    <div class="create-time fl"><span>{{coverDetail.createTime}}</span>创建</div>
+                    <div class="create-time fl" v-if="coverDetail.createTime"><span>{{new Date(coverDetail.createTime).toLocaleDateString().replace(/\//g,'-')}}</span>创建</div>
                 </div>
                 <div class="operation flexbox-h" :class="{'just-b': isDaily}">
                     <div class="play-btn play" @click="playAll(coverDetail.tracks[0], 1)">
