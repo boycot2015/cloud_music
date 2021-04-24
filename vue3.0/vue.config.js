@@ -11,7 +11,8 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                target: 'http://music.api.boycot.top',
+                // target: 'http://music.api.boycot.top',
+                target: 'https://netease-cloud-music-api-ten-red.vercel.app',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''
