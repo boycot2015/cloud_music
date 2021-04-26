@@ -12,7 +12,7 @@ module.exports = {
         proxy: {
             '/api': {
                 // target: 'http://music.api.boycot.top',
-                target: 'https://netease-cloud-music-api-ten-red.vercel.app',
+                target: 'https://boycot-music-api.vercel.app',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''
