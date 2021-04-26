@@ -11,8 +11,8 @@ module.exports = {
     devServer: {
         proxy: {
             '/api': {
-                // target: 'http://music.api.boycot.top',
-                target: 'https://boycot-music-api.vercel.app',
+                target: 'http://music.api.boycot.top',
+                // target: 'https://boycot-music-api.vercel.app',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': ''
