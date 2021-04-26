@@ -12,11 +12,11 @@ const env = process.env.NODE_ENV === 'development'
 switch (env) {
 case 'development':
     // baseUrl = 'http://192.168.1.216:2003/api' // 测试环境url
-    baseUrl = 'boycot-music-api.vercel.app'
+    baseUrl = 'https://boycot-music-api.vercel.app'
     // baseUrl = '/api'
     break
 case 'production':
-    baseUrl = 'boycot-music-api.vercel.app'
+    baseUrl = 'https://boycot-music-api.vercel.app'
     break
 }
 export default baseUrl
